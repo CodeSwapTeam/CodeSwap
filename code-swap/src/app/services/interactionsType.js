@@ -1,32 +1,112 @@
 const interactionsType = {
-    BUTTON_CLICK: 'button_click',
-    PAGE_LOAD: 'page_load',
-    FORM_SUBMISSION: 'form_submission',
-    LINK_CLICK: 'link_click',
-    VIDEO_PLAY: 'video_play',
-    AUDIO_PLAY: 'audio_play',
-    FILE_UPLOAD: 'file_upload',
-    SEARCH: 'search',
-    MENU_NAVIGATION: 'menu_navigation',
-    ITEM_SELECTION: 'item_selection',
-    CHAT_MESSAGE: 'chat_message',
-    EMAIL_SENT: 'email_sent',
-    LOGOUT: 'logout',
-    LOGIN: 'login',
-    SIGNUP: 'signup',
-    PROFILE_UPDATE: 'profile_update',
-    PASSWORD_CHANGE: 'password_change',
-    NOTIFICATION_READ: 'notification_read',
-    NOTIFICATION_CLICK: 'notification_click',
-    ERROR_OCCURRED: 'error_occurred',
-    PAGE_NOT_FOUND: 'page_not_found',
-    DATA_EXPORT: 'data_export',
-    DATA_IMPORT: 'data_import',
-    PAYMENT_PROCESS: 'payment_process',
-    ACCOUNT_DELETE: 'account_delete',
-    COOKIE_CONSENT: 'cookie_consent',
-    SURVEY_RESPONSE: 'survey_response',
-  };
-  
-  module.exports = interactionsType;
-  
+  BUTTON_CLICK: {
+    MESSAGE: 'button_click',
+    CODE: 100
+  },
+  PAGE_LOAD: {
+    MESSAGE: 'page_load',
+    CODE: 101
+  },
+  FORM_SUBMISSION: {
+    MESSAGE: 'form_submission',
+    CODE: 102
+  },
+  LINK_CLICK: {
+    MESSAGE: 'link_click',
+    CODE: 103
+  },
+  VIDEO_PLAY: {
+    MESSAGE: 'video_play',
+    CODE: 104
+  },
+  AUDIO_PLAY: {
+    MESSAGE: 'audio_play',
+    CODE: 105
+  },
+  FILE_UPLOAD: {
+    MESSAGE: 'file_upload',
+    CODE: 106
+  },
+  SEARCH: {
+    MESSAGE: 'search',
+    CODE: 107
+  },
+  MENU_NAVIGATION: {
+    MESSAGE: 'menu_navigation',
+    CODE: 108
+  },
+  ITEM_SELECTION: {
+    MESSAGE: 'item_selection',
+    CODE: 109
+  },
+  CHAT_MESSAGE: {
+    MESSAGE: 'chat_message',
+    CODE: 110
+  },
+  EMAIL_SENT: {
+    MESSAGE: 'email_sent',
+    CODE: 111
+  },
+  LOGOUT: {
+    MESSAGE: 'logout',
+    CODE: 112
+  },
+  LOGIN: {
+    MESSAGE: 'LOGIN',
+    CODE: 102
+  },
+  SIGNUP: {
+    MESSAGE: 'signup',
+    CODE: 113
+  },
+  PROFILE_UPDATE: {
+    MESSAGE: 'profile_update',
+    CODE: 114
+  },
+  PASSWORD_CHANGE: {
+    MESSAGE: 'password_change',
+    CODE: 115
+  },
+  NOTIFICATION_READ: {
+    MESSAGE: 'notification_read',
+    CODE: 116
+  },
+  NOTIFICATION_CLICK: {
+    MESSAGE: 'notification_click',
+    CODE: 117
+  },
+  ERROR_OCCURRED: {
+    MESSAGE: 'error_occurred',
+    CODE: 118
+  },
+  PAGE_NOT_FOUND: {
+    MESSAGE: 'page_not_found',
+    CODE: 119
+  },
+  DATA_EXPORT: {
+    MESSAGE: 'data_export',
+    CODE: 120
+  },
+  DATA_IMPORT: {
+    MESSAGE: 'data_import',
+    CODE: 121
+  },
+  PAYMENT_PROCESS: {
+    MESSAGE: 'payment_process',
+    CODE: 122
+  },
+  ACCOUNT_DELETE: {
+    MESSAGE: 'account_delete',
+    CODE: 123
+  },
+  COOKIE_CONSENT: {
+    MESSAGE: 'cookie_consent',
+    CODE: 124
+  },
+  SURVEY_RESPONSE: {
+    MESSAGE: 'survey_response',
+    CODE: 125
+  },
+};
+
+module.exports = interactionsType;

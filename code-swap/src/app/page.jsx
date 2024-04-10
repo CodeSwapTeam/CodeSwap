@@ -8,11 +8,11 @@ import interactionsType from './services/interactionsType';
 
 export default function Home() {
   
-  const { logInteraction } = useInteractionLogger(); // Usando o hook para acessar o contexto
-  logInteraction(interactionsType.PAGE_LOAD);
+  const  {logInteraction}  = useInteractionLogger(); // Usando o hook para acessar o contexto
+  logInteraction(interactionsType.PAGE_LOAD.MESSAGE, interactionsType.PAGE_LOAD.CODE);
 
   const handleButtonClick = () => {
-    logInteraction(interactionsType.LOGIN); // Registra a interação quando o botão é clicado
+    logInteraction(interactionsType.LOGIN.MESSAGE, interactionsType.LOGIN.CODE); // Registra a interação quando o botão é clicado
   };
 
   return (
