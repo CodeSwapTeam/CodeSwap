@@ -17,37 +17,8 @@ import AdmUser from "./components/Private/AdmUser";
 
 export default function Home() {
   return (
-    <div className="bg-background bg-no-repeat bg-cover">
-      <Router>
-
-      <AuthProvider>
-        <ContextStore>
-          <Routes>
-            <Route exact path="/" element={<Home/>}/>
-            <Route path="/carreiras" element={<Carreiras/>}/>
-            <Route path="/Metodologia" element={<Metodologia/>}/>
-            <Route path="/Comunidade" element={<Comunidade/>}/>
-            <Route path="/Saibamais/:id" element={<SaibaMais/>}/>
-            <Route path="/Login" element={<Login/>}/>
-            <Route path="/Cadastro" element={<Cadastro/>}/>
-            {/* Rotas Restritas com Autenticação */}
-
-              <Route path="/Dashboard" element={<PrivateRoutes/>}>
-                <Route path="/Dashboard" element={<Dashboard/>}/>
-              </Route>
-
-              <Route path="/AdmUser" element={<PrivateRoutes/>}>
-                <Route path="/AdmUser" element={<AdmUser/>}/>
-              </Route>
-
-          </Routes>
-        </ContextStore>
-      </AuthProvider>
-
-      </Router>
-      
-      
-      
+    <div>
+        <p>Hello Word</p>
     </div>
   );
 }
