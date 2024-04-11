@@ -17,18 +17,15 @@ export default function Home() {
   
 
   const handleButtonClick = () => {
-    logInteraction(interactionsType.BUTTON_CLICK); // Registra a interação quando o botão é clicado
+    logInteraction(interactionsType.CREATE_MODULE); // Registra a interação quando o botão é clicado
   };
 
-  const handleButtonClick2 = () => {
-    logInteraction(interactionsType.AUDIO_PLAY); // Registra a interação quando o botão é clicado
-  };
+  
 
   return (
     <div>
       <p>Hello Word.</p>
-      <button onClick={handleButtonClick}>clique</button>
-      <button onClick={handleButtonClick2}>clique2</button>
+      <button onClick={handleButtonClick}>Criar Curso WEB DESIGN</button>
     </div>
   );
 }
