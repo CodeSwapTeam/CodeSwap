@@ -1,4 +1,4 @@
-import interactionsType from "../services/interactionsType";
+import interactionsType from "../contexts/interactionsType";
 
 
 export const getCodeByInteractionType = (interactionType) => {
