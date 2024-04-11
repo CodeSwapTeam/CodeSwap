@@ -6,6 +6,8 @@ import interactionsType from './services/interactionsType';
 
 import Controller from '@/Controller/controller';
 
+import Divisor from './components/Divisor/page';
+
 
 
 export default function Home() {
@@ -23,10 +25,13 @@ export default function Home() {
   
 
   return (
+    <>
     <div>
       <p>Hello Word.</p>
       <button onClick={handleButtonClick}>Criar Curso WEB DESIGN</button>
     </div>
+    <Divisor />
+    </>
   );
 }
 

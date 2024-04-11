@@ -16,11 +16,11 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="icon" href="/favicon.ico" />
       </head>
-      
+
       <InteractionProvider>
         <body className={inter.className}>{children}</body>
       </InteractionProvider>
-      
+
     </html>
   );
 }
