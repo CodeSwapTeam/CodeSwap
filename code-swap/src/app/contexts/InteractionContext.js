@@ -1,5 +1,7 @@
 "use client";
 import React, { createContext, useContext } from 'react';
+import Controller from '@/Controller/controller';
+import { getCodeByInteractionType } from './getCodeByInteractionType';
 
 // Criação do contexto
 const InteractionContext = createContext();
@@ -9,15 +11,22 @@ export const useInteractionLogger = () => useContext(InteractionContext);
 
 // Componente Provedor para envolver a aplicação
 export const InteractionProvider = ({ children }) => {
-  // Função para registrar interações
+ 
+  const controller = Controller();
+  
 
   const MAX_LOGS = 10;
 
-  const logInteraction = (interactionType, code) => {
+   // Função para registrar interações do usuário
+  const logInteraction = (interactionType) => {
+
+    const type = interactionType.MESSAGE;
+    const code = getCodeByInteractionType(type);
+    
     if (typeof window !== 'undefined' && window.localStorage) {
-      const currentDate = new Date(); // Obter a data e hora atuais
-      const formattedDate = currentDate.toISOString(); // Formatar a data e hora como uma string
-      console.log('Interação registrada:', interactionType, 'código:', code, 'em:', formattedDate);
+
+      const formattedDate = new Date().toLocaleString("pt-BR", {timeZone: "America/Sao_Paulo"});
+      console.log('Interação registrada:', interactionType, 'em:', formattedDate);
       
       let logs = [];
       // Obter os logs existentes do localStorage
@@ -40,6 +49,7 @@ export const InteractionProvider = ({ children }) => {
       });
   
       if (logs.length > MAX_LOGS) {
+        controller.saveInteraction(logs);
         logs = [];
       }
   
@@ -47,10 +57,9 @@ export const InteractionProvider = ({ children }) => {
     } 
   };
   
-
-  // Fornecer o contexto e a função de registro de interações para os componentes filhos
+  // Contexto e a função de registro de interações para os componentes filhos
   return (
-    <InteractionContext.Provider value={{ logInteraction }}>
+    <InteractionContext.Provider value={{ logInteraction}}>
       {children}
     </InteractionContext.Provider>
   );
