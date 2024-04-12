@@ -92,10 +92,11 @@ const CreateCourses = () => {
     };
 
     return (
-        <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', border: '1px solid #ccc', borderRadius: '5px' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', border: '1px solid #ccc', borderRadius: '10px', backgroundColor: '#f8f9fa' }}>
+            <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#007bff' }}>Criar Novo Curso</h2>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
                 <div style={{ marginBottom: '20px' }}>
-                    <label htmlFor="title" style={{ fontWeight: 'bold', marginBottom: '5px' }}>Título do Curso:</label>
+                    <label htmlFor="title" style={{ fontWeight: 'bold', marginBottom: '5px', color: '#007bff' }}>Título do Curso:</label>
                     <input
                         type="text"
                         id="title"
@@ -103,25 +104,25 @@ const CreateCourses = () => {
                         value={formData.title}
                         onChange={handleChange}
                         required
-                        style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}
+                        style={{ width: '100%', padding: '10px', border: '1px solid #007bff', borderRadius: '5px' }}
                     />
                 </div>
                 <div style={{ marginBottom: '20px' }}>
-                    <label htmlFor="description" style={{ fontWeight: 'bold', marginBottom: '5px' }}>Descrição:</label>
+                    <label htmlFor="description" style={{ fontWeight: 'bold', marginBottom: '5px', color: '#007bff' }}>Descrição:</label>
                     <textarea
                         id="description"
                         name="description"
                         value={formData.description}
                         onChange={handleChange}
                         required
-                        style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}
+                        style={{ width: '100%', padding: '10px', border: '1px solid #007bff', borderRadius: '5px' }}
                     />
                 </div>
                 <div style={{ marginBottom: '20px' }}>
-                    <label style={{ fontWeight: 'bold' }}>Módulos:</label>
-                    <ul style={{ listStyle: 'none', padding: '0' }}>
+                    <label style={{ fontWeight: 'bold', color: '#007bff' }}>Módulos:</label>
+                    <ul style={{ listStyle: 'none', padding: '0', marginLeft: '0' }}>
                         {formData.modules.map((module, moduleIndex) => (
-                            <li key={moduleIndex}>
+                            <li key={moduleIndex} style={{ marginBottom: '20px', border: '2px solid #ccc', borderRadius: '5px', padding: '10px', backgroundColor: '#938f8f' }}>
                                 <div>
                                     <input
                                         type="text"
@@ -132,6 +133,7 @@ const CreateCourses = () => {
                                             setFormData({ ...formData, modules: updatedModules });
                                         }}
                                         placeholder="Nome do Módulo"
+                                        style={{ width: '100%', padding: '5px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '5px' }}
                                     />
                                     <textarea
                                         value={module.description}
@@ -141,10 +143,11 @@ const CreateCourses = () => {
                                             setFormData({ ...formData, modules: updatedModules });
                                         }}
                                         placeholder="Descrição do Módulo"
+                                        style={{ width: '100%', padding: '5px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '5px' }}
                                     />
-                                    <ul>
+                                    <ul style={{ listStyle: 'none', padding: '0', marginLeft: '0' }}>
                                         {module.lessons.map((lesson, lessonIndex) => (
-                                            <li key={lessonIndex}>
+                                            <li key={lessonIndex} style={{ marginBottom: '10px' }}>
                                                 <input
                                                     type="text"
                                                     value={lesson.nameLesson}
@@ -154,6 +157,7 @@ const CreateCourses = () => {
                                                         setFormData({ ...formData, modules: updatedModules });
                                                     }}
                                                     placeholder="Nome da Aula"
+                                                    style={{ width: '100%', padding: '5px', marginBottom: '5px', border: '1px solid #ccc', borderRadius: '5px' }}
                                                 />
                                                 <textarea
                                                     value={lesson.description}
@@ -163,23 +167,24 @@ const CreateCourses = () => {
                                                         setFormData({ ...formData, modules: updatedModules });
                                                     }}
                                                     placeholder="Descrição da Aula"
+                                                    style={{ width: '100%', padding: '5px', marginBottom: '5px', border: '1px solid #ccc', borderRadius: '5px' }}
                                                 />
                                             </li>
                                         ))}
                                         <li>
-                                            <button type="button" onClick={() => handleAddLesson(moduleIndex)}>Adicionar Aula</button>
+                                            <button type="button" onClick={() => handleAddLesson(moduleIndex)} style={{ padding: '5px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', margin: '5px' }}>Adicionar Aula</button>
                                         </li>
                                     </ul>
-                                    <button type="button" onClick={() => handleRemoveModule(moduleIndex)}>Remover Módulo</button>
+                                    <button type="button" onClick={() => handleRemoveModule(moduleIndex)} style={{ padding: '5px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Remover Módulo</button>
                                 </div>
                             </li>
                         ))}
                         <li>
-                            <button type="button" onClick={handleAddModule}>Adicionar Módulo</button>
+                            <button type="button" onClick={handleAddModule} style={{ padding: '10px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Adicionar Módulo</button>
                         </li>
                     </ul>
                 </div>
-                <button type="submit" style={{ padding: '10px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Criar Curso</button>
+                <button type="submit" style={{ padding: '10px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%' }}>Criar Curso</button>
             </form>
         </div>
     )
