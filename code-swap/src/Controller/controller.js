@@ -10,7 +10,7 @@ export default function Controller(){
 
     return{
         saveInteraction: saveInteraction,
-        courses : courses,
+        getAllModulesAndCourses,
         CreateCourse
         
     }
