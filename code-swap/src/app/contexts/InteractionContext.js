@@ -40,6 +40,8 @@ export const InteractionProvider = ({ children }) => {
           console.error("Error parsing existing logs:", error);
           logs = [];
         }
+      }else{
+        localStorage.setItem('logs', logs);
       }
   
       logs.push({
