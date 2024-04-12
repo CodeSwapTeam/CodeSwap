@@ -58,6 +58,10 @@ const interactionsType = {
   CREATE_MODULE:{
     MESSAGE: 'criação de curso novo',
     CODE : 120
+  },
+  PAGE_LOAD_HOME: {
+    MESSAGE: 'Carregamento de página Home',
+    CODE: 121
   }
 };
 

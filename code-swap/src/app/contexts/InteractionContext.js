@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useContext } from 'react';
 import Controller from '@/Controller/controller';
-import { getCodeByInteractionType } from './getCodeByInteractionType';
+import { getCodeByInteractionType } from '../services/getCodeByInteractionType';
 
 // Criação do contexto
 const InteractionContext = createContext();
