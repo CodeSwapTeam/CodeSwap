@@ -1,11 +1,10 @@
 
 import React, { useEffect, useState } from 'react';
 import Controller from '../../Controller/controller';
-import { CreateCourse } from '../../../database/functions/createCourses';
 
 const CreateCourses = () => {
     
-    
+    const controller = Controller();
 
     // Estado para armazenar os dados do formulário
     const [formData, setFormData] = useState({
@@ -24,7 +23,8 @@ const CreateCourses = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            CreateCourse(formData); // Chama a função createCourse com os dados do formulário
+            controller.CreateCourse(formData)
+            //console.log(formData);
             alert('Curso criado com sucesso!');
             // Limpa o formulário após o envio bem-sucedido
             setFormData({

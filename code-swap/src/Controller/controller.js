@@ -8,11 +8,10 @@ export default function Controller(){
     
     const courses = getAllModulesAndCourses();
 
-
     return{
         saveInteraction: saveInteraction,
-        createCourse: CreateCourse,
-        courses : courses
+        courses : courses,
+        CreateCourse
         
     }
     
