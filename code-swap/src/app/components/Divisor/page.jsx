@@ -32,15 +32,22 @@ border-color: #000000;
 border-width: 1px;
 `
 
+const DivisorText = styled.h2`
+padding: 0.5rem;
+font-size: 1.125rem;
+line-height: 1.75rem;
+font-weight: 600;
+`
+
 export default function Divisor() {
     return (
         <DivisorContainer>
                 <DivisorButtonContainer>
                     <Link href={"/Comunidade"}>
                         <DivisorButton id="Carreiras">
-                            <h2 className="text-lg text-primaryBlue font-semibold p-2">
+                            <DivisorText >
                                 Acesso a Comunidade
-                            </h2>
+                            </DivisorText>
                         </DivisorButton>
                     </Link>
                 </DivisorButtonContainer>
