@@ -28,7 +28,7 @@ export default function Dashboard(){
     }
 
     useEffect(()=>{
-       // console.log('daboard', currentUser);
+       
     },[])
 
     return(
