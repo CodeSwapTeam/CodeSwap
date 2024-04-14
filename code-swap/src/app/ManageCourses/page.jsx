@@ -4,9 +4,12 @@ import React, { useState } from 'react';
 import Controller from '@/Controller/controller';
 import ListCourses from '../Components/ListCourses';
 import CreateCourse from '../Components/CreateCourse';
+import { useAuthContext } from '../contexts/Auth';
 
 const CourseForm = () => {
     
+    const {currentUser, setCurrentUser} = useAuthContext();
+    console.log(currentUser);
 
     return (
         <div style={{ display: 'flex', gap: '20px' }}>

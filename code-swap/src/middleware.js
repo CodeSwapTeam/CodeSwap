@@ -5,22 +5,35 @@ import { cookies } from 'next/headers'
 
 
 export default function middleware( NextRequest){
+
     const cookieStore = cookies()
     const user = cookieStore.get('user')?.value;
-    const isLoginPage = NextRequest.nextUrl.pathname === '/';
+    const isHomePage = NextRequest.nextUrl.pathname === '/';
+    const isDashboardPage = NextRequest.nextUrl.pathname === '/Dashboard';
+    const isLoginPage = NextRequest.nextUrl.pathname === '/login';
 
-    if(!user){
-        if(isLoginPage){
+    if(!user && !isLoginPage){
+        if(isHomePage){
             return NextResponse.next();
         }
         return NextResponse.redirect(new URL('/', NextRequest.url));
     }
+    
 
     if(isLoginPage){
-        return NextResponse.redirect(new URL('/Dashboard', NextRequest.url));
+        if(user){
+            return NextResponse.redirect(new URL('/Dashboard', NextRequest.url));
+        }
+        
+    }
+    
+    else if(isHomePage){
+        if(user){
+            return NextResponse.redirect(new URL('/Dashboard', NextRequest.url));
+        }
     }
 
-  
+
 }
 
 export const config = {

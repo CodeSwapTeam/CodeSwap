@@ -7,8 +7,11 @@ export  async function setCookies(acessToken){
 
 export  async function getCookies(){
     const cookieStore = cookies();
-
-   const user = cookieStore.get('user');
+    const user = cookieStore.get('user');
 
    return user
+}
+
+export async function removeCookies(){
+    cookies().delete('user');
 }
