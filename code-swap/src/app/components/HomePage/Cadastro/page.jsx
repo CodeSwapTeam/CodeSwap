@@ -2,9 +2,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link, Navigate } from 'next/link';
-import logo4k from '.../public/assets/logo4k.png';
 import {FaArrowLeft} from 'react-icons/fa';
-import NavBar from '../NavBar';
+import NavBarPublic from '@/app/components/NavBarPublic/page';
 
 
 const CadastroContainer = styled.div`
@@ -140,6 +139,8 @@ line-height: 2rem;
 font-weight: 700;
 `
 
+const logo4k = '/public/assets/logo4k.png';
+
 export default function Login() {
 
 
@@ -164,7 +165,7 @@ export default function Login() {
 
     return (
         <CadastroContainer>
-                    <NavBar />
+                    <NavBarPublic />
             <TelaCadastro>
 
                 {/* Aba Lateral com Imagem */}

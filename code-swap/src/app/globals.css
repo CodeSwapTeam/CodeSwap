@@ -2,3 +2,8 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+body {
+  background-color: black;
+  min-width: 100vw;
+  min-height: 100vh;
+}

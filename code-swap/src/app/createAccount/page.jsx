@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { setCookies } from "../services/cookies";
 import Link from 'next/link'
 import { CreateUser } from "../../../database/functions/createUser";
-import NavBarPublic from "../Components/NavBarPublic";
+import NavBarPublic from "../components/NavBarPublic/page";
 
 export default function CreateAccount() {
 

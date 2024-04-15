@@ -21,7 +21,24 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="icon" href="/favicon.ico" />
       </head>
-          <body className={inter.className}>{children}</body>
+          <body className={inter.className}>
+            <video
+            src="/assets/backgroundVideo.webm"
+            type="video/webm"
+            autoPlay
+            loop
+            muted
+            style={{
+              position: 'fixed',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              zIndex: '-1',
+            }}
+            >
+            </video>
+            {children}
+            </body>
           </html>
         </AuthProvider>
         

@@ -6,7 +6,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, } from "../../../database/firebase";
 import { setCookies } from "../services/cookies";
 import Link from 'next/link'
-import NavBarPublic from "../Components/NavBarPublic";
+import NavBarPublic from "../components/NavBarPublic/page";
 
 import { Algorithm, encryptObjectData } from "../services/encryptedAlgorithm";
 import { getUserData } from "../../../database/functions/getUserId";
