@@ -1,37 +1,43 @@
 "use client";
-// Home.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useInteractionLogger} from '../app/contexts/InteractionContext';
-import interactionsType from './services/interactionsType';
+import interactionsType from './contexts/interactionsType';
 
-import Controller from '@/Controller/controller';
+import { useRouter } from 'next/navigation';
 
-import Divisor from './components/Divisor/page';
-
+import Link from 'next/link'
+import { getCookies } from './services/cookies';
+import { useAuthContext } from './contexts/Auth';
+import NavBarPublic from './Components/NavBarPublic';
 
 
 export default function Home() {
   
-  const  {logInteraction}  = useInteractionLogger(); // Usando o hook para acessar o contexto
+  const r = useRouter();
 
-  const controller = Controller();
+  const {currentUser, setCurrentUser} = useAuthContext();
 
+  useEffect(() => {
+    //console.log('home', currentUser);
+    if(currentUser){
+     
+      r.push('/Dashboard');
+    }
+    
+  }, []);
+
+ 
+    
+      return (
+        <div>
+          <NavBarPublic/>
+          <h1>Code Swap</h1>
+          <p>Apresentação</p>
+        </div>
+      );
+    
+    
   
-
-  const handleButtonClick = () => {
-    logInteraction(interactionsType.CREATE_MODULE); // Registra a interação quando o botão é clicado
-  };
-
   
-
-  return (
-    <>
-    <div>
-      <p>Hello Word.</p>
-      <button onClick={handleButtonClick}>Criar Curso WEB DESIGN</button>
-    </div>
-    <Divisor />
-    </>
-  );
+  
 }
-

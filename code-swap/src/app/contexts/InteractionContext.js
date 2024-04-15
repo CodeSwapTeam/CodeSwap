@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useContext } from 'react';
 import Controller from '@/Controller/controller';
-import { getCodeByInteractionType } from './getCodeByInteractionType';
+import { getCodeByInteractionType } from '../services/getCodeByInteractionType';
 
 // Criação do contexto
 const InteractionContext = createContext();
@@ -40,6 +40,8 @@ export const InteractionProvider = ({ children }) => {
           console.error("Error parsing existing logs:", error);
           logs = [];
         }
+      }else{
+        localStorage.setItem('logs', logs);
       }
   
       logs.push({
