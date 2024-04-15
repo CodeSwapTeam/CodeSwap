@@ -2,17 +2,22 @@ import {NextResponse} from 'next/server'
 import {NextRequest} from 'next/server'
 
 import { cookies } from 'next/headers'
+import { decryptObjectData } from './app/services/encryptedAlgorithm';
 
 
 export default function middleware( NextRequest){
 
     const cookieStore = cookies()
     const user = cookieStore.get('user')?.value;
+
+    const userDecrypted = user ? decryptObjectData(user) : null;
+    console.log(userDecrypted);
+    
     const isHomePage = NextRequest.nextUrl.pathname === '/';
     const isDashboardPage = NextRequest.nextUrl.pathname === '/Dashboard';
     const isLoginPage = NextRequest.nextUrl.pathname === '/login';
 
-    if(!user && !isLoginPage){
+    if(!userDecrypted && !isLoginPage){
         if(isHomePage){
             return NextResponse.next();
         }
@@ -21,14 +26,14 @@ export default function middleware( NextRequest){
     
 
     if(isLoginPage){
-        if(user){
+        if(userDecrypted){
             return NextResponse.redirect(new URL('/Dashboard', NextRequest.url));
         }
         
     }
     
     else if(isHomePage){
-        if(user){
+        if(userDecrypted){
             return NextResponse.redirect(new URL('/Dashboard', NextRequest.url));
         }
     }

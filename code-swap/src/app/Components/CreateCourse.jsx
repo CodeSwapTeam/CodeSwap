@@ -1,14 +1,33 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Controller from '../../Controller/controller';
+import { getCookies } from '../services/cookies';
+import { decryptObjectData } from '../services/encryptedAlgorithm';
 
 const CreateCourses = () => {
     const controller = Controller();
+    const [user, setUser] = useState(null);
+
+    
+    useEffect(() => {
+
+        // Verifica se o usuário está autenticado
+    const checkUser = async () => {
+        const user = await getCookies();
+        
+        const  decryptedUser = decryptObjectData(user.value);
+        setUser(decryptedUser.userName);
+    };
+    checkUser();
+    }, []);
+
+    
 
     // Estado para armazenar os dados do formulário
     const [formData, setFormData] = useState({
         title: '',
         status: 'pending',
         description: '',
+        owner: '',
         modules: [
             {
                 nameModule: '',
@@ -33,13 +52,14 @@ const CreateCourses = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            controller.CreateCourse(formData);
+            controller.CreateCourse(formData, user);
             console.log(formData);
             alert('Curso criado com sucesso!');
             // Limpa o formulário após o envio bem-sucedido
             setFormData({
                 title: '',
                 description: '',
+                owner: '',
                 modules: [
                     {
                         nameModule: '',
@@ -107,6 +127,7 @@ const CreateCourses = () => {
                         required
                         style={{ width: '100%', padding: '10px', border: '1px solid #007bff', borderRadius: '5px' }}
                     />
+                    <p>Criador: {user && user}</p>
                 </div>
                 <div style={{ marginBottom: '20px' }}>
                     <label htmlFor="description" style={{ fontWeight: 'bold', marginBottom: '5px', color: '#007bff' }}>Descrição:</label>

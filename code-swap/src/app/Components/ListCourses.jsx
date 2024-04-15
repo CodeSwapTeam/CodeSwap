@@ -49,6 +49,7 @@ const ListCourses = () => {
                 {course.status == 'pending' && <span style={{ padding: '5px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', margin: '5px' }}  onClick={()=>{aprovarCurso(course.title)}}> Aprovar</span> }
                      
                      </h3>
+                     <p>Criador: {course.owner}</p>
                 <p style={{ marginBottom: '10px' }}><strong>Descrição:</strong> {course.description}</p>
                 <div>
                     {course.modules.map((module, index) => (

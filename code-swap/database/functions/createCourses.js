@@ -4,13 +4,15 @@ import { db } from "../firebase";
 import { useInteractionLogger } from "@/app/contexts/InteractionContext";
 import interactionsType from "@/app/contexts/interactionsType";
 
-export async function CreateCourse(formData) {
+export async function CreateCourse(formData, user) {
 
     //const {logInteraction} = useInteractionLogger();
 
     try {
+
+        formData.owner = user;
         
-        console.log(formData);
+        //console.log(formData);
         // Referência ao documento no Firestore
         const docRef = doc(db, 'Modulos', formData.title);
 

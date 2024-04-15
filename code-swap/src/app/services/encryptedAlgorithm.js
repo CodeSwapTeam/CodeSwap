@@ -92,7 +92,17 @@ function decryptData(dadosCriptografados, chaveInterna) {
     }
 
     // Converter a string JSON descriptografada de volta para um objeto
-    const objetoDescriptografado = JSON.parse(dadosDescriptografados);
+    let objetoDescriptografado;
+
+    try {
+        objetoDescriptografado = JSON.parse(dadosDescriptografados);
+    } catch (error) {
+        console.error('Erro ao analisar JSON:', error);
+        // Você pode definir objetoDescriptografado como um objeto vazio ou qualquer outro valor padrão
+        objetoDescriptografado = {};
+    }
+
+    
     
     return objetoDescriptografado;
 }
