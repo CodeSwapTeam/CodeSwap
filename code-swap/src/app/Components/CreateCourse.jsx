@@ -7,6 +7,7 @@ const CreateCourses = () => {
     // Estado para armazenar os dados do formulário
     const [formData, setFormData] = useState({
         title: '',
+        status: 'pending',
         description: '',
         modules: [
             {

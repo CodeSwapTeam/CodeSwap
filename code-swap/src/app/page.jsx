@@ -1,33 +1,43 @@
 "use client";
-// Home.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useInteractionLogger} from '../app/contexts/InteractionContext';
 import interactionsType from './contexts/interactionsType';
 
-import Controller from '@/Controller/controller';
+import { useRouter } from 'next/navigation';
 
-import ListCourses from './Components/ListCourses';
-
+import Link from 'next/link'
+import { getCookies } from './services/cookies';
+import { useAuthContext } from './contexts/Auth';
+import NavBarPublic from './Components/NavBarPublic';
 
 
 export default function Home() {
   
-  const  {logInteraction}  = useInteractionLogger(); // Usando o hook para acessar o contexto
-  //Registrar log de carregamento de página Home
-  logInteraction(interactionsType.PAGE_LOAD_HOME);
+  const r = useRouter();
 
-  const controller = Controller();
+  const {currentUser, setCurrentUser} = useAuthContext();
 
+  useEffect(() => {
+    //console.log('home', currentUser);
+    if(currentUser){
+     
+      r.push('/Dashboard');
+    }
+    
+  }, []);
+
+ 
+    
+      return (
+        <div>
+          <NavBarPublic/>
+          <h1>Code Swap</h1>
+          <p>Apresentação</p>
+        </div>
+      );
+    
+    
   
-
   
   
-
-  return (
-    <div>
-      <ListCourses/>
-      
-    </div>
-  );
 }
-
