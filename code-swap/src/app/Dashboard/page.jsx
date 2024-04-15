@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from 'next/link'
 import { useAuthContext } from "../contexts/Auth";
 import { useEffect } from "react";
+import NavBarPrivate from "../Components/NavBarPrivate";
 
 
 
@@ -33,9 +34,8 @@ export default function Dashboard(){
 
     return(
         <div>
-            painel de aula.
-            <button  onClick={submitLogout}>delogar</button>
-            {currentUser && <button  onClick={manage}>manage</button>}
+            <NavBarPrivate submitLogout={submitLogout}/>
+            <p>Listagem de Cursos do Aluno</p>
             
         </div>
     )

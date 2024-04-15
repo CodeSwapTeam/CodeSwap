@@ -3,6 +3,7 @@ import ListCourses from "../Components/ListCourses"
 
 import interactionsType from "../contexts/interactionsType";
 import { useInteractionLogger } from "../contexts/InteractionContext";
+import NavBarPublic from "../Components/NavBarPublic";
 
 export default function CursosLayout(){
 
@@ -11,8 +12,7 @@ export default function CursosLayout(){
     logInteraction(interactionsType.PAGE_LOAD_COURSES);
     return(
         <div>
-            Lista de cursos
-
+            <NavBarPublic/>
             <ListCourses/>
         </div>
     )

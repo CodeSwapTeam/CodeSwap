@@ -5,6 +5,7 @@ import Controller from '@/Controller/controller';
 import ListCourses from '../Components/ListCourses';
 import CreateCourse from '../Components/CreateCourse';
 import { useAuthContext } from '../contexts/Auth';
+import NavBarPrivate from '../Components/NavBarPrivate';
 
 const CourseForm = () => {
     
@@ -12,6 +13,8 @@ const CourseForm = () => {
     console.log(currentUser);
 
     return (
+        <>
+        <NavBarPrivate/>
         <div style={{ display: 'flex', gap: '20px' }}>
             <div style={{ border: '1px solid black', padding: '20px' }}>
                 <CreateCourse />
@@ -20,6 +23,8 @@ const CourseForm = () => {
                 <ListCourses />
             </div>
         </div>
+        </>
+        
     );
 };
 

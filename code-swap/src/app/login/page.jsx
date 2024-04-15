@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, } from "../../../database/firebase";
 import { setCookies } from "../services/cookies";
+import Link from 'next/link'
+import NavBarPublic from "../Components/NavBarPublic";
 
 
 
@@ -42,7 +44,7 @@ export default function Login() {
             setEmail('');
             setPassword('');
             setError('');
-            //console.log(user);
+            console.log(user);
             setCurrentUser(user);;
 
         } catch (error) {
@@ -51,11 +53,13 @@ export default function Login() {
     };
 
     return (
+        <>
+        <NavBarPublic/>
         <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#f9f9f9' }}>
-            <h2 style={{ textAlign: 'center' }}>Authentication with Email and Password</h2>
+            <h2 style={{ textAlign: 'center' }}>Login</h2>
             <form onSubmit={handleSubmit}>
                 <div style={{ marginBottom: '20px' }}>
-                    <label htmlFor="email" style={{ display: 'block', marginBottom: '5px' }}>Email:</label>
+                    <label htmlFor="email" style={{ display: 'block', marginBottom: '5px' }}>E-mail:</label>
                     <input
                         type="email"
                         id="email"
@@ -66,7 +70,7 @@ export default function Login() {
                     />
                 </div>
                 <div style={{ marginBottom: '20px' }}>
-                    <label htmlFor="password" style={{ display: 'block', marginBottom: '5px' }}>Password:</label>
+                    <label htmlFor="password" style={{ display: 'block', marginBottom: '5px' }}>Senha:</label>
                     <input
                         type="password"
                         id="password"
@@ -76,10 +80,13 @@ export default function Login() {
                         style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
                     />
                 </div>
-                <button type="submit" style={{ width: '100%', padding: '10px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Authenticate</button>
+                <Link style={{ paddingBottom: '5px'}} href='/createAccount'>Não possui conta?</Link>
+                <button type="submit" style={{marginTop: '20px', width: '100%', padding: '10px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Authenticate</button>
             </form>
             {error && <p style={{ color: 'red', marginTop: '10px' }}>Error: {error}</p>}
         </div>
+        </>
+        
     )
 
 }

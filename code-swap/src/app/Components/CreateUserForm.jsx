@@ -1,12 +1,23 @@
+"use client";
 import { useState } from "react";
 import { auth } from "../../../database/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 export default function FormUserEmailAndPassword(){
 
+  const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const[user, setUser] = useState('');
+
+    useState(()=>{
+      if(user){
+        console.log(user)
+        router.push('/Dashboard');
+      }
+    },[user])
   
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -19,6 +30,7 @@ export default function FormUserEmailAndPassword(){
         setEmail('');
         setPassword('');
         setError('');
+        setUser(user.displayName);
       } catch (error) {
         setError(error.message);
       }

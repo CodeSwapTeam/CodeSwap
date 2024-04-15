@@ -8,14 +8,12 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link'
 import { getCookies } from './services/cookies';
 import { useAuthContext } from './contexts/Auth';
+import NavBarPublic from './Components/NavBarPublic';
 
 
 export default function Home() {
   
   const r = useRouter();
-   
-  
-  
 
   const {currentUser, setCurrentUser} = useAuthContext();
 
@@ -32,12 +30,9 @@ export default function Home() {
     
       return (
         <div>
+          <NavBarPublic/>
           <h1>Code Swap</h1>
-          <p>Conheça nossos cursos</p>
-          <button style={{ border: '1px solid black', padding: '2px' }}>
-            <Link href='/Cursos'>Clique aqui</Link>
-          </button>
-          <Link href='/login'>Logar</Link>
+          <p>Apresentação</p>
         </div>
       );
     
