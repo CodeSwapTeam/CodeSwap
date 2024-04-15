@@ -8,7 +8,8 @@ import { setCookies } from "../services/cookies";
 import Link from 'next/link'
 import NavBarPublic from "../Components/NavBarPublic";
 
-
+import { Algorithm, encryptObjectData } from "../services/encryptedAlgorithm";
+import { getUserData } from "../../../database/functions/getUserId";
 
 export default function Login() {
 
@@ -37,15 +38,24 @@ export default function Login() {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
+            //jbuscar objeto User que tem o userId == user. uid
+            const userData = await getUserData(user.uid);
+            //console.log(userData);
+            //criptografar o objeto
+            const userDataCript = encryptObjectData(userData);
+            //setar nos  cookies o o token acess criptografado
+            setCookies(userDataCript);
+            //console.log('dados criptografados pelo algoritmo', userDataCript);
+            
             //localStorage.setItem('userId', user.uid);
-            setCookies(user.accessToken);
-            localStorage.setItem('user', user.accessToken);
+            setCookies(userDataCript)
 
             setEmail('');
             setPassword('');
             setError('');
-            console.log(user);
-            setCurrentUser(user);;
+            //console.log(userData);
+
+            setCurrentUser(userData); // atualiza context
 
         } catch (error) {
             setError(error.message);

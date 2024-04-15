@@ -7,7 +7,8 @@ export const CreateUser = async (data) => {
 
     const userData = {
         userName: data.userName,
-        id: '',
+        idDataBase: '',
+        userId: data.userId,
         email: data.email,
         phone: data.phone,
         whatsapp: data.whatsapp,

@@ -32,9 +32,10 @@ export default function CreateAccount() {
     const [displayName, setDisplayName] = useState('');
     const [error, setError] = useState(null);
 
-    function criarConta() {
+    function criarConta(userId) {
         const userData = {
             userName: displayName,
+            userId: userId,
             email: email,
             phone: phoneNumber,
             whatsapp: isWhatsApp
@@ -55,11 +56,7 @@ export default function CreateAccount() {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            await updateProfile(user, {
-                displayName: displayName
-            });
-
-            criarConta();
+            criarConta(user.uid);
             alert(`Conta criada com sucesso! ${displayName}`);
 
 
@@ -67,7 +64,8 @@ export default function CreateAccount() {
             setPassword('');
             setDisplayName('');
             setError(null);
-            setCurrentUser(user);
+
+            setCurrentUser(user);// altera o Context
 
             setCookies(user.accessToken);
             localStorage.setItem('user', user.accessToken);
