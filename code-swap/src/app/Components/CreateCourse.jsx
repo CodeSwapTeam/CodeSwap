@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Controller from '../../Controller/controller';
 import { getCookies } from '../services/cookies';
 import { decryptObjectData } from '../services/encryptedAlgorithm';
+import { v4 as uuidv4 } from 'uuid';
 
 const CreateCourses = () => {
     const controller = Controller();
@@ -27,6 +28,7 @@ const CreateCourses = () => {
         status: 'pending',
         description: '',
         owner: '',
+        idCourse: uuidv4(),
         modules: [
             {
                 nameModule: '',
