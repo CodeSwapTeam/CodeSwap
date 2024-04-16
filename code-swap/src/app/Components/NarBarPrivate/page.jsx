@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link'
-
 
 const navbarStyle = {
   backgroundColor: '#333',
@@ -22,7 +21,7 @@ const navButtonStyle = {
 };
 
 
-const loginButtonStyle = {
+const logOutButtonStyle = {
     top: '0',
     backgroundColor: '#333',
     color: 'white',
@@ -41,6 +40,8 @@ const flexContainer = {
 
 const navBarLeft = {
   width: '40%',
+  display: 'flex',
+  justifyContent: 'flex-start',
 };
 
 const navBarMiddle = {
@@ -55,10 +56,31 @@ const navBarRight = {
   justifyContent: 'flex-end',
 };
 
-const NavBarPublic = () => {
+const adminButton = {
+  top: '0',
+  backgroundColor: '#333',
+  color: '#912d2d',
+  padding: '14px 16px',
+  border: 'none',
+  cursor: 'pointer',
+};
+
+const NavBarPrivate = (props) => {
+
+  const [painelAdmpermissions, setPainelAdmPermissions] = useState(false);
+
+  useEffect(() => {
+    // Verifica as permissões do usuário
+    if (props.userData && props.userData.permissions > 1) {
+      setPainelAdmPermissions(true);
+    } else {
+      setPainelAdmPermissions(false);
+    }
+  }, [props.userData]);
 
 
   return (
+    <>
     <nav style={navbarStyle}>
       <div style={flexContainer}>
         <div style={navBarLeft}>
@@ -70,16 +92,17 @@ const NavBarPublic = () => {
           <img src="/assets/logo4k.png" alt="Logo" width={50} height={50}/>
         </div>
         <div style={navBarRight}>
-          <Link href='/login' style={loginButtonStyle} >
-            Fazer Login
-          </Link>
-          <Link href='/cadastro' style={loginButtonStyle} >
-            Cadastre-se
-          </Link>
+            {painelAdmpermissions && (
+                <Link href='/ManageCourses' style={adminButton}>
+                  Painel ADM
+                </Link>
+            )}
+          <button onClick={props.submitLogout} style={logOutButtonStyle}>Sair</button>
         </div>
       </div>
     </nav>
+    </>
   );
 };
 
-export default NavBarPublic;
+export default NavBarPrivate;

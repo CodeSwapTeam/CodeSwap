@@ -5,7 +5,7 @@ import Controller from '@/Controller/controller';
 import ListCourses from '../Components/ListCourses';
 import CreateCourse from '../Components/CreateCourse';
 import { useAuthContext } from '../contexts/Auth';
-import NavBarPrivate from '../Components/NavBarPrivate';
+import NavBarPrivate from '../components/NarBarPrivate/page';
 import { getCookies, removeCookies } from '../services/cookies';
 import { decryptObjectData } from '../services/encryptedAlgorithm';
 import { useRouter } from 'next/navigation';

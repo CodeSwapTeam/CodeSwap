@@ -14,7 +14,7 @@ const PageContainer = styled.div`
 display: flex;
 flex-direction: column;
 width: 100%;
-height: 100vh;
+height: 100%;
 `
 
 const CardsContainer = styled.div`
@@ -34,6 +34,9 @@ margin-top: 2rem;
 border-radius: 1rem;
 width: 16rem;
 height: 14rem;
+background: rgba(81, 80, 78, 0.47);
+border-radius: 24px;
+
 
 @media (min-width: 640px) {
 width: 33.333333%;
@@ -45,15 +48,17 @@ const TextoDireitaContainer = styled.div`
 display: flex;
 margin-top: 1.5rem;
 align-items: center;
-border-radius: 1rem;
+border-radius: 2rem;
 width: 16rem;
 height: 13rem;
-background-color: #000000;
+box-sizing: border-box;
+background: rgba(15, 14, 10, 0.76);
+border: 1px solid #09381C;
 
 @media (min-width: 640px) {
   margin-left: 2rem;
 width: 33.333333%;
-height: 16rem;
+height: 95%;
 }
 `
 
@@ -74,10 +79,30 @@ line-height: 1;
 const TextoEstatico = styled.p`
 margin-top: 0.5rem;
 font-weight: 600;
-color: white;
+font-family: 'Inter';
+font-style: normal;
+text-align: center;
+color: whitesmoke;
 
 @media (min-width: 640px) {
   margin-top: 2rem;
+  font-weight: 400;
+  margin-left: 2rem;
+}
+`
+
+const TextoEstaticoDireita = styled.p`
+font-size:16px;
+line-height:48px;
+font-weight:600;
+font-family:'Inter';
+font-style:normal;
+text-align:center;
+color:whitesmoke;
+
+@media (min-width: 640px) {
+  margin-top: 2rem;
+  font-size: 32px;
 }
 `
 
@@ -87,13 +112,44 @@ font-style: normal;
 font-weight: 600;
 font-size: 96px;
 line-height: 116px;
-
 color: #73DF4A;
 text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+@media (min-width: 640px) {
+  font-weight: 600;
+  font-size: 78px;
+}
+`
+
+const DivisorCarreiras = styled.div`
+display: flex;
+position: fixed;
+bottom: 0;
+margin-top: 4rem;
+justify-content: center;
+align-items: center;
+width: 100%;
+height: 6rem;
+background: linear-gradient(180deg, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 1) 40%);
+`
+
+const ButtonCarreiras = styled.button`
+border-radius: 0.75rem;
+border-width: 1px;
+border-color: #73DF4A;
+`
+
+const CarreirasText = styled.h2`
+padding: 0.5rem;
+font-size: 1.125rem;
+line-height: 1.75rem;
+font-weight: 600;
+color: #0099ff;
 `
 
 
 export default function Home() {
+  const [isMounted, setIsMounted] = useState(false);
 
   const r = useRouter();
 
@@ -106,6 +162,7 @@ export default function Home() {
       r.push('/Dashboard');
     }
 
+    setIsMounted(true);
   }, []);
 
   const isClient = typeof window !== 'undefined';
@@ -125,7 +182,7 @@ export default function Home() {
                                 <TextoEstatico>Sua carreira Começa
                                     <br />
                                     <TextoDinamico>
-                                                    {isClient ? (
+                                                    {isMounted && (
                                                       <Typewriter
                                                         options={{
                                                           strings: ['Aqui!', 'Agora!', 'Hoje!'],
@@ -133,8 +190,6 @@ export default function Home() {
                                                           loop: true,
                                                         }}
                                                       />
-                                                    ) : (
-                                                      <p>Loading</p>
                                                     )}
                                                   </TextoDinamico>
                                               </TextoEstatico>
@@ -142,10 +197,10 @@ export default function Home() {
                                       </TextoEsquerda>
                                       {/* Segundo Texto */}
                         <TextoDireitaContainer>
-                                <div style={{display:'flex'}}>
-                                    <TextoEstatico>
+                                <div style={{display:'flex', padding:'1rem'}}>
+                                    <TextoEstaticoDireita>
                                             Domine as tecnologias utilizadas pelas empresas mais inovadoras do mundo e encare seu novo desafio profissional, evoluindo em comunidade com os melhores experts.
-                                    </TextoEstatico>
+                                    </TextoEstaticoDireita>
 
                                 </div>
 
@@ -153,18 +208,15 @@ export default function Home() {
                     </CardsContainer>
 
                     {/* Divisor Carreiras */}
-                    <div className="h-24  w-full mt-16 fixed bottom-0
-                        backdrop-opacity-10 backdrop-invert bg-black/70
-                        flex justify-center items-center">
-
+                    <DivisorCarreiras>
                         <Link href={"/Carreiras"}>
-                            <button className="border rounded-xl border-secondaryGreen" id="Carreiras">
-                                <h2 className="text-lg text-primaryBlue font-semibold p-2">
+                            <ButtonCarreiras id="Carreiras">
+                                <CarreirasText>
                                     Explore nossas Carreiras
-                                </h2>
-                            </button>
+                                </CarreirasText>
+                            </ButtonCarreiras>
                         </Link>
-                    </div>
+                    </DivisorCarreiras>
                 </PageContainer>
         </>
       );
