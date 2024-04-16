@@ -3,10 +3,14 @@ import Controller from '../../Controller/controller';
 import { getCookies } from '../services/cookies';
 import { decryptObjectData } from '../services/encryptedAlgorithm';
 import { v4 as uuidv4 } from 'uuid';
+//importar router do next/navigation
+import { useRouter } from 'next/navigation';
 
 const CreateCourses = () => {
     const controller = Controller();
     const [user, setUser] = useState(null);
+
+    const router = useRouter();
 
     
     useEffect(() => {
@@ -54,8 +58,7 @@ const CreateCourses = () => {
         e.preventDefault();
         try {
             controller.CreateCourse(formData, user);
-            console.log(formData);
-            alert('Curso criado com sucesso!');
+            alert(`Curso ${formData.title} criado com sucesso!`);
             // Limpa o formulário após o envio bem-sucedido
             setFormData({
                 title: '',
@@ -74,6 +77,8 @@ const CreateCourses = () => {
                     }
                 ]
             });
+            
+            router.push('/');
         } catch (error) {
             console.error('Erro ao criar o curso:', error);
             alert('Erro ao criar o curso. Por favor, tente novamente mais tarde.');
