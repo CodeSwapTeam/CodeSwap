@@ -18,8 +18,6 @@ export async function CreateCourse(formData, user) {
 
         // Salva os dados do módulo no Firestore
         await setDoc(docRef, formData);
-
-        alert('Módulo do curso criado com sucesso no Firestore');
         
     } catch (error) {
         console.error('Erro ao criar o módulo do curso:', error);

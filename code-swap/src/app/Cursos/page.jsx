@@ -12,8 +12,10 @@ export default function CursosLayout(){
     logInteraction(interactionsType.PAGE_LOAD_COURSES);
     return(
         <div>
+            
             <NavBarPublic/>
-            <ListCourses/>
+            <h1>Cursos Públicos</h1>
+            
         </div>
     )
 }

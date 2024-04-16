@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { updateModule } from '../../../database/functions/createCourses';
+import { useRouter } from 'next/navigation';
 
 function UpdateModuleModal(props) {
+    const router = useRouter();
+
     const [show, setShow] = useState(false);
     const [moduleName, setModuleName] = useState('');
     const [moduleDescription, setModuleDescription] = useState('');
@@ -18,6 +21,8 @@ function UpdateModuleModal(props) {
         setModuleName('');
         setModuleDescription('');
         handleClose();
+
+        router.push('/')
     };
     return (
         <>

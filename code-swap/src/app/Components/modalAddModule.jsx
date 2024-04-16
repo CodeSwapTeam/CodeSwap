@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { createModule } from '../../../database/functions/createCourses';
+import { useRouter } from 'next/navigation';
 
 function AddModuleModal(props) {
+    const router = useRouter();
     const [show, setShow] = useState(false);
     const [moduleName, setModuleName] = useState('');
     const [moduleDescription, setModuleDescription] = useState('');
@@ -26,6 +28,8 @@ function AddModuleModal(props) {
         setModuleName('');
         setModuleDescription('');
         handleClose();
+
+        router.push('/')
     };
 
     return (

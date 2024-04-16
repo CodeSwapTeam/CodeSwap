@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { updateLesson } from '../../../database/functions/createCourses';
+import { useRouter } from 'next/navigation';
 
 function UpdateLessonModal(props) {
+    const router = useRouter();
+
     const [show, setShow] = useState(false);
     const [lessonTitle, setLessonTitle] = useState();
     const [lessonDescription, setLessonDescription] = useState();
@@ -16,6 +19,7 @@ function UpdateLessonModal(props) {
         };
         updateLesson(props.courseId, props.moduleId, props.lessonId, updatedLesson);
         handleClose();
+        router.push('/')
     };
 
     return (

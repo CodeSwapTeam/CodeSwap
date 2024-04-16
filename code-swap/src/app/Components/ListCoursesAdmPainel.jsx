@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import Controller from '@/Controller/controller';
 import { DeleteCourse, deleteModule, deleteLesson } from '../../../database/functions/deleteCourse';
-import { getCourseById} from '../../../database/functions/deleteCourse';
 
 import { ChangeStatusCourse } from '../../../database/functions/ChangeStatusCourse';
 import { useInteractionLogger } from '../contexts/InteractionContext';
 import { useAuthContext } from '../contexts/Auth';
-import { createModule } from '../../../database/functions/createCourses';
+
+import { getAllCategories } from '../../../database/functions/createCategory';
+
 import AddModuleModal from './modalAddModule';
 import AddLessonModal from './modalAddLesson';
 
 import UpdateCourseModal from './modalUpdateCourse';
 import UpdateModuleModal from './modalUpdateModule';
 import UpdateLessonModal from './modalUpdateLesson';
+import EditCourseCategoryModal from './modalEditCategoryCourse';
 
 const ListCourses = () => {
     const controller = Controller();
@@ -33,14 +35,13 @@ const ListCourses = () => {
     };
 
     useEffect(() => {
-      
+        
 
         fetchCourses();
     }, []);
 
     function deleteCourse(courseId){
         DeleteCourse(courseId);
-        alert(`Curso ${courseId} deletado com sucesso!`);
         fetchCourses();
     }
 
@@ -55,11 +56,6 @@ const ListCourses = () => {
         fetchCourses();
     }
 
-    //buscar um curso pelo id
-    async function buscarCurso(courseId) {
-        const cursos  = await getCourseById(courseId);
-        console.log(cursos);
-      }
 
     function deleteSpecificLesson(courseId, moduleId, lessonId) {
         console.log(courseId, moduleId, lessonId);
@@ -67,10 +63,6 @@ const ListCourses = () => {
         fetchCourses();
     }
 
-    function addModule(courseId) {
-        
-        fetchCourses();
-    }
 
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', border: '1px solid #ccc', borderRadius: '10px', backgroundColor: '#f8f9fa' }}>
@@ -84,7 +76,10 @@ const ListCourses = () => {
                      </h3>
                      
                      <p>Criador: {course.owner}</p>
-                     <p>ID: {course.idCourse}</p>
+                     <p>Categoria: {course.category}</p>
+                      <span>
+                        <EditCourseCategoryModal courseId={course.id}  />
+                        </span>
                 <p style={{ marginBottom: '10px' }}><strong>Descrição:</strong> {course.description}</p>
                 <div>
                     {course.modules.map((module, index) => (
