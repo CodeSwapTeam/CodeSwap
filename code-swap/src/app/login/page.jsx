@@ -31,24 +31,19 @@ export default function Login() {
 
 
     const handleSubmit = async (e) => {
-
         e.preventDefault();
 
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            //jbuscar objeto User que tem o userId == user. uid
+            //buscar objeto User que tem o userId == user. uid
             const userData = await getUserData(user.uid);
-            //console.log(userData);
             //criptografar o objeto
             const userDataCript = encryptObjectData(userData);
             //setar nos  cookies o o token acess criptografado
             setCookies(userDataCript);
             //console.log('dados criptografados pelo algoritmo', userDataCript);
-            
-            //localStorage.setItem('userId', user.uid);
-            setCookies(userDataCript)
 
             setEmail('');
             setPassword('');

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../database/firebase";
 import { useAuthContext } from "../contexts/Auth";
 import { useRouter } from "next/navigation";

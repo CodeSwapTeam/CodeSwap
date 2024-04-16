@@ -14,13 +14,12 @@ const CreateCourses = () => {
     const checkUser = async () => {
         const user = await getCookies();
         
-        const  decryptedUser = decryptObjectData(user.value);
-        setUser(decryptedUser.userName);
+        
+        const  decryptedUser = decryptObjectData(user.value); // Descriptografa os dados do usuário
+        setUser(decryptedUser.userName); // Define o usuário no estado
     };
     checkUser();
     }, []);
-
-    
 
     // Estado para armazenar os dados do formulário
     const [formData, setFormData] = useState({

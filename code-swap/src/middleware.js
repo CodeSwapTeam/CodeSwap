@@ -1,46 +1,58 @@
+// Importando as classe necessária do pacote 'next/server'
 import {NextResponse} from 'next/server'
-import {NextRequest} from 'next/server'
 
+// Importando a função 'cookies' do pacote 'next/headers'
 import { cookies } from 'next/headers'
+
+// Importando a função 'decryptObjectData' do arquivo './app/services/encryptedAlgorithm'
 import { decryptObjectData } from './app/services/encryptedAlgorithm';
 
-
+// Função middleware que será exportada como padrão
 export default function middleware( NextRequest){
 
+    // Criando um armazenamento para os cookies
     const cookieStore = cookies()
+
+    // Obtendo o cookie 'user' e seu valor
     const user = cookieStore.get('user')?.value;
 
+    // Descriptografando os dados do usuário, se existir
     const userDecrypted = user ? decryptObjectData(user) : null;
-    console.log(userDecrypted);
     
+    // Verificando se a página atual é a página inicial
     const isHomePage = NextRequest.nextUrl.pathname === '/';
-    const isDashboardPage = NextRequest.nextUrl.pathname === '/Dashboard';
+
+    // Verificando se a página atual é a página de login
     const isLoginPage = NextRequest.nextUrl.pathname === '/login';
 
+    // Se o usuário não estiver autenticado e não estiver na página de login
     if(!userDecrypted && !isLoginPage){
+        // Se estiver na página inicial, continue com a próxima resposta
         if(isHomePage){
             return NextResponse.next();
         }
+        // Caso contrário, redirecione para a página inicial
         return NextResponse.redirect(new URL('/', NextRequest.url));
     }
     
-
+    // Se estiver na página de login
     if(isLoginPage){
+        // Se o usuário estiver autenticado, redirecione para a página do painel
         if(userDecrypted){
             return NextResponse.redirect(new URL('/Dashboard', NextRequest.url));
         }
-        
     }
     
+    // Se estiver na página inicial
     else if(isHomePage){
+        // Se o usuário estiver autenticado, redirecione para a página do painel
         if(userDecrypted){
             return NextResponse.redirect(new URL('/Dashboard', NextRequest.url));
         }
     }
-
-
 }
 
+// Configuração de rotas que utilizarão este middleware
 export const config = {
         matcher: ['/', '/Dashboard:path*', '/ManageCourses']
 }

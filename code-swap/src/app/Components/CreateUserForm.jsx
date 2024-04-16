@@ -14,7 +14,7 @@ export default function FormUserEmailAndPassword(){
 
     useState(()=>{
       if(user){
-        console.log(user)
+        //console.log(user)
         router.push('/Dashboard');
       }
     },[user])
