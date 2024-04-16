@@ -2,7 +2,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import Controller from '@/Controller/controller';
-import ListCourses from '../Components/ListCourses';
+import ListCourses from '../Components/ListCoursesAdmPainel';
 import CreateCourse from '../Components/CreateCourse';
 import { useAuthContext } from '../contexts/Auth';
 import NavBarPrivate from '../Components/NavBarPrivate';

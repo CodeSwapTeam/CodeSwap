@@ -1,5 +1,5 @@
 "use client";
-import ListCourses from "../Components/ListCourses"
+import ListCourses from "../Components/ListCoursesAdmPainel"
 
 import interactionsType from "../contexts/interactionsType";
 import { useInteractionLogger } from "../contexts/InteractionContext";
