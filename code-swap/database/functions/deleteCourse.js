@@ -23,11 +23,10 @@ export const deleteModule = async (courseId, moduleindexArray) => {
             courseData.modules.splice(moduleindexArray, 1);
             //atualizar o documento no firestore
             await updateDoc(docRef, courseData);
-            alert(`${courseData.modules[moduleindexArray].nameModule} deletado com sucesso!`);
+            alert(`Módulo deletado com sucesso!`);
+            window.location.reload();
             
-        } else {
-            console.error('Curso não encontrado');
-        }
+        } 
     } catch (error) {
         console.error('Erro ao deletar o módulo:', error);
         throw error; // Lança o erro para tratamento em um nível superior
@@ -38,6 +37,7 @@ export const deleteModule = async (courseId, moduleindexArray) => {
 //função para deletar lessons dentro de um modulo de um curso
 
 export const deleteLesson = async (courseId, moduleId, lessonId) => {
+    console.log(courseId, moduleId, lessonId);
     try {
         const docRef = doc(db, 'Modulos', courseId);
         const docSnap = await getDoc(docRef);
@@ -48,16 +48,15 @@ export const deleteLesson = async (courseId, moduleId, lessonId) => {
             const moduleSelecionado = moduleData[moduleId];
             const aulas = moduleSelecionado.lessons
 
-            alert(`Aula: ${aulas[lessonId].nameLesson}  deletada com sucesso`);
+            alert(`Aula deletada com sucesso`);
             //remover a aula do array lessons com base no id da aula lessonId
             aulas.splice(lessonId, 1);
             //atualizar o documento no firestore
             await updateDoc(docRef, courseData);
             
+            window.location.reload();
 
-            } else {
-                console.error('Módulo não encontrado');
-            }
+            } 
         
         
     } catch (error) {

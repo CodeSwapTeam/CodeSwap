@@ -14,7 +14,7 @@ function ModalCreateCategory() {
         createCategory(categoryName);
         setCategoryName('');
         handleClose();
-        router.push('/')
+        window.location.reload();
     };
 
     return (

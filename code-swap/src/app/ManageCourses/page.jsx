@@ -11,9 +11,12 @@ import { decryptObjectData } from '../services/encryptedAlgorithm';
 import { useRouter } from 'next/navigation';
 
 import { GetAllUsers } from '../../../database/functions/GetAllUsers';
-import UserList from '../Components/ListUsers';
+import UserList from '../services/ListUsers';
 
 const CourseForm = () => {
+
+    const { currentUser, setCurrentUser } = useAuthContext();
+    const [userDataPermission, setuserDataPermission] = useState();
 
     const router = useRouter();
 
@@ -27,35 +30,33 @@ const CourseForm = () => {
 
     const [users, setUsers] = useState();
 
-    async function getUsers() {
+    async function getUsersList() {
         const users = await GetAllUsers();
-        //console.log(users);
         setUsers(users);
     }
 
-    const { currentUser, setCurrentUser } = useAuthContext();
-    const [userDataPermission, setuserDataPermission] = useState(1);
+    async function getUser() {
+        //const users = await GetAllUsers();
+        //console.log(users);
+        //setUsers(users);
+
+        const userCookie = await getCookies();
+        const userDataDescrypt = decryptObjectData(userCookie.value);
+        //console.log(userDataDescrypt);
+        setuserDataPermission(userDataDescrypt.permissions);
+        setCurrentUser(userDataDescrypt);
+        //console.log(userDataDescrypt.permissions);
+        userDataDescrypt.permissions;   
+    }
+
+    
     //console.log(currentUser);
     useEffect(() => {
+        
 
-        getUsers();
-
-        async function getUserData() {
-            if (currentUser == null) {
-                const userDataCrypt = await getCookies();
-                //console.log(userDataCrypt);
-                const userDataDescrypt = decryptObjectData(userDataCrypt.value);
-                //console.log(userDataDescrypt);
-                setuserDataPermission(userDataDescrypt.permissions);
-
-                //console.log(userDataDescrypt.permissions);
-
-            } else {
-                setuserDataPermission(currentUser.permissions);
-            }
-        }
-        getUserData();
-
+        getUser();
+        getUsersList();
+        
     }, [])
 
     return (
@@ -64,19 +65,19 @@ const CourseForm = () => {
             <div style={{ display: 'flex', gap: '20px' }}>
                 <div>
                     <div style={{ border: '1px solid black', padding: '20px' }}>
-                        {userDataPermission > 1 && <CreateCourse />}
+                        {userDataPermission > 1 ? <CreateCourse /> : <h1>Você não tem permissão para criar cursos</h1>}
 
                     </div>
                 </div>
 
                 <div style={{ border: '1px solid black', padding: '20px' }}>
-                    {userDataPermission > 2 && <ListCourses />}
+                    {userDataPermission > 2 ? <ListCourses /> : <h1>Você não tem permissão para listar cursos</h1>}
 
                 </div>
 
                 <div style={{ border: '1px solid black', padding: '20px' }}>
-                    {userDataPermission > 3 &&                     
-                           <UserList users={users} />            
+                    {userDataPermission > 3 ?                    
+                           <UserList users={users}  />    : <h1>Você não tem permissão para listar usuários</h1>        
                     }
 
                 </div>

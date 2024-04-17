@@ -21,7 +21,7 @@ function AddLessonModal(props) {
         setLessonDescription('');
         handleClose();
 
-        router.push('/')
+        
     };
 
     return (

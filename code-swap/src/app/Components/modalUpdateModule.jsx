@@ -13,8 +13,7 @@ function UpdateModuleModal(props) {
     const handleSubmit = () => {
         const updatedModule = {
             nameModule: moduleName,
-            description: moduleDescription,
-            lessons: []
+            description: moduleDescription
         };
         updateModule(props.courseId, props.moduleId, updatedModule);
         
@@ -22,7 +21,7 @@ function UpdateModuleModal(props) {
         setModuleDescription('');
         handleClose();
 
-        router.push('/')
+        
     };
     return (
         <>

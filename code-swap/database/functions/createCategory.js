@@ -74,7 +74,7 @@ export async function addCourseToCategory(courseId, categoryName) {
 //editar categoria
 
 export async function updateCategory(categoryName, courseId) {
-    console.log( courseId);
+    
     try {
         //buscar o curso pelo id
         const cursoRef = collection(db, 'Modulos');
@@ -90,9 +90,71 @@ export async function updateCategory(categoryName, courseId) {
         });
 
         alert(`Categoria ${categoryName} atualizada com sucesso!`);
+        window.location.reload();
 
     } catch (error) {
         console.error('Erro ao atualizar a categoria:', error);
         throw error; // Lança o erro para tratamento em um nível superior
     }
 }
+
+
+// função que busca os cursos que tem a idCourse igual ao parametro da url
+
+export async function getCoursesByCategory(idCourse) {
+    try {
+        const courses = [];
+        const coursesRef = collection(db, 'Modulos');
+        const query = await getDocs(coursesRef);
+
+        query.forEach((doc) => {
+            if (doc.data().idCourse === idCourse) {
+                courses.push(doc.data());
+            }
+        });
+
+        return courses;
+
+    } catch (error) {
+        console.error('Erro ao buscar os cursos:', error);
+        throw error; // Lança o erro para tratamento em um nível superior
+    }
+    
+    
+}
+
+
+
+
+// função para buscar os cursos pela id do curso 
+
+export async function getModuleByCourseAndModuleId(idcourse, idmodule) {
+    
+    try {
+        const courses = [];
+        const coursesRef = collection(db, 'Modulos');
+        const query = await getDocs(coursesRef);
+
+        query.forEach((doc) => {
+            if (doc.data().idCourse === idcourse) {
+                courses.push(doc.data());
+            }
+        });
+
+        //buscar o modulo pelo id dentro course.modules
+        const module = courses[0].modules.filter((module) => module.idModule === idmodule);
+        
+
+        return module;
+
+        
+
+    } catch (error) {
+        console.error('Erro ao buscar os cursos:', error);
+        throw error; // Lança o erro para tratamento em um nível superior
+    }
+    
+    
+}
+
+

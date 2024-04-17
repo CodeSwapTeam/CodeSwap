@@ -23,6 +23,7 @@ function EditCourseCategoryModal(props) {
     const fetchCategories = async () => {
         const categories = await getAllCategories();
         setCategories(categories);
+        setNewCategoryName(categories[0].name);
     };
 
     const handleSubmit = (event) => {
@@ -31,7 +32,7 @@ function EditCourseCategoryModal(props) {
         updateCategory( newCategoryName, props.courseId);
 
         closeModal();
-        router.push('/')
+        
 
     };
 
@@ -46,16 +47,16 @@ function EditCourseCategoryModal(props) {
                         <div className="modal-body">
                             <form onSubmit={handleSubmit}>
                                 <select name="category" id="category" onChange={(e) => setNewCategoryName(e.target.value)}>
-                                    {categories.map((category) => (
-                                        <option value={category.name}>{category.name}</option>
+                                    {categories.map((category, index) => (
+                                        <option key={index} value={category.name}>{category.name}</option>
                                     ))}
                                 </select>
                                 
                             </form>
                         </div>
                         <div className="modal-footer">
-                            <button onClick={closeModal}>Fechar</button>
-                            <button onClick={handleSubmit}>Salvar Categoria</button>
+                            <button style={{ padding: '5px', backgroundColor: '#232323', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer'  }} onClick={closeModal}>Fechar</button>
+                            <button style={{ padding: '5px', backgroundColor: '#16ff66', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }} onClick={handleSubmit}>Salvar Categoria</button>
                         </div>
                     </div>
                 </div>

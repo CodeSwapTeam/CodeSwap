@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createModule } from '../../../database/functions/createCourses';
 import { useRouter } from 'next/navigation';
+import { v4 as uuidv4 } from 'uuid';
 
 function AddModuleModal(props) {
     const router = useRouter();
@@ -12,10 +13,11 @@ function AddModuleModal(props) {
     const handleShow = () => setShow(true);
 
     const handleSubmit = () => {
-        console.log(props.courseId);
+        
         const newModule = {
             nameModule: moduleName,
             description: moduleDescription,
+            idModule: uuidv4(),
             lessons: [
                 {
                     nameLesson: '',
@@ -29,7 +31,7 @@ function AddModuleModal(props) {
         setModuleDescription('');
         handleClose();
 
-        router.push('/')
+        
     };
 
     return (

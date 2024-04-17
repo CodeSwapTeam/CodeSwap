@@ -10,20 +10,18 @@ import { getAllCategories } from '../../../database/functions/createCategory';
 import { addCourseToCategory } from '../../../database/functions/createCategory';
 
 const CreateCourses = () => {
+
     const controller = Controller();
+    const router = useRouter();
+
     const [user, setUser] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('');
-
-
-
     const [categories, setCategories] = useState([]);
+
 
     const handleChangeCategory = (event) => {
         setSelectedCategory(event.target.value);
-        console.log(selectedCategory);
     };
-
-    const router = useRouter();
 
 
     useEffect(() => {
@@ -60,6 +58,7 @@ const CreateCourses = () => {
             {
                 nameModule: '',
                 description: '',
+                idModule: uuidv4(),
                 lessons: [
                     {
                         nameLesson: '',
@@ -93,6 +92,9 @@ const CreateCourses = () => {
                 category: selectedCategory,
             };
 
+            
+            
+
             controller.CreateCourse(courseData, user);
 
 
@@ -109,6 +111,7 @@ const CreateCourses = () => {
                     {
                         nameModule: '',
                         description: '',
+                        idModule: '',
                         lessons: [
                             {
                                 nameLesson: '',
@@ -119,7 +122,7 @@ const CreateCourses = () => {
                 ]
             });
 
-            router.push('/');
+            window.location.reload();
         } catch (error) {
             console.error('Erro ao criar o curso:', error);
             alert('Erro ao criar o curso. Por favor, tente novamente mais tarde.');
@@ -131,6 +134,7 @@ const CreateCourses = () => {
         const newModule = {
             nameModule: '',
             description: '',
+            idModule: '',
             lessons: [
                 {
                     nameLesson: '',
@@ -138,6 +142,13 @@ const CreateCourses = () => {
                 }
             ]
         };
+
+        //adicionar id unico para cada modulo criado dentro do curso
+        newModule.idModule = uuidv4();
+
+        
+
+
         setFormData({ ...formData, modules: [...formData.modules, newModule] });
     };
 
