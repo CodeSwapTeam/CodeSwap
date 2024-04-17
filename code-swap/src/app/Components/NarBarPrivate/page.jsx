@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link'
 
 const navbarStyle = {
-  backgroundColor: '#333',
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
   overflow: 'hidden',
   display: 'flex',
 
@@ -23,7 +23,7 @@ const navButtonStyle = {
 
 const logOutButtonStyle = {
     top: '0',
-    backgroundColor: '#333',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     color: 'white',
     padding: '14px 16px',
     border: 'none',

@@ -1,13 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "../../../../database/firebase";
-import { useAuthContext } from "../../contexts/Auth";
+import { auth } from "../../../database/firebase";
+import { useAuthContext } from "../contexts/Auth";
 import { useRouter } from "next/navigation";
-import { setCookies } from "../../services/cookies";
+import { setCookies } from "../services/cookies";
 import Link from 'next/link'
-import { CreateUser } from "../../../../database/functions/createUser";
-import NavBarPublic from "../NavBarPublic/page";
+import { CreateUser } from "../../../database/functions/createUser";
+import NavBarPublic from "../components/NavBarPublic/page";
 import styled from 'styled-components';
 import Image from 'next/image';
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
@@ -51,6 +51,12 @@ font-weight: 600;
 font-style: normal;
 font-size: 2rem;
 color: #04449c;
+text-shadow: 0 0 1.5px #fff,
+    0 0 2.5px #fff,
+    0 0 5px #fff,
+    0 0 10px #0fa,
+    0 0 20px #0fa,
+    0 0 23px #0fa;
 `
 
 const CadastroText = styled.h2`
@@ -66,6 +72,35 @@ width: 100%;
 padding: 8px;
 border: 1px solid #ccc;
 border-radius: 4px;
+`
+
+const LogoEffect = styled.div`
+
+animation: animateLogoCodeSwap 2.5s alternate infinite;
+border-radius: 100px;
+width: 150px;
+height: 150px;
+position: absolute;
+z-index: -1;
+margin-bottom: 75px;
+
+@keyframes animateLogoCodeSwap {
+    100%{
+box-shadow: 0 0 7px #fff,
+    0 0 10px #fff,
+    0 0 21px #fff,
+    0 0 42px #0fa,
+    0 0 82px #0fa,
+    0 0 92px #0fa;
+} 0% {
+    box-shadow: 0 0 3.5px #fff,
+    0 0 5px #fff,
+    0 0 10.5px #fff,
+    0 0 21px #0fa,
+    0 0 41px #0fa,
+    0 0 46px #0fa;
+}
+}
 `
 
 export default function CreateAccount() {
@@ -142,6 +177,7 @@ export default function CreateAccount() {
         <Container>
             <LeftSide>
             <Image src="/assets/logo4k.png" alt="logo" width={200} height={200} />
+            <LogoEffect />
                 <CodeSwapCadastro>CODE SWAP</CodeSwapCadastro>
                 <CadastroText>Crie sua conta e inicie sua jornada hoje mesmo!</CadastroText>
             </LeftSide>
@@ -204,7 +240,7 @@ export default function CreateAccount() {
                     </LabelText>
                 </div>
 
-                <Link style={{ paddingBottom: '5px', color:'white', display:'flex', flexDirection:'row', alignItems:'center' }} href='/createAccount'>Já possui conta? <IoIosArrowForward /> Login<IoIosArrowBack /></Link>
+                <Link style={{ paddingBottom: '5px', color:'white', display:'flex', flexDirection:'row', alignItems:'center' }} href='../../login/'>Já possui conta? <IoIosArrowForward /> Login<IoIosArrowBack /></Link>
 
                 <button type="submit" style={{ marginTop: '10px', width: '100%', padding: '10px', backgroundColor: '#82d79d', color: 'black', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Criar conta</button>
             </form>
