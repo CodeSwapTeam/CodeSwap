@@ -40,7 +40,7 @@ const Page = () => {
                     {module.lessons.map((lesson, index) => (
                         <div key={index} style={{ backgroundColor: '#b0b0b0', margin: '5px', padding: '2px' }}>
                             <h4 style={{ color: 'red' }}>{lesson.nameLesson}</h4>
-                            <p>{lesson.description}</p>
+                            
                         </div>
                     ))}
                     <button onClick={() => redirectToModuleDescription(module.idModule)}>Ver módulo</button>

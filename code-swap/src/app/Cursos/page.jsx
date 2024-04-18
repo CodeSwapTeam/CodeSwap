@@ -45,7 +45,7 @@ const Page = () => {
                     .map((course, index) => (
                         <div key={index} style={{ margin: '10px', border: '1px solid grey', padding: '5px' }}>
                             <h3 style={{ color: 'green' }}>{course.title}</h3>
-                            <p>{course.description}</p>
+                            
                             
                             <p>{course.modules.length} módulos</p>
                             <p>{course.modules.reduce((acc, module) => acc + module.lessons.length, 0)} aulas</p>
