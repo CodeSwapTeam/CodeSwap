@@ -24,6 +24,12 @@ const LayoutComponents = ({ children }) => {
             setUserLogged(true);
             setUserData(currentUser);
         }else{
+            if(userCookie){
+                const userDescript = decryptObjectData(userCookie.value);
+                setUserData(userDescript);
+                setCurrentUser(userDescript);
+                setUserLogged(true);
+            }
             setUserLogged(false);
         
         }
