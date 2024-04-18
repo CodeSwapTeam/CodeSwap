@@ -28,7 +28,7 @@ const Page = () => {
     return (
         <div>
     <NavBarPublic />
-    <p>Descrição curso publica</p>
+    <p></p>
     {courses.map((course, index) => (
         <div key={index} style={{ backgroundColor: '#f0f0f0', margin: '20px', padding: '10px' }}>
             <h2 style={{ color: 'blue' }}>{course.title}</h2>
