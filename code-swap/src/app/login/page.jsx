@@ -6,13 +6,13 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../database/firebase";
 import { setCookies } from "../services/cookies";
 import Link from 'next/link'
-import NavBarPublic from "../components/NavBarPublic/page";
+
 import styled from 'styled-components';
-import { Algorithm, encryptObjectData } from "../services/encryptedAlgorithm";
+import {  encryptObjectData } from "../services/encryptedAlgorithm";
 import { getUserData } from "../../../database/functions/getUserId";
 import Image from 'next/image';
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { CreatePhrase, GetPhrases } from "../../../database/functions/phrases";
+import {  GetPhrases } from "../../../database/functions/phrases";
 
 const Container = styled.div`
 margin: 10vh auto;
@@ -254,7 +254,7 @@ export default function Login() {
 
     return (
         <>
-        <NavBarPublic/>
+        
         <Container>
             <LeftSide>
                 <Image src="/assets/logo4k.png" alt="logo" width={200} height={200}  />
@@ -276,6 +276,7 @@ export default function Login() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
+                            autoComplete="email"
                             style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
                         />
                     </InputDiv>
@@ -287,6 +288,7 @@ export default function Login() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            autoComplete="current-password"
                             style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
                         />
                     </InputDiv>

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 
-import NavBarPublic from '@/app/Components/NavBarPublic';
+
 import { useParams, useRouter } from 'next/navigation';
 import { getCoursesByCategory } from '../../../../database/functions/createCategory';
 

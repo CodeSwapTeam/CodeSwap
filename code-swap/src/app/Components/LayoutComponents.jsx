@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import NavBarPublic from './NavBarPublic';
+import NavBarPublic from '../Components/NavBarPublic/page';
 import NavBarPrivate from './NavBarPrivate';
 import { getCookies } from '../services/cookies';
 import { decryptObjectData } from '../services/encryptedAlgorithm';

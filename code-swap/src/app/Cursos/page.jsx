@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { getAllCategories } from '../../../database/functions/createCategory';
 import { getAllModulesAndCourses } from '../../../database/functions/searchModules';
-import NavBarPublic from '../Components/NavBarPublic';
+
 import { useRouter } from 'next/navigation';
 
 const Page = () => {

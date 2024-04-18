@@ -73,7 +73,7 @@ const NavBarPublic = () => {
           <Link href='/login' style={loginButtonStyle} >
             Fazer Login
           </Link>
-          <Link href='../components/createAccount' style={loginButtonStyle} >
+          <Link href='./createAccount' style={loginButtonStyle} >
             Cadastre-se
           </Link>
         </div>

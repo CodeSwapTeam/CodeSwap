@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 
 
-import NavBarPrivate from '@/app/Components/NavBarPrivate';
+
 import { useParams } from 'next/navigation';
 import { getModuleByCourseAndModuleId } from '../../../../../../database/functions/createCategory';
 

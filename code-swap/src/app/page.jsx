@@ -6,9 +6,8 @@ import styled from 'styled-components';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link'
 import Typewriter from 'typewriter-effect';
-import { getCookies } from './services/cookies';
 import { useAuthContext } from './contexts/Auth';
-import NavBarPublic from './components/NavBarPublic/page';
+
 
 const PageContainer = styled.div`
 display: flex;
