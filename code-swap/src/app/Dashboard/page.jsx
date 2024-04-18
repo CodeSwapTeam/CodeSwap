@@ -55,7 +55,7 @@ export default function Dashboard(){
 
     return(
         <div>
-            <NavBarPrivate submitLogout={submitLogout} userData={userData}/>
+            
             <p>Listagem de Cursos do Aluno</p>
             {userData && <p>Bem-vindo(a) {userData.userName}</p> }
         </div>

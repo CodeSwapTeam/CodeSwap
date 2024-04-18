@@ -30,7 +30,7 @@ export default function Home() {
     
       return (
         <div>
-          <NavBarPublic/>
+          
           <h1>Code Swap</h1>
           <p>Apresentação</p>
         </div>

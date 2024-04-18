@@ -61,7 +61,7 @@ const CourseForm = () => {
 
     return (
         <>
-            <NavBarPrivate submitLogout={submitLogout} />
+            
             <div style={{ display: 'flex', gap: '20px' }}>
                 <div>
                     <div style={{ border: '1px solid black', padding: '20px' }}>

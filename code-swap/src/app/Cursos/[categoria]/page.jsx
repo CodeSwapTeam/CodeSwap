@@ -27,25 +27,29 @@ const Page = () => {
 
     return (
         <div>
-    <NavBarPublic />
+    
     <p></p>
     {courses.map((course, index) => (
         <div key={index} style={{ backgroundColor: '#f0f0f0', margin: '20px', padding: '10px' }}>
             <h2 style={{ color: 'blue' }}>{course.title}</h2>
             <p>{course.description}</p>
-            {course.modules.map((module, index) => (
-                <div key={index} style={{ backgroundColor: '#d0d0d0', margin: '10px', padding: '5px' }}>
-                    <h3 style={{ color: 'green' }}>{module.nameModule}</h3>
-                    <p>{module.description}</p>
-                    {module.lessons.map((lesson, index) => (
-                        <div key={index} style={{ backgroundColor: '#b0b0b0', margin: '5px', padding: '2px' }}>
-                            <h4 style={{ color: 'red' }}>{lesson.nameLesson}</h4>
-                            
-                        </div>
-                    ))}
-                    <button onClick={() => redirectToModuleDescription(module.idModule)}>Ver módulo</button>
-                </div>
-            ))}
+
+            <div style={{border: '1px solid black', height: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}} >
+                {course.modules.map((module, index) => (
+                    <div key={index} style={{ backgroundColor: '#d0d0d0', margin: '10px', padding: '5px' }}>
+                        <h3 style={{ color: 'green' }}>{module.nameModule}</h3>
+                        <p>{module.description}</p>
+                        {module.lessons.map((lesson, index) => (
+                            <div key={index} style={{ backgroundColor: '#b0b0b0', margin: '5px', padding: '2px' }}>
+                                <h4 style={{ color: 'red' }}>{lesson.nameLesson}</h4>
+                
+                            </div>
+                        ))}
+                        <button style={{ padding: '5px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%' }}  onClick={() => redirectToModuleDescription(module.idModule)}>Ver módulo</button>
+                    </div>
+                ))}
+            </div>
+
         </div>
     ))}
 </div>

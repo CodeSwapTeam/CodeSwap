@@ -33,7 +33,7 @@ const Page = () => {
         
         
         <div>
-    <NavBarPublic/>
+    
     {categories && categories
         .filter((category) => courses.some((course) => course.category === category.name && course.status === 'approved'))
         .map((category, index) => (

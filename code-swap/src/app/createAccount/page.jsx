@@ -79,7 +79,7 @@ export default function CreateAccount() {
 
     return (
         <>
-        <NavBarPublic/>
+        
         <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#f9f9f9' }}>
            
            <h2 style={{ textAlign: 'center' }}>Criar Conta</h2>

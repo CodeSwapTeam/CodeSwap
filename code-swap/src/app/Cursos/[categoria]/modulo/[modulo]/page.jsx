@@ -36,7 +36,7 @@ const Page = () => {
 
     return (
         <div>
-    <NavBarPrivate/>
+    
     <p></p>
 
     {module.map((module, index) => (

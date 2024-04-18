@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link'
+import { removeCookies } from '../services/cookies';
+import { useRouter } from 'next/navigation';
 
 const navbarStyle = {
   backgroundColor: '#333',
@@ -74,6 +76,7 @@ const logoutButtonStyle = {
   };
 
 const NavBarPrivate = (props) => {
+  const router = useRouter();
   
   const [painelAdmpermissions, setPainelAdmPermissions] = useState(false);
 
@@ -85,6 +88,13 @@ const NavBarPrivate = (props) => {
       setPainelAdmPermissions(false);
     }
   }, [props.userData]);
+
+  //função para deslogar
+  async function logout() {
+    //remove os cookies
+    await removeCookies();
+    router.push('/Dashboard');
+  }
 
 
   return (
@@ -100,7 +110,7 @@ const NavBarPrivate = (props) => {
           
         
       )}
-      <button onClick={props.submitLogout} style={{ position: 'fixed', right: '40px', top: '0', backgroundColor: '#333', color: 'white', padding: '14px 16px', border: 'none', cursor: 'pointer' }}>Sair</button>
+      <button onClick={()=> logout()} style={{ position: 'fixed', right: '40px', top: '0', backgroundColor: '#333', color: 'white', padding: '14px 16px', border: 'none', cursor: 'pointer' }}>Sair</button>
     </nav>
   );
 };
