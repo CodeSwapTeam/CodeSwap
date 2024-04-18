@@ -4,8 +4,11 @@ import NavBarPublic from './NavBarPublic';
 import NavBarPrivate from './NavBarPrivate';
 import { getCookies } from '../services/cookies';
 import { decryptObjectData } from '../services/encryptedAlgorithm';
+import { useAuthContext } from "../contexts/Auth";
 
 const LayoutComponents = ({ children }) => {
+
+    const {currentUser, setCurrentUser} = useAuthContext();
 
     const [userLogged, setUserLogged] = useState();
     const [userData, setUserData] = useState();
@@ -14,10 +17,12 @@ const LayoutComponents = ({ children }) => {
         
         
         const userCookie = await getCookies();
-        const userDataDescrypt = decryptObjectData(userCookie.value);
-        if (userDataDescrypt) {
+        //console.log(currentUser);
+        
+        if (currentUser) {
+            
             setUserLogged(true);
-            setUserData(userDataDescrypt);
+            setUserData(currentUser);
         }else{
             setUserLogged(false);
         
@@ -27,7 +32,7 @@ const LayoutComponents = ({ children }) => {
 
     useEffect(() => {
         getUser();
-    }, []);
+    }, [currentUser]);
 
     return (
         <div>

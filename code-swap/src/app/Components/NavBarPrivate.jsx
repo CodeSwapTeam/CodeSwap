@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link'
 import { removeCookies } from '../services/cookies';
 import { useRouter } from 'next/navigation';
+import { useAuthContext } from '../contexts/Auth';
 
 const navbarStyle = {
   backgroundColor: '#333',
@@ -77,22 +78,26 @@ const logoutButtonStyle = {
 
 const NavBarPrivate = (props) => {
   const router = useRouter();
+
+  const {currentUser, setCurrentUser} = useAuthContext();
   
   const [painelAdmpermissions, setPainelAdmPermissions] = useState(false);
 
   useEffect(() => {
+    //console.log('props.userData', props.userData);
     // Verifica as permissões do usuário
     if (props.userData && props.userData.permissions > 1) {
       setPainelAdmPermissions(true);
     } else {
       setPainelAdmPermissions(false);
     }
-  }, [props.userData]);
+  }, [currentUser]);
 
   //função para deslogar
   async function logout() {
     //remove os cookies
-    await removeCookies();
+    await removeCookies('user');
+    setCurrentUser(null);
     router.push('/Dashboard');
   }
 
