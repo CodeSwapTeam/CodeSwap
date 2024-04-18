@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link'
-import { removeCookies } from '../services/cookies';
+import { removeCookies } from '../../services/cookies';
 import { useRouter } from 'next/navigation';
-import { useAuthContext } from '../contexts/Auth';
+import { useAuthContext } from '../../contexts/Auth';
 
 
 
@@ -63,11 +63,11 @@ const navBarRight = {
 
 const adminButton = {
   top: '0',
-  backgroundColor: '#333',
   color: '#912d2d',
   padding: '14px 16px',
   border: 'none',
   cursor: 'pointer',
+  fontWeight: '800',
 };
 
 const NavBarPrivate = (props) => {
