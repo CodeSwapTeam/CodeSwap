@@ -12,6 +12,7 @@ import { Algorithm, encryptObjectData } from "../services/encryptedAlgorithm";
 import { getUserData } from "../../../database/functions/getUserId";
 import Image from 'next/image';
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { CreatePhrase, GetPhrases } from "../../../database/functions/phrases";
 
 const Container = styled.div`
 margin: 10vh auto;
@@ -195,56 +196,12 @@ width: 100%;
 
 export default function Login() {
 
-    const frases = [
-        /*2*/
-        { frase: '"O homem precisa de dificuldades para mostrar o que ele é."', autor: " - Leonardo Da Vinci", referencia: "Caderno de anotações de Leonardo da Vinci (c. 1508)" },
-        /*3*/
-        { frase: '"O sucesso não é definitivo, o fracasso não é fatal: o que importa é a coragem de continuar."', autor: " - Winston Churchill", referencia: "Discurso na Câmara dos Comuns (1940)." },
-        /*5*/
-        { frase: '"Não existem segredos para o sucesso. O sucesso é resultado de dedicação, trabalho árduo e aprendizagem com os erros."', autor: " - Henry Ford", referencia: "Entrevista para o Chicago Tribune (1923)." },
-        /*7*/
-        { frase: '"A mente que se abre a uma nova ideia jamais retorna ao seu tamanho original."', autor: " - Albert Einstein", referencia: "Entrevista para o New York Times (1929)." },
-        /*8*/
-        { frase: '"O que nos torna fortes não é a ausência de desafios, mas a capacidade de superá-los."', autor: " - Nelson Mandela", referencia: "Discurso na abertura do primeiro parlamento democrático da África do Sul (1994)." },
-        /*9*/
-        { frase: '"O conhecimento é poder. É a chave para abrir as portas do futuro."', autor: " - Francis Bacon", referencia: 'Ensaio "Of Studies" (1597).' },
-        /*10*/
-        { frase: '"O sucesso não é a chave para a felicidade. A felicidade é a chave para o sucesso. Se você fizer o que você ama, você será bem sucedido."', autor: " - Albert Schweitzer", referencia: "Discurso de aceitação do Prêmio Nobel da Paz (1954)." },
-        /*11*/
-        { frase: ' "A vida é uma aventura ousada ou nada."', autor: " - Helen Keller", referencia: "Discurso na Convenção Nacional da Associação Americana para Cegos (1920)." },
-        /*12*/
-        { frase: '"O que não me mata me torna mais forte."', autor: " - Friedrich Nietzsche", referencia: "Assim Falou Zaratustra (1883)." },
-        /*13*/
-        { frase: '"A maior glória na vida não está em não cair, mas em levantar-se sempre que se cai."', autor: " - Nelson Mandela", referencia: "Discurso na abertura do primeiro parlamento democrático da África do Sul (1994)." },
-        /*14*/
-        { frase: '"O fracasso é apenas a oportunidade de começar de novo, desta vez de forma mais inteligente."', autor: " - Henry Ford", referencia: "Entrevista para o Saturday Evening Post (1922)." },
-        /*15*/
-        { frase: '"O único limite para o nosso aprendizado é a nossa vontade de aprender."', autor: " - William Arthur Ward", referencia: 'Livro "A Thousand Days" (1957).' },
-        /*16*/
-        { frase: '"O sucesso é a soma de pequenos esforços repetidos dia após dia."', autor: " - Robert Collier", referencia: 'Livro "Secret of the Ages" (1926).' },
-        /*17*/
-        { frase: '"A persistência é a chave para o sucesso. Se você continuar tentando, você vai conseguir."', autor: " - Winston Churchill", referencia: "Discurso na Câmara dos Comuns (1940)." },
-        /*28*/
-        { frase: '"O que você faz hoje é mais importante do que o que você fez ontem."', autor: " - Abraham Lincoln", referencia: "Discurso em Gettysburg (1863)." },
-        /*29*/
-        { frase: '"O sucesso não é final, o fracasso não é fatal: o que importa é a coragem de continuar."', autor: " - Winston Churchill", referencia: "Discurso na Câmara dos Comuns (1940)." },
-        /*31*/
-        { frase: '"A mente que se abre a uma nova ideia jamais retorna ao seu tamanho original."', autor: " - Albert Einstein", referencia: "Entrevista para o New York Times (1929)." },
-        /*34*/
-        { frase: '"O sucesso não é a chave para a felicidade. A felicidade é a chave para o sucesso. Se você fizer o que você ama, você será bem sucedido."', autor: " - Albert Schweitzer", referencia: "Discurso de aceitação do Prêmio Nobel da Paz (1954)." },
-        /*38*/
-        { frase: '"Nossa maior glória não está em nunca cair, mas em emergir sempre que caímos."', autor: " - Confúcio", referencia: "Analectos de Confúcio (Livro 17, Capítulo 23)." },
-        /*42*/
-        { frase: '"A vida é 10% o que acontece com você e 90% como você reage a isso."', autor: " - Charles R. Swindoll", referencia: 'Livro "The Tough Stuff" (1987).' },
-
-    ];
-
-    
     const [fraseAleatoria, setFraseAleatoria] = useState(null);
     
-    function getFraseAleatoria() {
+    async function getFraseAleatoria() {
+        const frases = await GetPhrases();
         const index = Math.floor(Math.random() * frases.length);
-        return frases[index];
+        setFraseAleatoria(frases[index]);
     }
 
     
@@ -257,7 +214,8 @@ export default function Login() {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        setFraseAleatoria(getFraseAleatoria());
+        getFraseAleatoria();
+        
         //console.log('login', currentUser);
         if (currentUser) {
             r.push('/Dashboard');
