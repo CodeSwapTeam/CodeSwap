@@ -19,18 +19,9 @@ export default function Dashboard(){
 
     const router = useRouter();
 
-    function submitLogout(){
-        removeCookies();
-        localStorage.removeItem('user')
-        
-        setCurrentUser(null);
-        router.push('/login');
-    }
+    
 
-    function manage(){
-        router.push('/ManageCourses');
-    }
-
+    
     useEffect(()=>{
         
 
@@ -46,6 +37,7 @@ export default function Dashboard(){
                 setCurrentUser(userDescript);
                 
              }else{
+                //console.log('currentUser', currentUser);
                 setUserData(currentUser)
              }
         }
@@ -55,7 +47,7 @@ export default function Dashboard(){
 
     return(
         <div>
-            <NavBarPrivate submitLogout={submitLogout} userData={userData}/>
+            
             <p>Listagem de Cursos do Aluno</p>
             {userData && <p>Bem-vindo(a) {userData.userName}</p> }
         </div>

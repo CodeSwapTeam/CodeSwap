@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { createLesson } from '../../../database/functions/createCourses';
+import { useRouter } from 'next/navigation';
 
 function AddLessonModal(props) {
+    const router = useRouter();
     const [show, setShow] = useState(false);
     const [lessonName, setLessonName] = useState('');
     const [lessonDescription, setLessonDescription] = useState('');
@@ -18,6 +20,8 @@ function AddLessonModal(props) {
         setLessonName('');
         setLessonDescription('');
         handleClose();
+
+        
     };
 
     return (

@@ -173,7 +173,7 @@ export default function CreateAccount() {
 
     return (
         <>
-        <NavBarPublic/>
+        
         <Container>
             <LeftSide>
             <Image src="/assets/logo4k.png" alt="logo" width={200} height={200} />

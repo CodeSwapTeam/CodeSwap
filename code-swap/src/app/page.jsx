@@ -171,7 +171,7 @@ export default function Home() {
       return (
         <>
         <div>
-          <NavBarPublic />
+          
         </div>
         <PageContainer>
                     {/* Cards Middle */}

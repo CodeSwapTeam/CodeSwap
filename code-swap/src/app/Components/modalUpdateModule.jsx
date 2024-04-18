@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { updateModule } from '../../../database/functions/createCourses';
+import { useRouter } from 'next/navigation';
 
 function UpdateModuleModal(props) {
+    const router = useRouter();
+
     const [show, setShow] = useState(false);
     const [moduleName, setModuleName] = useState('');
     const [moduleDescription, setModuleDescription] = useState('');
@@ -10,14 +13,15 @@ function UpdateModuleModal(props) {
     const handleSubmit = () => {
         const updatedModule = {
             nameModule: moduleName,
-            description: moduleDescription,
-            lessons: []
+            description: moduleDescription
         };
         updateModule(props.courseId, props.moduleId, updatedModule);
         
         setModuleName('');
         setModuleDescription('');
         handleClose();
+
+        
     };
     return (
         <>

@@ -25,6 +25,26 @@ export default function middleware( NextRequest){
     // Verificando se a página atual é a página de login
     const isLoginPage = NextRequest.nextUrl.pathname === '/login';
 
+    // Se a URL começa com '/Cursos/' e contém '/modulo/'
+    if (NextRequest.nextUrl.pathname.startsWith('/Cursos/') && NextRequest.nextUrl.pathname.includes('/modulo/')) {
+        // Se o usuário não estiver autenticado, redirecione para a página de login
+       
+        if (!userDecrypted) {
+            return NextResponse.redirect(new URL('/login', NextRequest.url));
+        }
+    }
+
+    // Se o usuário não estiver autenticado e não estiver na página de login
+    if(!userDecrypted && !isLoginPage){
+        // Se estiver na página inicial, continue com a próxima resposta
+        if(isHomePage){
+            return NextResponse.next();
+        }
+        // Caso contrário, redirecione para a página inicial
+        return NextResponse.redirect(new URL('/', NextRequest.url));
+    }
+
+
     // Se o usuário não estiver autenticado e não estiver na página de login
     if(!userDecrypted && !isLoginPage){
         // Se estiver na página inicial, continue com a próxima resposta
@@ -54,5 +74,5 @@ export default function middleware( NextRequest){
 
 // Configuração de rotas que utilizarão este middleware
 export const config = {
-        matcher: ['/', '/Dashboard:path*', '/ManageCourses']
+        matcher: ['/', '/Dashboard:path*', '/ManageCourses','/Cursos/:id/modulo/:moduleId*']
 }

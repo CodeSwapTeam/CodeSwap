@@ -5,25 +5,45 @@ import { decryptObjectData } from '../services/encryptedAlgorithm';
 import { v4 as uuidv4 } from 'uuid';
 //importar router do next/navigation
 import { useRouter } from 'next/navigation';
+import ModalCreateCategory from './modalCreateCategory';
+import { getAllCategories } from '../../../database/functions/createCategory';
+import { addCourseToCategory } from '../../../database/functions/createCategory';
 
 const CreateCourses = () => {
-    const controller = Controller();
-    const [user, setUser] = useState(null);
 
+    const controller = Controller();
     const router = useRouter();
 
-    
+    const [user, setUser] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const [categories, setCategories] = useState([]);
+
+
+    const handleChangeCategory = (event) => {
+        setSelectedCategory(event.target.value);
+    };
+
+
     useEffect(() => {
 
         // Verifica se o usuário está autenticado
-    const checkUser = async () => {
-        const user = await getCookies();
-        
-        
-        const  decryptedUser = decryptObjectData(user.value); // Descriptografa os dados do usuário
-        setUser(decryptedUser.userName); // Define o usuário no estado
-    };
-    checkUser();
+        const checkUser = async () => {
+            const user = await getCookies();
+
+
+            const decryptedUser = decryptObjectData(user.value); // Descriptografa os dados do usuário
+            setUser(decryptedUser.userName); // Define o usuário no estado
+
+            async function fetchCategories() {
+                const categories = await getAllCategories();
+                setCategories(categories);
+                //console.log(categories);
+            }
+            fetchCategories();
+
+
+        };
+        checkUser();
     }, []);
 
     // Estado para armazenar os dados do formulário
@@ -33,10 +53,12 @@ const CreateCourses = () => {
         description: '',
         owner: '',
         idCourse: uuidv4(),
+        category: selectedCategory ? selectedCategory : 'categoria não selecionada',
         modules: [
             {
                 nameModule: '',
                 description: '',
+                idModule: uuidv4(),
                 lessons: [
                     {
                         nameLesson: '',
@@ -56,9 +78,30 @@ const CreateCourses = () => {
     // Função para lidar com o envio do formulário
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Verifica se uma categoria foi selecionada
+        if (!selectedCategory || selectedCategory.trim() === '') {
+            alert('Por favor, escolha uma categoria.');
+            return;
+        }
+
         try {
-            controller.CreateCourse(formData, user);
+            // Adiciona a categoria selecionada ao formData antes de criar o curso
+            const courseData = {
+                ...formData,
+                category: selectedCategory,
+            };
+
+            
+            
+
+            controller.CreateCourse(courseData, user);
+
+
+            // Adiciona o curso à categoria selecionada
+            await addCourseToCategory(formData.title, selectedCategory);
             alert(`Curso ${formData.title} criado com sucesso!`);
+            //console.log('categoria selecionada:', selectedCategory);
             // Limpa o formulário após o envio bem-sucedido
             setFormData({
                 title: '',
@@ -68,6 +111,7 @@ const CreateCourses = () => {
                     {
                         nameModule: '',
                         description: '',
+                        idModule: '',
                         lessons: [
                             {
                                 nameLesson: '',
@@ -77,8 +121,8 @@ const CreateCourses = () => {
                     }
                 ]
             });
-            
-            router.push('/');
+
+            window.location.reload();
         } catch (error) {
             console.error('Erro ao criar o curso:', error);
             alert('Erro ao criar o curso. Por favor, tente novamente mais tarde.');
@@ -90,6 +134,7 @@ const CreateCourses = () => {
         const newModule = {
             nameModule: '',
             description: '',
+            idModule: '',
             lessons: [
                 {
                     nameLesson: '',
@@ -97,6 +142,13 @@ const CreateCourses = () => {
                 }
             ]
         };
+
+        //adicionar id unico para cada modulo criado dentro do curso
+        newModule.idModule = uuidv4();
+
+        
+
+
         setFormData({ ...formData, modules: [...formData.modules, newModule] });
     };
 
@@ -121,6 +173,16 @@ const CreateCourses = () => {
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', border: '1px solid #ccc', borderRadius: '10px', backgroundColor: '#f8f9fa' }}>
             <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#007bff' }}>Criar Novo Curso</h2>
+            <h3>Categoria</h3>
+            <select value={selectedCategory} onChange={handleChangeCategory}>
+                <option value="">Selecione uma categoria</option>
+                {categories.map((category, index) => (
+                    <option key={index} value={category.name}>
+                        {category.name}
+                    </option>
+                ))}
+            </select>
+            <ModalCreateCategory />
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
                 <div style={{ marginBottom: '20px' }}>
                     <label htmlFor="title" style={{ fontWeight: 'bold', marginBottom: '5px', color: '#007bff' }}>Título do Curso:</label>

@@ -13,6 +13,7 @@ const UserList = ({ users  }) => {
         if (selectedUser && selectedPermission) {
             ChangePermissionUser(selectedUser.id, selectedPermission);
         }
+        window.location.reload();
         
     }
 
