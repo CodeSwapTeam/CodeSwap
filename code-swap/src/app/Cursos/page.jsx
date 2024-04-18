@@ -19,6 +19,7 @@ const Page = () => {
             
             setCategories(categoriesData);
             setCourses(coursesData);
+            console.log(coursesData);
         };
         fetchCategoriesAndCourses();
     }, []);
@@ -48,7 +49,7 @@ const Page = () => {
                             <div key={index} style={{ margin: '10px', border: '2px solid grey', padding: '5px', width: '30vw',height: '20%', display: 'flex',  flexDirection: 'row'  }}>
                                 
                                 <div style={{ margin: '1px', border: '1px solid grey', padding: '5px' , width: '60%' }}>
-                                    <img src={course.image} alt="thumbnail do curso" style={{ width: '100%', height: '100%' }} />
+                                    <img src={course.thumbnail} alt="thumbnail do curso" style={{ width: '100%', height: '100%' }} />
                                 </div>
                                 
                                 <div style={{ margin: '1px', border: '1px solid grey', padding: '5px' , width: '40%' }}>

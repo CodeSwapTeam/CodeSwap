@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Controller from '@/Controller/controller';
 import ListCourses from '../Components/ListCoursesAdmPainel';
-import CreateCourse from '../Components/CreateCourse';
+import CreateCourse from '../Components/CreateCourse/CreateCourse';
 import { useAuthContext } from '../contexts/Auth';
 
 import { getCookies, removeCookies } from '../services/cookies';

@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import Controller from '../../Controller/controller';
-import { getCookies } from '../services/cookies';
-import { decryptObjectData } from '../services/encryptedAlgorithm';
+import Controller from '../../../Controller/controller';
+import { getCookies } from '../../services/cookies';
+import { decryptObjectData } from '../../services/encryptedAlgorithm';
 import { v4 as uuidv4 } from 'uuid';
 //importar router do next/navigation
 import { useRouter } from 'next/navigation';
-import ModalCreateCategory from './modalCreateCategory';
-import { getAllCategories } from '../../../database/functions/createCategory';
-import { addCourseToCategory } from '../../../database/functions/createCategory';
+import ModalCreateCategory from '../modalCreateCategory';
+import { getAllCategories } from '../../../../database/functions/createCategory';
+import { addCourseToCategory } from '../../../../database/functions/createCategory';
+import { storage } from '../../../../database/firebase';
+import { getDownloadURL, uploadBytesResumable } from 'firebase/storage';
+
+import { convertBlobToBase64 } from "image-conversion";
+
+
+import {  ref } from "firebase/storage";
 
 const CreateCourses = () => {
 
@@ -17,6 +24,9 @@ const CreateCourses = () => {
     const [user, setUser] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('');
     const [categories, setCategories] = useState([]);
+
+    const [imgUrl, setImgUrl] = useState('');
+    const [progress, setProgress] = useState(0);
 
 
     const handleChangeCategory = (event) => {
@@ -52,6 +62,7 @@ const CreateCourses = () => {
         status: 'pending',
         description: '',
         owner: '',
+        thumbnail: imgUrl ? imgUrl : '',
         idCourse: uuidv4(),
         category: selectedCategory ? selectedCategory : 'categoria não selecionada',
         modules: [
@@ -90,6 +101,7 @@ const CreateCourses = () => {
             const courseData = {
                 ...formData,
                 category: selectedCategory,
+                thumbnail: imgUrl
             };
 
             
@@ -170,6 +182,35 @@ const CreateCourses = () => {
         setFormData({ ...formData, modules: updatedModules });
     };
 
+    
+
+    const handleUpload = async (e) => {
+        e.preventDefault();
+        const file = e.target.file.files[0];
+        if(!file) return;
+        const storageRef = ref(storage, `images/${file.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        uploadTask.on('state_changed', (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setProgress(progress);
+        }, (error) => {
+            console.error(error);
+        }
+        , () => {
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                setImgUrl(downloadURL);
+                console.log('File available at', downloadURL);
+            });
+            //limpar o campo de upload
+            e.target.file.value = '';
+        });
+    };
+
+
+
+    
+
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', border: '1px solid #ccc', borderRadius: '10px', backgroundColor: '#f8f9fa' }}>
             <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#007bff' }}>Criar Novo Curso</h2>
@@ -208,6 +249,7 @@ const CreateCourses = () => {
                         style={{ width: '100%', padding: '10px', border: '1px solid #007bff', borderRadius: '5px' }}
                     />
                 </div>
+                
                 <div style={{ marginBottom: '20px' }}>
                     <label style={{ fontWeight: 'bold', color: '#007bff' }}>Módulos:</label>
                     <ul style={{ listStyle: 'none', padding: '0', marginLeft: '0' }}>
@@ -276,6 +318,16 @@ const CreateCourses = () => {
                 </div>
                 <button type="submit" style={{ padding: '10px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%' }}>Criar Curso</button>
             </form>
+            <div>
+                    <label style={{ fontWeight: 'bold', color: '#007bff' }}>Upload Arquivos:</label>
+                    <form onSubmit={handleUpload} >
+                        <input type="file" name="file" />
+                        <button style={{ padding: '5px', backgroundColor: 'blue', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} type="submit">Enviar</button>
+                    </form>
+                    <br />
+                    {!imgUrl && <progress value={progress} max="100" />} 
+                    {imgUrl && <img src={imgUrl} alt="Imagem do curso" style={{ width: '100px', height: '100px' }} />}
+                </div>
         </div>
     )
 };
