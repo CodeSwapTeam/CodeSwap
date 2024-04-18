@@ -20,8 +20,28 @@ export default function RootLayout({ children }) {
         <html lang="Pt-br">
       <head>
         <link rel="icon" href="/favicon.ico" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet" />
       </head>
-          <body className={inter.className}>{children}</body>
+          <body className={inter.className}>
+            <video
+            src="/assets/backgroundVideo.webm"
+            type="video/webm"
+            autoPlay
+            loop
+            muted
+            style={{
+              position: 'fixed',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              zIndex: '-1',
+            }}
+            >
+            </video>
+            {children}
+            </body>
           </html>
         </AuthProvider>
         

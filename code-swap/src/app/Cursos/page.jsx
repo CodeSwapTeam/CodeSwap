@@ -3,7 +3,7 @@ import ListCourses from "../Components/ListCoursesAdmPainel"
 
 import interactionsType from "../contexts/interactionsType";
 import { useInteractionLogger } from "../contexts/InteractionContext";
-import NavBarPublic from "../Components/NavBarPublic";
+import NavBarPublic from "../components/NavBarPublic/page";
 
 export default function CursosLayout(){
 

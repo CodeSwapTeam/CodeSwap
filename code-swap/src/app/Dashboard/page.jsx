@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from 'next/link'
 import { useAuthContext } from "../contexts/Auth";
 import { useEffect, useState } from "react";
-import NavBarPrivate from "../Components/NavBarPrivate";
+import NavBarPrivate from "../components/NarBarPrivate/page";
 
 import { decryptObjectData } from "../services/encryptedAlgorithm";
 

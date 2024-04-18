@@ -7,7 +7,101 @@ import { useRouter } from "next/navigation";
 import { setCookies } from "../services/cookies";
 import Link from 'next/link'
 import { CreateUser } from "../../../database/functions/createUser";
-import NavBarPublic from "../Components/NavBarPublic";
+import NavBarPublic from "../components/NavBarPublic/page";
+import styled from 'styled-components';
+import Image from 'next/image';
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+
+
+
+const Container = styled.div`
+margin: 10vh auto;
+display: flex;
+padding: 1rem;
+flex-direction: column;
+width: 100%;
+border: 1px solid #7cd393;
+border-radius: 8px;
+background: linear-gradient(90deg, rgba(2,0,36,0.5) 0%, rgba(9,9,121,0.5) 0%, rgba(0,0,0,0.5) 100%);
+
+@media (min-width: 640px) {
+flex-direction: row;
+justify-content: space-around;
+align-items: center;
+}
+`
+
+const LeftSide = styled.div`
+display: flex;
+justify-content: center;
+text-align: center;
+flex-direction: column;
+align-items: center;
+`
+
+const LabelText = styled.label`
+color: #fff;
+display: 'block';
+margin-bottom: '5px';
+`
+
+const CodeSwapCadastro = styled.h2`
+font-family: "Play", sans-serif;
+font-weight: 600;
+font-style: normal;
+font-size: 2rem;
+color: #04449c;
+text-shadow: 0 0 1.5px #fff,
+    0 0 2.5px #fff,
+    0 0 5px #fff,
+    0 0 10px #0fa,
+    0 0 20px #0fa,
+    0 0 23px #0fa;
+`
+
+const CadastroText = styled.h2`
+text-align: center;
+color: #fff;
+font-size: 1.5rem;
+font-weight: 600;
+font-style: normal;
+`
+
+const InputCadastro = styled.input`
+width: 100%;
+padding: 8px;
+border: 1px solid #ccc;
+border-radius: 4px;
+`
+
+const LogoEffect = styled.div`
+
+animation: animateLogoCodeSwap 2.5s alternate infinite;
+border-radius: 100px;
+width: 150px;
+height: 150px;
+position: absolute;
+z-index: -1;
+margin-bottom: 75px;
+
+@keyframes animateLogoCodeSwap {
+    100%{
+box-shadow: 0 0 7px #fff,
+    0 0 10px #fff,
+    0 0 21px #fff,
+    0 0 42px #0fa,
+    0 0 82px #0fa,
+    0 0 92px #0fa;
+} 0% {
+    box-shadow: 0 0 3.5px #fff,
+    0 0 5px #fff,
+    0 0 10.5px #fff,
+    0 0 21px #0fa,
+    0 0 41px #0fa,
+    0 0 46px #0fa;
+}
+}
+`
 
 export default function CreateAccount() {
 
@@ -80,76 +174,79 @@ export default function CreateAccount() {
     return (
         <>
         <NavBarPublic/>
-        <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#f9f9f9' }}>
-           
-           <h2 style={{ textAlign: 'center' }}>Criar Conta</h2>
-           <form onSubmit={handleSubmit}>
-               <div style={{ marginBottom: '20px' }}>
-                   <label htmlFor="displayName" style={{ display: 'block', marginBottom: '5px', textAlign: 'center' }}>Como gostaria de ser chamado(a)?:</label>
-                   <input
-                       type="text"
-                       id="displayName"
-                       value={displayName}
-                       onChange={(e) => setDisplayName(e.target.value)}
-                       style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
-                   />
-               </div>
-               <div style={{ marginBottom: '20px' }}>
-                   <label htmlFor="email" style={{ display: 'block', marginBottom: '5px' }}>Email:</label>
-                   <input
-                       type="email"
-                       id="email"
-                       value={email}
-                       onChange={(e) => setEmail(e.target.value)}
-                       required
-                       style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
-                   />
-               </div>
-               <div style={{ marginBottom: '20px' }}>
-                   <label htmlFor="password" style={{ display: 'block', marginBottom: '5px' }}>Senha:</label>
-                   <input
-                       type="password"
-                       id="password"
-                       value={password}
-                       onChange={(e) => setPassword(e.target.value)}
-                       required
-                       style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
-                   />
-               </div>
+        <Container>
+            <LeftSide>
+            <Image src="/assets/logo4k.png" alt="logo" width={200} height={200} />
+            <LogoEffect />
+                <CodeSwapCadastro>CODE SWAP</CodeSwapCadastro>
+                <CadastroText>Crie sua conta e inicie sua jornada hoje mesmo!</CadastroText>
+            </LeftSide>
 
-               <div style={{ marginBottom: '20px' }}>
-                   <label htmlFor="phoneNumber" style={{ display: 'block', marginBottom: '5px' }}>Número de Telefone:</label>
-                   <input
-                       type="text"
-                       id="phoneNumber"
-                       value={phoneNumber}
-                       onChange={(e) => setPhoneNumber(e.target.value)}
-                       style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
-                   />
-               </div>
-               <div style={{ marginBottom: '20px' }}>
-                   <label htmlFor="whatsapp" style={{ display: 'block', marginBottom: '5px' }}>
-                       <input
-                           type="checkbox"
-                           id="whatsapp"
-                           checked={isWhatsApp}
-                           onChange={(e) => setIsWhatsApp(e.target.checked)}
-                           style={{ marginRight: '5px' }}
-                       />
-                       WhatsApp?
-                   </label>
-               </div>
+            <form style={{marginTop:'2rem', marginBottom:'2rem'}} onSubmit={handleSubmit}>
+                <div style={{ marginBottom: '20px' }}>
+                    <LabelText htmlFor="displayName" >Como gostaria de ser chamado(a)?:</LabelText>
+                    <InputCadastro
+                        type="text"
+                        id="displayName"
+                        value={displayName}
+                        required
+                        onChange={(e) => setDisplayName(e.target.value)}
+                        placeholder="Pode ser o seu nome ou um apelido!"
+                    />
+                </div>
+                <div style={{ marginBottom: '20px' }}>
+                    <LabelText htmlFor="email">Email:</LabelText>
+                    <InputCadastro
+                        type="email"
+                        id="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        placeholder="exemplo@exemplo.com"
+                    />
+                </div>
+                <div style={{ marginBottom: '20px' }}>
+                    <LabelText htmlFor="password">Senha:</LabelText>
+                    <InputCadastro
+                        type="password"
+                        id="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        placeholder="Insira uma senha forte!"
+                    />
+                </div>
 
-               <Link style={{ paddingBottom: '5px' }} href='/createAccount'>Já possui conta?</Link>
+                <div style={{ marginBottom: '20px' }}>
+                    <LabelText htmlFor="phoneNumber" >Número de Telefone:</LabelText>
+                    <InputCadastro
+                        type="text"
+                        id="phoneNumber"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        placeholder="(Opcional)"
+                    />
+                </div>
+                <div style={{ marginBottom: '20px' }}>
+                    <LabelText htmlFor="whatsapp">
+                        <input
+                            type="checkbox"
+                            id="whatsapp"
+                            checked={isWhatsApp}
+                            onChange={(e) => setIsWhatsApp(e.target.checked)}
+                            style={{ marginRight: '5px' }}
+                        />
+                        Aceita receber informativos sobre eventos e promoções via WhatsApp?
+                    </LabelText>
+                </div>
 
-               <button type="submit" style={{ marginTop: '10px', width: '100%', padding: '10px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Criar Conta</button>
-           </form>
-           {error && <p style={{ color: 'red', marginTop: '10px' }}>Erro: {error}</p>}
+                <Link style={{ paddingBottom: '5px', color:'white', display:'flex', flexDirection:'row', alignItems:'center' }} href='../../login/'>Já possui conta? <IoIosArrowForward /> Login<IoIosArrowBack /></Link>
 
-       </div>
+                <button type="submit" style={{ marginTop: '10px', width: '100%', padding: '10px', backgroundColor: '#82d79d', color: 'black', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Criar conta</button>
+            </form>
+            {error && <p style={{ color: 'red', marginTop: '10px' }}>Erro: {error}</p>}
+
+        </Container>
         </>
-        
-        
-        
     );
 }
