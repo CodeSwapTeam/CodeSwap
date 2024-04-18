@@ -238,13 +238,16 @@ export default function Login() {
         { frase: '"A vida é 10% o que acontece com você e 90% como você reage a isso."', autor: " - Charles R. Swindoll", referencia: 'Livro "The Tough Stuff" (1987).' },
 
     ];
+
+    
+    const [fraseAleatoria, setFraseAleatoria] = useState(null);
     
     function getFraseAleatoria() {
         const index = Math.floor(Math.random() * frases.length);
         return frases[index];
     }
 
-    const fraseAleatoria = getFraseAleatoria();
+    
 
     const { currentUser, setCurrentUser } = useAuthContext();
     const r = useRouter();
@@ -254,6 +257,7 @@ export default function Login() {
     const [error, setError] = useState('');
 
     useEffect(() => {
+        setFraseAleatoria(getFraseAleatoria());
         //console.log('login', currentUser);
         if (currentUser) {
             r.push('/Dashboard');
@@ -303,9 +307,9 @@ export default function Login() {
                 <Image src="/assets/logo4k.png" alt="logo" width={200} height={200}  />
                 <LogoEffect></LogoEffect>
                     <CodeSwap>CODE SWAP</CodeSwap>
-                    <FraseMotivacional>{fraseAleatoria.frase}</FraseMotivacional>
-                    <AutorMotivacional>{fraseAleatoria.autor}</AutorMotivacional>
-                    <ReferenciaMotivacional>{fraseAleatoria.referencia}</ReferenciaMotivacional>
+                    {fraseAleatoria && <FraseMotivacional>{fraseAleatoria.frase}</FraseMotivacional> }
+                    {fraseAleatoria && <AutorMotivacional>{fraseAleatoria.autor}</AutorMotivacional> }
+                    {fraseAleatoria && <ReferenciaMotivacional>{fraseAleatoria.referencia}</ReferenciaMotivacional> }
             </LeftSide>
             <RightSide>
             <BoxContainer>
