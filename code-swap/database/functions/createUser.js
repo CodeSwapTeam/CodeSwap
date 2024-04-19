@@ -12,6 +12,7 @@ export const CreateUser = async (data) => {
         email: data.email,
         phone: data.phone,
         whatsapp: data.whatsapp,
+        CoursesPermissions: [], // Array de objetos com courseId: curso e permissionModule:
         permissions: 1,
         codes: 100,
         xp: 100,

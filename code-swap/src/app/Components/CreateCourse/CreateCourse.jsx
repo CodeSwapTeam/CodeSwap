@@ -14,7 +14,7 @@ import { getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import { convertBlobToBase64 } from "image-conversion";
 
 
-import {  ref } from "firebase/storage";
+import { ref } from "firebase/storage";
 
 const CreateCourses = () => {
 
@@ -28,6 +28,8 @@ const CreateCourses = () => {
     const [imgUrl, setImgUrl] = useState('');
     const [progress, setProgress] = useState(0);
 
+    const [SequentialModule, setSequentialModule] = useState(false);
+    const [modulePermission, setModulePermission] = useState(0); 
 
     const handleChangeCategory = (event) => {
         setSelectedCategory(event.target.value);
@@ -60,6 +62,8 @@ const CreateCourses = () => {
     const [formData, setFormData] = useState({
         title: '',
         status: 'pending',
+        registrations: [], // Lista de alunos inscritos no curso com ID e status (concluído, desistente, cursando)
+
         description: '',
         owner: '',
         thumbnail: imgUrl ? imgUrl : '',
@@ -69,6 +73,9 @@ const CreateCourses = () => {
             {
                 nameModule: '',
                 description: '',
+                registrationsModule: [], // Lista de alunos inscritos no módulo com ID e status (concluído, desistente, cursando)
+
+                modulePermission: modulePermission,
                 idModule: uuidv4(),
                 lessons: [
                     {
@@ -101,11 +108,12 @@ const CreateCourses = () => {
             const courseData = {
                 ...formData,
                 category: selectedCategory,
-                thumbnail: imgUrl
+                thumbnail: imgUrl,
+                SequentialModule: SequentialModule
             };
 
-            
-            
+
+
 
             controller.CreateCourse(courseData, user);
 
@@ -117,13 +125,22 @@ const CreateCourses = () => {
             // Limpa o formulário após o envio bem-sucedido
             setFormData({
                 title: '',
+                status: 'pending',
+                registrations: [],
+
                 description: '',
                 owner: '',
+                thumbnail: '',
+                idCourse: uuidv4(),
+                category: selectedCategory,
                 modules: [
                     {
                         nameModule: '',
                         description: '',
-                        idModule: '',
+                        registrationsModule: [],
+
+                        modulePermission: modulePermission,
+                        idModule: uuidv4(),
                         lessons: [
                             {
                                 nameLesson: '',
@@ -141,11 +158,19 @@ const CreateCourses = () => {
         }
     };
 
+    
+
     // Função para adicionar um novo módulo a um curso existente
     const handleAddModule = () => {
+
+        setModulePermission(modulePermission + 1);
+        
+
         const newModule = {
             nameModule: '',
             description: '',
+            //module com permissão sequencial sempre adiciona o nivel de permissão +1
+            modulePermission: SequentialModule ? modulePermission + 1 : modulePermission,
             idModule: '',
             lessons: [
                 {
@@ -158,7 +183,12 @@ const CreateCourses = () => {
         //adicionar id unico para cada modulo criado dentro do curso
         newModule.idModule = uuidv4();
 
-        
+        console.log('Nível de persimissao do modulo', newModule.modulePermission);
+
+        //se sequencialMoule for false, o modulo é criado com permissão 0
+        if (!SequentialModule) {
+            newModule.modulePermission = 0;
+        }
 
 
         setFormData({ ...formData, modules: [...formData.modules, newModule] });
@@ -182,12 +212,12 @@ const CreateCourses = () => {
         setFormData({ ...formData, modules: updatedModules });
     };
 
-    
+
 
     const handleUpload = async (e) => {
         e.preventDefault();
         const file = e.target.file.files[0];
-        if(!file) return;
+        if (!file) return;
         const storageRef = ref(storage, `images/${file.name}`);
         const uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -197,19 +227,24 @@ const CreateCourses = () => {
         }, (error) => {
             console.error(error);
         }
-        , () => {
-            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                setImgUrl(downloadURL);
-                console.log('File available at', downloadURL);
+            , () => {
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    setImgUrl(downloadURL);
+                    console.log('File available at', downloadURL);
+                });
+                //limpar o campo de upload
+                e.target.file.value = '';
             });
-            //limpar o campo de upload
-            e.target.file.value = '';
-        });
+    };
+
+    
+    //função para lidar com alteração no checkbox
+    const handleChangeCheckbox = (e) => {
+        setSequentialModule(e.target.checked);
+        
     };
 
 
-
-    
 
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', border: '1px solid #ccc', borderRadius: '10px', backgroundColor: '#f8f9fa' }}>
@@ -248,8 +283,16 @@ const CreateCourses = () => {
                         required
                         style={{ width: '100%', padding: '10px', border: '1px solid #007bff', borderRadius: '5px' }}
                     />
+
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <label htmlFor="private" style={{ fontWeight: 'bold', marginBottom: '5px', color: '#007bff' }}>Módulos sequenciais?</label>
+                        <input type="checkbox" id="private" name="private" value="private" style={{ padding: '10px', border: '1px solid #007bff', borderRadius: '5px' }} onChange={handleChangeCheckbox} />
+                    </div>
+
+
                 </div>
-                
+
                 <div style={{ marginBottom: '20px' }}>
                     <label style={{ fontWeight: 'bold', color: '#007bff' }}>Módulos:</label>
                     <ul style={{ listStyle: 'none', padding: '0', marginLeft: '0' }}>
@@ -319,15 +362,15 @@ const CreateCourses = () => {
                 <button type="submit" style={{ padding: '10px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%' }}>Criar Curso</button>
             </form>
             <div>
-                    <label style={{ fontWeight: 'bold', color: '#007bff' }}>Upload Arquivos:</label>
-                    <form onSubmit={handleUpload} >
-                        <input type="file" name="file" />
-                        <button style={{ padding: '5px', backgroundColor: 'blue', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} type="submit">Enviar</button>
-                    </form>
-                    <br />
-                    {!imgUrl && <progress value={progress} max="100" />} 
-                    {imgUrl && <img src={imgUrl} alt="Imagem do curso" style={{ width: '100px', height: '100px' }} />}
-                </div>
+                <label style={{ fontWeight: 'bold', color: '#007bff' }}>Upload Arquivos:</label>
+                <form onSubmit={handleUpload} >
+                    <input type="file" name="file" />
+                    <button style={{ padding: '5px', backgroundColor: 'blue', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} type="submit">Enviar</button>
+                </form>
+                <br />
+                {!imgUrl && <progress value={progress} max="100" />}
+                {imgUrl && <img src={imgUrl} alt="Imagem do curso" style={{ width: '100px', height: '100px' }} />}
+            </div>
         </div>
     )
 };

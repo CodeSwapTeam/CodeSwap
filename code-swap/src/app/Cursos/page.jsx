@@ -54,8 +54,8 @@ const Page = () => {
                                 
                                 <div style={{ margin: '1px', border: '1px solid grey', padding: '5px' , width: '40%' }}>
                                     <h3 style={{ color: 'green' }}>{course.title}</h3>
-                                    <p>{course.modules.length} módulos</p>
-                                    <p>{course.modules.reduce((acc, module) => acc + module.lessons.length, 0)} aulas</p>
+                                    <p style={{ color: 'blue' }}>{course.modules.length} módulos</p>
+                                    <p style={{ color: 'blue' }}>{course.modules.reduce((acc, module) => acc + module.lessons.length, 0)} aulas</p>
                                     <button style={{ padding: '5px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%' }} onClick={() => redirectToCourseDescription(course.idCourse)}>Ver cursos</button>
                                 </div>
                             </div>
