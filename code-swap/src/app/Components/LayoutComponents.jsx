@@ -5,6 +5,22 @@ import NavBarPrivate from '../Components/NarBarPrivate/page';
 import { getCookies } from '../services/cookies';
 import { decryptObjectData } from '../services/encryptedAlgorithm';
 import { useAuthContext } from "../contexts/Auth";
+import styled from 'styled-components';
+
+const PageContainer = styled.section`
+
+`
+
+const ContentContainer = styled.div`
+    overflow-x: hidden;
+    height: 100vh;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+`
 
 const LayoutComponents = ({ children }) => {
 
@@ -41,10 +57,12 @@ const LayoutComponents = ({ children }) => {
     }, [currentUser]);
 
     return (
-        <div>
+        <PageContainer>
             {userLogged ? <NavBarPrivate userData={userData} /> : <NavBarPublic />}
-            {children}
-        </div>
+            <ContentContainer>
+                {children}
+            </ContentContainer>
+        </PageContainer>
     );
 }
 

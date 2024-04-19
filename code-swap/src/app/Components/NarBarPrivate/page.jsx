@@ -10,7 +10,6 @@ const navbarStyle = {
   backgroundColor: 'rgba(0, 0, 0, 0.5)',
   overflow: 'hidden',
   display: 'flex',
-
 };
 
 const navButtonStyle = {
@@ -28,7 +27,6 @@ const navButtonStyle = {
 
 const logOutButtonStyle = {
     top: '0',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     color: 'white',
     padding: '14px 16px',
     border: 'none',
