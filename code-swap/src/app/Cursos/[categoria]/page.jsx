@@ -15,28 +15,38 @@ const Page = () => {
     const { categoria } = useParams();
     const [courses, setCourses] = useState([]);
     const [user, setUser] = useState({});
+    const[userLogged, setUserLogged] = useState();
 
     //função para descriptografar os dados do usuário
     const[userPermission, setUserPermission] = useState();
+
    async function decryptUserData() {
         const cookies = await getCookies();
         
-        const userDecrypted = decryptObjectData(cookies.value);
+        if(cookies) {
+            
+            setUserLogged(true);
+            const userDecrypted = decryptObjectData(cookies.value);
+
+            if(userDecrypted) {
+                //console.log(userDecrypted);
+                setUser(userDecrypted);
+                setUserPermission(userDecrypted.CoursesPermissions);
+            }else {
+                setUserLogged(false);
+            }
+        
+        }else {
+            setUserLogged(false);
+        }
         
         
         
-        setUserPermission(userDecrypted.CoursesPermissions);
-        setUser(userDecrypted);
-        console.log('userPermission', userPermission);
     
-}
-//
-function checarPermissao() {
-    
-    
-}
+    }
 
     useEffect(() => {
+       
         
         decryptUserData();
         
@@ -44,7 +54,7 @@ function checarPermissao() {
             const coursesData = await getCoursesByCategory(categoria);
             setCourses(coursesData);
             //console.log(coursesData);
-            checarPermissao();
+            
         };
         fetchCourses();
     }, [categoria]);
@@ -79,14 +89,25 @@ function checarPermissao() {
             <p>{course.description}</p>
 
             <div style={{border: '1px solid black', height: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}} >
-                {course.modules.map((module, index) => {
-                    // Encontre a permissão do usuário para este módulo
-                    const userModulePermission = user.CoursesPermissions[0].permissionModule;
-                        console.log('userModulePermission', userModulePermission);
-                        const modulePermission = module.modulePermission
+                {course.modules.map((module, indexC) => {
+                    const coursePermission = course.modules;
+                    //nivel de permissão para ver o  modulo
+                    console.log('coursePermission', coursePermission);
+                    const modulePermission = coursePermission[indexC].modulePermission;
+
+                    //console.log('categoria', categoria);
+
+                    //nivelde permisão do usuário
+                    //console.log('userPermission', userPermission);
+                    //procure o objeto dentro de userPermission que tenha o mesmo courseId da categoria
+                    const userPermissionCourse = userPermission ? userPermission.find((permission) => permission.courseId === course.idCourse) : 0;
+                    //pegar o nivel de permissão do modulo
+                    console.log('userPermissionCourse', userPermissionCourse.permissionModule);
+                   
+                   
                         console.log('modulePermission', modulePermission);
                     return (
-                        <div key={index} style={{ backgroundColor: '#d0d0d0', margin: '10px', padding: '5px' }}>
+                        <div key={indexC} style={{ backgroundColor: '#d0d0d0', margin: '10px', padding: '5px' }}>
                             <h3 style={{ color: 'green' }}>{module.nameModule}</h3>
                             <p>{module.description}</p>
                             {module.lessons.map((lesson, index) => (
@@ -95,8 +116,8 @@ function checarPermissao() {
                                 </div>
                             ))}
                                 {/**se o userPermission é maior que o module permission renderizar botao */}
-                                {userModulePermission >= modulePermission && (
-                                    <button style={{ padding: '5px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%' }} onClick={() => redirectToModuleDescription(module.idModule)}>Ver módulo</button>
+                                {userLogged  && userPermissionCourse.permissionModule >= modulePermission && (
+                                    <button style={{ padding: '5px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%' }} onClick={() => redirectToModuleDescription(module.idModule)}>Ver modulo</button>
                                 )}
                         </div>
                     );
