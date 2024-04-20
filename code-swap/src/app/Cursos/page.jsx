@@ -19,7 +19,7 @@ const Page = () => {
             
             setCategories(categoriesData);
             setCourses(coursesData);
-            console.log(coursesData);
+            //console.log(coursesData);
         };
         fetchCategoriesAndCourses();
     }, []);
