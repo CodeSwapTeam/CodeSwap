@@ -5,6 +5,10 @@ import { decryptObjectData, encryptObjectData } from "@/app/services/encryptedAl
 import { getUserData } from "./getUserId";
 
 export const SubscribeUserCourse = async (userId, courseId, permission) => {
+    console.log('userId:', userId);
+console.log('courseId:', courseId);
+console.log('permission:', permission);
+
     try {
         const userRef = doc(db, "Users", userId);
         await updateDoc(userRef, {

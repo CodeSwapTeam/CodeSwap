@@ -14,10 +14,19 @@ export default function middleware( NextRequest){
     const cookieStore = cookies()
 
     // Obtendo o cookie 'user' e seu valor
-    const user = cookieStore.get('user')?.value;
+    const userCookie = cookieStore.get('user')?.value;
 
-    // Descriptografando os dados do usuário, se existir
-    const userDecrypted = user ? decryptObjectData(user) : null;
+    let userDecrypted = null;
+
+    if (userCookie) {
+        try {
+          userDecrypted = decryptObjectData(userCookie);
+          
+        } catch (error) {
+          console.error('Erro ao descriptografar cookie do usuário:', error);
+          return NextResponse.redirect(new URL('/login', NextRequest.url));
+        }
+      }
     
     // Verificando se a página atual é a página inicial
     const isHomePage = NextRequest.nextUrl.pathname === '/';
@@ -28,7 +37,7 @@ export default function middleware( NextRequest){
     // Se a URL começa com '/Cursos/' e contém '/modulo/'
     if (NextRequest.nextUrl.pathname.startsWith('/Cursos/') && NextRequest.nextUrl.pathname.includes('/modulo/')) {
         // Se o usuário não estiver autenticado, redirecione para a página de login
-       
+      
         if (!userDecrypted) {
             return NextResponse.redirect(new URL('/login', NextRequest.url));
         }

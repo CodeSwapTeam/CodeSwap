@@ -2,12 +2,15 @@
 import React, { useEffect, useState } from 'react';
 
 
-
-import { useParams } from 'next/navigation';
+import { getCookies } from '@/app/services/cookies';
+import { decryptObjectData } from '@/app/services/encryptedAlgorithm';
+import { useParams, useRouter } from 'next/navigation';
 import { getModuleByCourseAndModuleId } from '../../../../../../database/functions/createCategory';
 import { UpdateUserCourseStatus, finishUserModule } from '../../../../../../database/functions/subscribeUserCourse';
 
 const Page = () => {
+
+    const router = useRouter();
 
     //pegar o parametro da url
     const { categoria, modulo } = useParams();
@@ -15,12 +18,12 @@ const Page = () => {
     const [module, setModule] = useState([]);
     const [lessonSelected, setLessonSelected] = useState(null);
 
+    
+
     useEffect(() => {
-        
         const fetchModule = async () => {
             const moduleData = await getModuleByCourseAndModuleId(categoria,modulo);
             setModule(moduleData);
-            //console.log(moduleData);
         };
         fetchModule();
     }, [categoria, modulo]);
@@ -31,8 +34,6 @@ const Page = () => {
         //pegar  a lesson selecionada dentro do modulo pelo index
         const lesson = module[0].lessons[index];
         setLessonSelected(lesson);
-        
-
     }
 
     //função para concluir o curso
@@ -41,7 +42,8 @@ const Page = () => {
         //chamar a função de atualizar o status do curso
         finishUserModule(categoria, modulo);
 
-        //atualizar os dados do usuario nos cookies 
+        //redirecionar para a página de cursos
+        router.push(`/Cursos/${categoria}`);
         
     }
 

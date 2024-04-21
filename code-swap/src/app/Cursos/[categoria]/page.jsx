@@ -1,7 +1,5 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-
-
 import { useParams, useRouter } from 'next/navigation';
 import { getCoursesByCategory } from '../../../../database/functions/createCategory';
 import { getCookies, setCookies } from '@/app/services/cookies';
@@ -18,11 +16,11 @@ const Page = () => {
     const [user, setUser] = useState({});
     const [userLogged, setUserLogged] = useState();
 
-    //função para descriptografar os dados do usuário
     const [userPermission, setUserPermission] = useState();
-    //usuario inscrito no curso
+
     const [userSubscribed, setUserSubscribed] = useState(false);
 
+    //Ao carregar a página, verificar se o usuário está logado checando os cookies e se está inscrito no curso
     async function decryptUserData() {
         const cookies = await getCookies();
 
@@ -62,53 +60,59 @@ const Page = () => {
     }
 
     useEffect(() => {
-
+        decryptUserData();
         const fetchCourses = async () => {
             const coursesData = await getCoursesByCategory(categoria);
             setCourses(coursesData);
-            //console.log(coursesData);
         };
 
         fetchCourses();
-        decryptUserData();
+        
     }, [categoria]);
 
     //função para redirecionar para a página de descrição do modulo
     function redirectToModuleDescription(idModule) {
-         router.push(`/Cursos/${categoria}/modulo/${idModule}`);
-      // console.log(`/Cursos/${categoria}/modulo/${idModule}`)
-       subscribeModule(categoria, idModule);
+        router.push(`/Cursos/${categoria}/modulo/${idModule}`);
+        subscribeModule(categoria, idModule);
     }
 
 
     //se botao de inscrever-se for clicado, chama a função de inscrever o usuário no curso
     async function subscribeUser(course) {
-
-        try {
-            await SubscribeUserCourse(user.id, course.idCourse, 0);
-            setUserSubscribed(true);
-            //buscar os dados do usuário novamente no banco de dados e atualizar os cookies
-
-            const novosDados = await getUserData(user.userId).then((userData) => {
-
-                return userData;
-
-            });
-            setUser(novosDados);
-            RegisterUserCourse(course.title, user.userId, 'inscrito');
-
-            //buscar objeto User que tem o userId == user. uid
-            const userData = await getUserData(user.userId);
-            //criptografar o objeto
-
-            const userDataCript = encryptObjectData(userData);
-            //setar nos  cookies o o token acess criptografado
-            setCookies(userDataCript);
-
-
-        } catch (error) {
-            console.error('Erro ao inscrever o usuário no curso:', error);
+        //verifica se o curso é premium e o usuário não é premium
+        if (course.coursePremium === true && user.premium === false) {
+            //se for premium, redireciona para a página de pagamento
+           router.push(`/SwapPro`);
+            return;
+        }else{
+            try {
+                await SubscribeUserCourse(user.id, course.idCourse, 0);
+                setUserSubscribed(true);
+                //buscar os dados do usuário novamente no banco de dados e atualizar os cookies
+    
+                const novosDados = await getUserData(user.userId).then((userData) => {
+    
+                    return userData;
+    
+                });
+                setUser(novosDados);
+                RegisterUserCourse(course.title, user.userId, 'inscrito');
+    
+                //buscar objeto User que tem o userId == user. uid
+                const userData = await getUserData(user.userId);
+                //criptografar o objeto
+    
+                const userDataCript = encryptObjectData(userData);
+                //setar nos  cookies o o token acess criptografado
+                setCookies(userDataCript);
+    
+    
+            } catch (error) {
+                console.error('Erro ao inscrever o usuário no curso:', error);
+            }
         }
+        
+        
     }
 
     //função para se inscrever no módulo
@@ -125,13 +129,13 @@ const Page = () => {
                 <div key={index} style={{ backgroundColor: '#f0f0f0', margin: '20px', padding: '10px' }}>
                     <h2 style={{ color: 'blue' }}>{course.title}</h2>
                     {userLogged && !userSubscribed && (
-    <button 
-        style={{ padding: '5px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%' }} 
-        onClick={() => subscribeUser(course)}
-    >
-        Inscrever-se
-    </button>
-)}
+                        <button
+                            style={{ padding: '5px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%' }}
+                            onClick={() => subscribeUser(course)}
+                        >
+                            Inscrever-se
+                        </button>
+                    )}
                     <p>{course.description}</p>
 
                     <div style={{ border: '1px solid black', height: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} >

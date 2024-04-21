@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, setDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
 export const CreateUser = async (data) => {
@@ -10,6 +10,7 @@ export const CreateUser = async (data) => {
         idDataBase: '',
         userId: data.userId,
         email: data.email,
+        premium: false,
         phone: data.phone,
         whatsapp: data.whatsapp,
         CoursesPermissions: [], // Array de objetos com courseId: curso e permissionModule:

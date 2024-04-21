@@ -3,7 +3,6 @@
 //import { cookies } from 'next/headers'
 import { getCookies, removeCookies } from "../services/cookies"
 import { useRouter } from "next/navigation";
-import Link from 'next/link'
 import { useAuthContext } from "../contexts/Auth";
 import { useEffect, useState } from "react";
 
@@ -28,7 +27,6 @@ export default function Dashboard(){
         async function pegarDadosCookies(){
             if(currentUser == null){
                 const userCript = await getCookies();
-                //console.log(userCript.value);
                 
                 const userDescript = decryptObjectData(userCript.value);
                 //console.log(userDescript);
@@ -37,7 +35,6 @@ export default function Dashboard(){
                 setCurrentUser(userDescript);
                 
              }else{
-                //console.log('currentUser', currentUser);
                 setUserData(currentUser)
              }
         }

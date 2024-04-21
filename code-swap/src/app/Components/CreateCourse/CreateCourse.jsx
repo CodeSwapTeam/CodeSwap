@@ -29,6 +29,7 @@ const CreateCourses = () => {
     const [progress, setProgress] = useState(0);
 
     const [SequentialModule, setSequentialModule] = useState(false);
+    const [coursePremium, setCoursePremium] = useState(false);
     const [modulePermission, setModulePermission] = useState(0); 
 
     const handleChangeCategory = (event) => {
@@ -67,6 +68,7 @@ const CreateCourses = () => {
         description: '',
         owner: '',
         thumbnail: imgUrl ? imgUrl : '',
+        coursePremium: false,
         idCourse: uuidv4(),
         category: selectedCategory ? selectedCategory : 'categoria não selecionada',
         modules: [
@@ -109,7 +111,8 @@ const CreateCourses = () => {
                 ...formData,
                 category: selectedCategory,
                 thumbnail: imgUrl,
-                SequentialModule: SequentialModule
+                SequentialModule: SequentialModule,
+                coursePremium: coursePremium,
             };
 
 
@@ -127,7 +130,7 @@ const CreateCourses = () => {
                 title: '',
                 status: 'pending',
                 registrations: [],
-
+                coursePremium: false,
                 description: '',
                 owner: '',
                 thumbnail: '',
@@ -245,6 +248,11 @@ const CreateCourses = () => {
         
     };
 
+    //função para lidar com alteração no checkbox de curso premium
+    const handleChangeCheckboxPremium = (e) => {
+        setCoursePremium(e.target.checked);
+    }
+
 
 
     return (
@@ -289,6 +297,11 @@ const CreateCourses = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <label htmlFor="private" style={{ fontWeight: 'bold', marginBottom: '5px', color: '#007bff' }}>Módulos sequenciais?</label>
                         <input type="checkbox" id="private" name="private" value="private" style={{ padding: '10px', border: '1px solid #007bff', borderRadius: '5px' }} onChange={handleChangeCheckbox} />
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <label htmlFor="private" style={{ fontWeight: 'bold', marginBottom: '5px', color: '#007bff' }}>Curso Premium?</label>
+                        <input type="checkbox" id="private" name="private" value="private" style={{ padding: '10px', border: '1px solid #007bff', borderRadius: '5px' }} onChange={handleChangeCheckboxPremium} />
                     </div>
 
 

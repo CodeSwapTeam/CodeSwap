@@ -8,11 +8,11 @@ import { setCookies } from "../services/cookies";
 import Link from 'next/link'
 
 import styled from 'styled-components';
-import {  encryptObjectData } from "../services/encryptedAlgorithm";
+import { encryptObjectData } from "../services/encryptedAlgorithm";
 import { getUserData } from "../../../database/functions/getUserId";
 import Image from 'next/image';
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import {  GetPhrases } from "../../../database/functions/phrases";
+import { GetPhrases } from "../../../database/functions/phrases";
 
 const Container = styled.div`
 margin: 10vh auto;
@@ -31,7 +31,6 @@ justify-content: space-around;
 align-items: center;
 }
 `
-
 const LeftSide = styled.div`
 display: flex;
 justify-content: center;
@@ -42,7 +41,6 @@ width: 50%;
 height: 100%;
 padding: 5rem 0 5rem 0;
 `
-
 const RightSide = styled.div`
 width: 50%;
 display: flex;
@@ -52,7 +50,6 @@ align-items: center;
 height: 100%;
 
 `
-
 const CodeSwap = styled.h2`
 //animation: animateCodeSwap 2.5s alternate infinite;
 font-family: "Play", sans-serif;
@@ -85,7 +82,6 @@ text-shadow: 0 0 1.5px #fff,
 }
 }*/
 `
-
 const FraseMotivacional = styled.h2`
 text-align: center;
 color: #fff;
@@ -113,7 +109,6 @@ flex-direction: column;
 width: 100%;
 align-items: center;
 `
-
 const InputContainer = styled.div`
 display: flex;
 width: 90%;
@@ -121,7 +116,6 @@ flex-direction: column;
 justify-content: center;
 align-items: center;
 `
-
 const BoxContainer = styled.div`
 display: flex;
 flex-direction: column;
@@ -138,7 +132,6 @@ box-shadow: 0 0 1.5px #fff,
     0 0 20px #0fa,
     0 0 23px #0fa;
 `
-
 const LogoEffect = styled.div`
 
 animation: animateLogoCodeSwap 2.5s alternate infinite;
@@ -167,19 +160,16 @@ box-shadow: 0 0 7px #fff,
 }
 }
 `
-
 const LabelText = styled.label`
 color: #fff;
 display: 'block';
 margin-bottom: '5px';
 `
-
 const LinkText = styled.p`
 display: flex;
 flex-direction: row;
 color: #fff;
 `
-
 const LoginAlternatives = styled.div`
 display: flex;
 flex-direction: row;
@@ -187,7 +177,6 @@ justify-content: center;
 margin: 10px;
 width: 100%;
 `
-
 const InputDiv = styled.div`
 margin-bottom: 20px;
 width: 100%;
@@ -197,17 +186,17 @@ width: 100%;
 export default function Login() {
 
     const [fraseAleatoria, setFraseAleatoria] = useState(null);
-    
+
     async function getFraseAleatoria() {
         const frases = await GetPhrases();
         const index = Math.floor(Math.random() * frases.length);
         setFraseAleatoria(frases[index]);
     }
 
-    
+
 
     const { currentUser, setCurrentUser } = useAuthContext();
-    const r = useRouter();
+    const router = useRouter();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -215,10 +204,9 @@ export default function Login() {
 
     useEffect(() => {
         getFraseAleatoria();
-        
-        //console.log('login', currentUser);
+
         if (currentUser) {
-            r.push('/Dashboard');
+            router.push('/Dashboard');
         }
 
 
@@ -238,12 +226,10 @@ export default function Login() {
             const userDataCript = encryptObjectData(userData);
             //setar nos  cookies o o token acess criptografado
             setCookies(userDataCript);
-            //console.log('dados criptografados pelo algoritmo', userDataCript);
 
             setEmail('');
             setPassword('');
             setError('');
-            //console.log(userData);
 
             setCurrentUser(userData); // atualiza context
 
@@ -254,57 +240,57 @@ export default function Login() {
 
     return (
         <>
-        
-        <Container>
-            <LeftSide>
-                <Image src="/assets/logo4k.png" alt="logo" width={200} height={200}  />
-                <LogoEffect></LogoEffect>
+
+            <Container>
+                <LeftSide>
+                    <Image src="/assets/logo4k.png" alt="logo" width={200} height={200} />
+                    <LogoEffect></LogoEffect>
                     <CodeSwap>CODE SWAP</CodeSwap>
-                    {fraseAleatoria && <FraseMotivacional>{fraseAleatoria.frase}</FraseMotivacional> }
-                    {fraseAleatoria && <AutorMotivacional>{fraseAleatoria.autor}</AutorMotivacional> }
-                    {fraseAleatoria && <ReferenciaMotivacional>{fraseAleatoria.referencia}</ReferenciaMotivacional> }
-            </LeftSide>
-            <RightSide>
-            <BoxContainer>
-                <Form onSubmit={handleSubmit}>
-                    <InputContainer>
-                    <InputDiv>
-                        <LabelText htmlFor="email" style={{ display: 'block', marginBottom: '5px' }}>E-mail:</LabelText>
-                        <input
-                            type="email"
-                            id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            autoComplete="email"
-                            style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
-                        />
-                    </InputDiv>
-                    <InputDiv>
-                        <LabelText htmlFor="password" style={{ display: 'block', marginBottom: '5px' }}>Senha:</LabelText>
-                        <input
-                            type="password"
-                            id="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            autoComplete="current-password"
-                            style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
-                        />
-                    </InputDiv>
-                    <LinkText>Não possui conta?<Link style={{ paddingBottom: '5px', color:'#7cd393', display:'flex', flexDirection:'row', alignItems:'center' }} href='/createAccount/'><IoIosArrowForward /> Cadastrar-se<IoIosArrowBack /></Link></LinkText>
-                    <button type="submit" style={{margin: '20px 0 20px 0', width: '60%', padding: '10px', backgroundColor: '#7cd393', color: 'black', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Entrar</button>
-                    </InputContainer>
-                    <FraseMotivacional>Ou entre com:</FraseMotivacional>
-                        <LoginAlternatives>
-                            <Image src="/assets/GoogleLogo.png" alt="google" width={50} height={50} style={{margin:'0 5px 0 5px'}}/>
-                            <Image src="/assets/githubLogo.png" alt="github" width={50} height={50} style={{margin:'0 5px 0 5px'}}/>
-                        </LoginAlternatives>
-                </Form>
-            </BoxContainer>
-            </RightSide>
-            {error && <p style={{ color: 'red', marginTop: '10px' }}>Error: {error}</p>}
-        </Container>
+                    {fraseAleatoria && <FraseMotivacional>{fraseAleatoria.frase}</FraseMotivacional>}
+                    {fraseAleatoria && <AutorMotivacional>{fraseAleatoria.autor}</AutorMotivacional>}
+                    {fraseAleatoria && <ReferenciaMotivacional>{fraseAleatoria.referencia}</ReferenciaMotivacional>}
+                </LeftSide>
+                <RightSide>
+                    <BoxContainer>
+                        <Form onSubmit={handleSubmit}>
+                            <InputContainer>
+                                <InputDiv>
+                                    <LabelText htmlFor="email" style={{ display: 'block', marginBottom: '5px' }}>E-mail:</LabelText>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                        autoComplete="email"
+                                        style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
+                                    />
+                                </InputDiv>
+                                <InputDiv>
+                                    <LabelText htmlFor="password" style={{ display: 'block', marginBottom: '5px' }}>Senha:</LabelText>
+                                    <input
+                                        type="password"
+                                        id="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        autoComplete="current-password"
+                                        style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
+                                    />
+                                </InputDiv>
+                                <LinkText>Não possui conta?<Link style={{ paddingBottom: '5px', color: '#7cd393', display: 'flex', flexDirection: 'row', alignItems: 'center' }} href='/createAccount/'><IoIosArrowForward /> Cadastrar-se<IoIosArrowBack /></Link></LinkText>
+                                <button type="submit" style={{ margin: '20px 0 20px 0', width: '60%', padding: '10px', backgroundColor: '#7cd393', color: 'black', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Entrar</button>
+                            </InputContainer>
+                            <FraseMotivacional>Ou entre com:</FraseMotivacional>
+                            <LoginAlternatives>
+                                <Image src="/assets/GoogleLogo.png" alt="google" width={50} height={50} style={{ margin: '0 5px 0 5px' }} />
+                                <Image src="/assets/githubLogo.png" alt="github" width={50} height={50} style={{ margin: '0 5px 0 5px' }} />
+                            </LoginAlternatives>
+                        </Form>
+                    </BoxContainer>
+                </RightSide>
+                {error && <p style={{ color: 'red', marginTop: '10px' }}>Error: {error}</p>}
+            </Container>
         </>
     )
 

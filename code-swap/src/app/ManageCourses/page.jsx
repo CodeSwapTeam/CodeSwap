@@ -11,7 +11,7 @@ import { decryptObjectData } from '../services/encryptedAlgorithm';
 import { useRouter } from 'next/navigation';
 
 import { GetAllUsers } from '../../../database/functions/GetAllUsers';
-import UserList from '../services/ListUsers';
+import UserList from '../Components/ListUsers';
 
 const CourseForm = () => {
 
