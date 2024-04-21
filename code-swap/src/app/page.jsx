@@ -75,7 +75,7 @@ line-height: 1;
 }
 `
 
-const TextoEstatico = styled.p`
+const TextoEstatico = styled.div`
 margin-top: 0.5rem;
 font-weight: 600;
 font-family: 'Inter';

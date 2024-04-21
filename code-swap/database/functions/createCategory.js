@@ -1,5 +1,7 @@
 import { doc, getDoc, setDoc, updateDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
+import { getCookies } from "@/app/services/cookies";
+import { decryptObjectData } from "@/app/services/encryptedAlgorithm";
 
 
 //criar uma categoria para o curso
@@ -113,14 +115,76 @@ export async function getCoursesByCategory(idCourse) {
             }
         });
 
-        return courses;
+        //verificar se o usuario esta logado checando se o token de acesso esta nos cookies
+        const cookies = await getCookies();
+
+        let userDecrypted = null;
+        let user = null;
+
+        //descriptografar o token de acesso se cookies não for undefined
+        if (cookies) {
+            userDecrypted = decryptObjectData(cookies.value);
+
+            //verificar se o usuario esta logado
+            if (!userDecrypted) {
+                user = null;
+            } else {
+                user = userDecrypted.userId;
+            }
+        }
+
+        let userLoggedData = null;
+
+        //se usuario estiver logado dentro do curso, dentro de modules o aray registrationsModule será filtrado somente os objetos que tem o userId igual ao userId do usuario logado
+        if (user) {
+            userLoggedData = courses[0].modules.map((module) => {
+                return {
+                    ...module,
+                    registrationsModule: module.registrationsModule.filter((registration) => registration.userId === user)
+                }
+            });
+
+            let registrationsCourse = courses[0].registrations.filter((registration) => registration.userId === user);
+
+            if (registrationsCourse.length === 0) {
+                registrationsCourse = null;
+            } else {
+                registrationsCourse = registrationsCourse[0];
+            }
+
+            //adicionar no userLoggedData o objeto registrationsCourse
+            userLoggedData = {
+                ...courses[0],
+                modules: userLoggedData,
+                registrations: registrationsCourse
+            }
+
+        } else {
+            userLoggedData = null;
+        }
+
+        //se usuario estiver logado, retornar o objeto userLoggedData, senão retornar o objeto courses
+        if (user) {
+            //adicionar dentro de um array o objeto userLoggedData e retornar o array
+            //console.log('userLoggedData:', [userLoggedData]);
+            return [userLoggedData];
+        } else {
+            //se nao estiver logado remover o item registrations de dentro do objeto courses
+            delete courses[0].registrations;
+            //dentro do curses[0].modules remover todos os objetos do array registrationsModule de cada objeto do array modules
+            courses[0].modules.forEach((module) => {
+                delete module.registrationsModule;
+            });
+            //adicionar dentro de um array o objeto courses e retornar o array
+            //console.log('courses:', [courses[0]]);
+            return [courses[0]];
+
+        }
 
     } catch (error) {
         console.error('Erro ao buscar os cursos:', error);
         throw error; // Lança o erro para tratamento em um nível superior
     }
-    
-    
 }
 
 

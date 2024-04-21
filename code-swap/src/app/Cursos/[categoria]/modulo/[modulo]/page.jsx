@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 
 import { useParams } from 'next/navigation';
 import { getModuleByCourseAndModuleId } from '../../../../../../database/functions/createCategory';
+import { UpdateUserCourseStatus, finishUserModule } from '../../../../../../database/functions/subscribeUserCourse';
 
 const Page = () => {
 
@@ -19,6 +20,7 @@ const Page = () => {
         const fetchModule = async () => {
             const moduleData = await getModuleByCourseAndModuleId(categoria,modulo);
             setModule(moduleData);
+            //console.log(moduleData);
         };
         fetchModule();
     }, [categoria, modulo]);
@@ -31,7 +33,18 @@ const Page = () => {
         setLessonSelected(lesson);
         
 
-      }
+    }
+
+    //função para concluir o curso
+    const  handleFinishModule = () => {
+        
+        //chamar a função de atualizar o status do curso
+        finishUserModule(categoria, modulo);
+
+        //atualizar os dados do usuario nos cookies 
+        
+    }
+
 
 
     return (
@@ -58,7 +71,7 @@ const Page = () => {
                         </div>
                             ))}
                     </div>
-                    <button style={{ backgroundColor: '#d0d0d0' }}>Finalizar Atividade</button>
+                    <button onClick={handleFinishModule} style={{ backgroundColor: '#d0d0d0' }}>Teste Final</button>
                 </div>
                 
             </div>

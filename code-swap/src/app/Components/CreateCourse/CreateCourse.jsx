@@ -169,6 +169,7 @@ const CreateCourses = () => {
         const newModule = {
             nameModule: '',
             description: '',
+            registrationsModule: [],
             //module com permissão sequencial sempre adiciona o nivel de permissão +1
             modulePermission: SequentialModule ? modulePermission + 1 : modulePermission,
             idModule: '',

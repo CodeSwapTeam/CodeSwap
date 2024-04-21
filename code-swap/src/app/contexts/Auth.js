@@ -4,9 +4,9 @@ import { Algorithm, decryptToken } from '../services/encryptedAlgorithm';
 import { getCookies, setCookies } from '../services/cookies';
 
 // Criando o contexto de autenticação
-export const AuthContext = createContext();
+export const authContext = createContext();
 
-export const useAuthContext = () => useContext(AuthContext);
+export const useAuthContext = () => useContext(authContext);
 
 // Componente de provedor do contexto de autenticação
 export const AuthProvider = ({ children }) => {
@@ -20,8 +20,8 @@ export const AuthProvider = ({ children }) => {
   },[])
 
   return (
-    <AuthContext.Provider value={{ currentUser, setCurrentUser }}>
+    <authContext.Provider value={{ currentUser, setCurrentUser }}>
       { children}
-    </AuthContext.Provider>
+    </authContext.Provider>
   );
 };
