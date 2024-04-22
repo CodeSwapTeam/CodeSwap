@@ -3,11 +3,10 @@ import { db } from "../firebase";
 import { getCookies, setCookies } from "@/app/services/cookies";
 import { decryptObjectData, encryptObjectData } from "@/app/services/encryptedAlgorithm";
 import { getUserData } from "./getUserId";
+import { useAuthContext } from "@/app/contexts/Auth";
 
-export const SubscribeUserCourse = async (userId, courseId, permission) => {
-    console.log('userId:', userId);
-console.log('courseId:', courseId);
-console.log('permission:', permission);
+export const SubscribeUserCourse = async (userId, courseId, permission, setCurrentUser) => {
+    
 
     try {
         const userRef = doc(db, "Users", userId);
@@ -17,6 +16,12 @@ console.log('permission:', permission);
                 permissionModule: permission
             })
         });
+        //pegar os dados do usuario com o userRef
+        const userSnap = await getDoc(userRef);
+        //pegar os dados do usuario
+        const userData = userSnap.data();
+
+        setCurrentUser(userData);
     } catch (error) {
         console.error('Erro ao inscrever o usuário no curso:', error);
     }
@@ -97,15 +102,15 @@ export const subscribeUserModule = async (categoria, idModule) => {
 
     const modules = curso.modules;
     const moduleIndex = modules.findIndex((module) => module.idModule === idModule);
-
+    //console.log('moduleIndex', moduleIndex);
     if (moduleIndex === -1) {
        // console.log('Module not found');
         return;
     }
 
     const registrationsModule = modules[moduleIndex].registrationsModule;
-
-    const userRegistrationIndex = registrationsModule.findIndex(reg => reg.userId === user);
+    console.log('registrationsModule', registrationsModule);
+    const userRegistrationIndex =  registrationsModule.findIndex(reg => reg.userId === user);
 
     if (userRegistrationIndex !== -1) {
         if (registrationsModule[userRegistrationIndex].status !== 'concluido') {
@@ -141,8 +146,8 @@ export const subscribeUserModule = async (categoria, idModule) => {
 
 //função para concluír o modulo
 
-export const finishUserModule = async (categoria, idModule) => {
-   
+export const finishUserModule = async (categoria, idModule, setCurrentUser) => {
+    
 
     const querySnapshot = await getDocs(collection(db, "Modulos"));
 
@@ -240,8 +245,10 @@ export const finishUserModule = async (categoria, idModule) => {
     //atualizar os dados do usuario nos cookies
 
     const novosDados = await getUserData(userDecrypted.userId).then((userData) => {
+        console.log('novos dados atualizados', userData);
         return userData;
     });
+    setCurrentUser(novosDados);
 
     //criptografar os dados do usuario
     const userEncrypted = encryptObjectData(novosDados);

@@ -7,8 +7,10 @@ import { decryptObjectData } from '@/app/services/encryptedAlgorithm';
 import { useParams, useRouter } from 'next/navigation';
 import { getModuleByCourseAndModuleId } from '../../../../../../database/functions/createCategory';
 import { UpdateUserCourseStatus, finishUserModule } from '../../../../../../database/functions/subscribeUserCourse';
+import { useAuthContext } from '@/app/contexts/Auth';
 
 const Page = () => {
+    const {currentUser, setCurrentUser } = useAuthContext();
 
     const router = useRouter();
 
@@ -40,8 +42,8 @@ const Page = () => {
     const  handleFinishModule = () => {
         
         //chamar a função de atualizar o status do curso
-        finishUserModule(categoria, modulo);
-
+        finishUserModule(categoria, modulo,setCurrentUser);
+        
         //redirecionar para a página de cursos
         router.push(`/Cursos/${categoria}`);
         

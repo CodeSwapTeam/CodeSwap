@@ -195,7 +195,7 @@ export default function Login() {
 
 
 
-    const { currentUser, setCurrentUser } = useAuthContext();
+    const { setCurrentUser } = useAuthContext();
     const router = useRouter();
 
     const [email, setEmail] = useState('');
@@ -204,13 +204,7 @@ export default function Login() {
 
     useEffect(() => {
         getFraseAleatoria();
-
-        if (currentUser) {
-            router.push('/Dashboard');
-        }
-
-
-    }, [currentUser])
+    }, [])
 
 
     const handleSubmit = async (e) => {
@@ -232,6 +226,7 @@ export default function Login() {
             setError('');
 
             setCurrentUser(userData); // atualiza context
+            router.push('/Dashboard');
 
         } catch (error) {
             setError(error.message);

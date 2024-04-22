@@ -3,7 +3,6 @@ import { db } from "../firebase";
 
 import { useInteractionLogger } from "@/app/contexts/InteractionContext";
 import interactionsType from "@/app/contexts/interactionsType";
-import { v4 as uuidv4 } from 'uuid';
 
 export async function CreateCourse(formData, user) {
 
@@ -12,11 +11,6 @@ export async function CreateCourse(formData, user) {
     try {
 
         formData.owner = user;
-
-        
-
-        
-        //console.log(formData);
         // Referência ao documento no Firestore
         const docRef = doc(db, 'Modulos', formData.title);
 
@@ -52,8 +46,8 @@ export async function createModule(courseId, moduleData) {
             const courseData = docSnap.data();
             courseData.modules.push(moduleData);
             await updateDoc(docRef, courseData);
-            alert(`Módulo ${moduleData.nameModule} criado com sucesso!`);
-            window.location.reload();
+            //alert(`Módulo ${moduleData.nameModule} criado com sucesso!`);
+          //  window.location.reload();
         } else {
             console.error('Curso não encontrado');
         }
