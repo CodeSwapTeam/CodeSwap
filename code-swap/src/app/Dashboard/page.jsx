@@ -18,35 +18,38 @@ export default function Dashboard(){
 
     const router = useRouter();
 
+    async function pegarDadosCookies() {
+        // Se o usuário atual não estiver definido, tente pegar os dados do cookie
+        if (currentUser == null) {
+            const userCript = await getCookies();
     
+            // Se não houver dados de cookie, redirecione para a página de login
+            if (!userCript) {
+                router.push('/login');
+                return;
+            }
+    
+            // Descriptografe os dados do usuário e atualize o estado do usuário
+            const userDescript = decryptObjectData(userCript.value);
+            setUserData(userDescript);
+            setCurrentUser(userDescript);
+        } else {
+            // Se o usuário atual já estiver definido, apenas atualize o estado do usuário
+            setUserData(currentUser);
+        }
+    }
 
     
     useEffect(()=>{
-        
-
-        async function pegarDadosCookies(){
-            if(currentUser == null){
-                const userCript = await getCookies();
-                
-                const userDescript = decryptObjectData(userCript.value);
-                //console.log(userDescript);
-                setUserData(userDescript);
-                
-                setCurrentUser(userDescript);
-                
-             }else{
-                setUserData(currentUser)
-             }
-        }
+    
         pegarDadosCookies();
        
     },[userData])
 
     return(
-        <div>
-            
+        <div style={{color:'white'}}> 
             <p>Listagem de Cursos do Aluno</p>
-            {userData && <p>Bem-vindo(a) {userData.userName}</p> }
+            {userData && <p>Bem-vindo(a) <strong>{userData.userName}</strong></p> }
         </div>
     )
 }

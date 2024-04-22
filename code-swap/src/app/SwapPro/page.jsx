@@ -36,12 +36,11 @@ const PageSwapPro = () => {
     }, []);
 
     return (
-        <div>
+        <div style={{color: 'white' }}>
             <h1>Swap Pro</h1>
             <h2>Plano de assinatura</h2>
             <p>Assine o Swap Pro para ter acesso a todos os cursos e módulos disponíveis na plataforma.</p>
             <p>Valor: R$ 19,90/mês</p>
-            <button onClick={() => router.push('/pagamento')}>Assinar</button>
         </div>
     );
 }
