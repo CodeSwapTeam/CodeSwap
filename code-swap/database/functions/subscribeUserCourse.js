@@ -3,26 +3,31 @@ import { db } from "../firebase";
 import { getCookies, setCookies } from "@/app/services/cookies";
 import { decryptObjectData, encryptObjectData } from "@/app/services/encryptedAlgorithm";
 import { getUserData } from "./getUserId";
-import { useAuthContext } from "@/app/contexts/Auth";
 
 export const SubscribeUserCourse = async (userId, courseId, permission, setCurrentUser) => {
     
-
     try {
+        // Cria uma referência para o documento do usuário no banco de dados
         const userRef = doc(db, "Users", userId);
+
+        // Atualiza o documento do usuário para incluir a nova permissão do curso
         await updateDoc(userRef, {
             CoursesPermissions: arrayUnion({
                 courseId: courseId,
                 permissionModule: permission
             })
         });
-        //pegar os dados do usuario com o userRef
+
+        // Obtém o documento do usuário atualizado
         const userSnap = await getDoc(userRef);
-        //pegar os dados do usuario
+
+        // Extrai os dados do usuário do documento
         const userData = userSnap.data();
 
+        // Atualiza o usuário atual com os novos dados
         setCurrentUser(userData);
     } catch (error) {
+        // Registra o erro se houver falha ao inscrever o usuário no curso
         console.error('Erro ao inscrever o usuário no curso:', error);
     }
 }
@@ -109,7 +114,6 @@ export const subscribeUserModule = async (categoria, idModule) => {
     }
 
     const registrationsModule = modules[moduleIndex].registrationsModule;
-    console.log('registrationsModule', registrationsModule);
     const userRegistrationIndex =  registrationsModule.findIndex(reg => reg.userId === user);
 
     if (userRegistrationIndex !== -1) {
@@ -245,7 +249,7 @@ export const finishUserModule = async (categoria, idModule, setCurrentUser) => {
     //atualizar os dados do usuario nos cookies
 
     const novosDados = await getUserData(userDecrypted.userId).then((userData) => {
-        console.log('novos dados atualizados', userData);
+        
         return userData;
     });
     setCurrentUser(novosDados);

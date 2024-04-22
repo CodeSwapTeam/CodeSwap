@@ -188,9 +188,13 @@ const Page = () => {
                             //busca os registros do usuario no modulo
                             const registrationModules = modulesCourses[indexC].registrationsModule;
                             //procura o usuario na lista de inscritos com o userId == currentUser.userId
-                            const userRegistration = registrationModules.find(
-                                (registration) => registration.userId === currentUser.userId
-                            );
+                            let userRegistration;
+                            if (currentUser) {
+                                userRegistration = registrationModules.find(
+                                    (registration) => registration.userId === currentUser.userId
+                                );
+                            }
+
 
                             // Verifica se o usuário concluiu o módulo
                             const userHasConcluded = userRegistration && userRegistration.status === 'concluido';
