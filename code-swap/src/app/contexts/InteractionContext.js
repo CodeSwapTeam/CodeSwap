@@ -60,7 +60,7 @@ export const InteractionProvider = ({ children }) => {
       
       // Se o número de logs exceder MAX_LOGS, salva os logs e redefine o array de logs
       if (logs.length > MAX_LOGS) {
-        controller.saveInteraction(logs);
+        controller.logsRegister.saveInteraction(logs);
         logs = [];
       }
   

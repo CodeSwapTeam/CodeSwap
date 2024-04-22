@@ -1,21 +1,32 @@
 import React, { useState } from 'react';
-import { updateModule } from '../../../database/functions/createCourses';
-import { useRouter } from 'next/navigation';
+import { v4 as uuidv4 } from 'uuid';
+import Controller from '@/Controller/controller';
 
-function UpdateModuleModal(props) {
-    const router = useRouter();
+function AddModuleModal(props) {
+
+    const controller = Controller();
 
     const [show, setShow] = useState(false);
     const [moduleName, setModuleName] = useState('');
     const [moduleDescription, setModuleDescription] = useState('');
+
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
     const handleSubmit = () => {
-        const updatedModule = {
+        
+        const newModule = {
             nameModule: moduleName,
-            description: moduleDescription
+            description: moduleDescription,
+            idModule: uuidv4(),
+            lessons: [
+                {
+                    nameLesson: '',
+                    description: ''
+                }
+            ]
         };
-        updateModule(props.courseId, props.moduleId, updatedModule);
+        controller.manageModules.createModule(props.courseId, newModule);
         
         setModuleName('');
         setModuleDescription('');
@@ -23,14 +34,17 @@ function UpdateModuleModal(props) {
 
         
     };
+
     return (
         <>
-            <button style={{ padding: '5px', backgroundColor: '#5150e1', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={handleShow}>Atualizar Módulo</button>
+            <button style={{ padding: '5px', backgroundColor: '#5150e1', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={handleShow}>Adicionar Modulo</button>
+
             {show && (
                 <div className="modal">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title">Atualizar Módulo</h5>
+                            <h5 className="modal-title">Adicionar Módulo</h5>
+                            
                         </div>
                         <div className="modal-body">
                             <input type="text" placeholder="Nome do Módulo" value={moduleName} onChange={(e) => setModuleName(e.target.value)} />
@@ -38,7 +52,7 @@ function UpdateModuleModal(props) {
                         </div>
                         <div className="modal-footer">
                             <button type="button" style={{ padding: '5px', backgroundColor: '#232323', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer'  }} onClick={handleClose}>Fechar</button>
-                            <button type="button" style={{ padding: '5px', backgroundColor: '#5150e1', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer'  }} onClick={handleSubmit}>Salvar</button>
+                            <button type="button" style={{ padding: '5px', backgroundColor: '#16ff66', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }}  onClick={handleSubmit}>Salvar Módulo</button>
                         </div>
                     </div>
                 </div>
@@ -47,4 +61,4 @@ function UpdateModuleModal(props) {
     );
 }
 
-export default UpdateModuleModal;
+export default AddModuleModal;

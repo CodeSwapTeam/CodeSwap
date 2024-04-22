@@ -9,10 +9,11 @@ import Link from 'next/link'
 
 import styled from 'styled-components';
 import { encryptObjectData } from "../services/encryptedAlgorithm";
-import { getUserData } from "../../../database/functions/getUserId";
+import { getUserData } from "../../../database/functions/Users/getUserId";
 import Image from 'next/image';
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { GetPhrases } from "../../../database/functions/phrases";
+import { GetPhrases } from "../services/phrases";
+import Controller from "@/Controller/controller";
 
 const Container = styled.div`
 margin: 10vh auto;
@@ -185,10 +186,12 @@ width: 100%;
 
 export default function Login() {
 
+    const controller = Controller();
+
     const [fraseAleatoria, setFraseAleatoria] = useState(null);
 
     async function getFraseAleatoria() {
-        const frases = await GetPhrases();
+        const frases = await controller.services.phrases.GetPhrases();
         const index = Math.floor(Math.random() * frases.length);
         setFraseAleatoria(frases[index]);
     }
@@ -215,11 +218,11 @@ export default function Login() {
             const user = userCredential.user;
 
             //buscar objeto User que tem o userId == user. uid
-            const userData = await getUserData(user.uid);
+            const userData = await controller.manageUsers.getUserData(user.uid);
             //criptografar o objeto
-            const userDataCript = encryptObjectData(userData);
+            const userDataCript = controller.encryptionAlgorithm.encryptObjectData(userData);
             //setar nos  cookies o o token acess criptografado
-            setCookies(userDataCript);
+            controller.services.manageCookies.setCookies(userDataCript);
 
             setEmail('');
             setPassword('');

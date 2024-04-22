@@ -1,11 +1,11 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { getAllCategories } from '../../../database/functions/createCategory';
-import { getAllModulesAndCourses } from '../../../database/functions/searchModules';
-
 import { useRouter } from 'next/navigation';
+import Controller from '@/Controller/controller';
 
 const Page = () => {
+
+    const controller = Controller();
 
     const router = useRouter();
 
@@ -15,9 +15,9 @@ const Page = () => {
     // Função assíncrona para buscar categorias e cursos
     const fetchCategoriesAndCourses = async () => {
         // Busca todas as categorias
-        const categoriesData = await getAllCategories();
+        const categoriesData = await controller.manageCategories.getAllCategories();
         // Busca todos os módulos e cursos
-        const coursesData = await getAllModulesAndCourses();
+        const coursesData = await controller.manageCourses.getAllModulesAndCourses();
 
         // Atualiza o estado das categorias com os dados obtidos
         setCategories(categoriesData);

@@ -146,7 +146,6 @@ export default function Home() {
 
   useEffect(() => {
     if (currentUser) {
-
       router.push('/Dashboard');
     }
 

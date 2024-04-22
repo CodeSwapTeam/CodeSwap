@@ -1,11 +1,12 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getModuleByCourseAndModuleId } from '../../../../../../database/functions/createCategory';
-import { finishUserModule } from '../../../../../../database/functions/subscribeUserCourse';
 import { useAuthContext } from '@/app/contexts/Auth';
+import Controller from '@/Controller/controller';
 
 const Page = () => {
+
+    const controller = Controller();
 
     // Obtém a função setCurrentUser do contexto de autenticação
     const { setCurrentUser } = useAuthContext();
@@ -20,7 +21,7 @@ const Page = () => {
 
     const fetchModule = async () => {
         // Busca o módulo pelo id da categoria e do módulo
-        const moduleData = await getModuleByCourseAndModuleId(categoria, modulo);
+        const moduleData = await controller.manageModules.getModuleByCourseAndModuleId(categoria, modulo);
         // Atualiza o estado do módulo com os dados obtidos
         setModule(moduleData);
     };
@@ -42,7 +43,7 @@ const Page = () => {
     const handleFinishModule = () => {
 
         //chamar a função de atualizar o status do curso
-        finishUserModule(categoria, modulo, setCurrentUser);
+        controller.manageModules.finishUserModule(categoria, modulo, setCurrentUser);
 
         //redirecionar para a página de cursos
         router.push(`/Cursos/${categoria}`);

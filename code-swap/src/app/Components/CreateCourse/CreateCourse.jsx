@@ -1,25 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import Controller from '../../../Controller/controller';
-import { getCookies } from '../../services/cookies';
-import { decryptObjectData } from '../../services/encryptedAlgorithm';
 import { v4 as uuidv4 } from 'uuid';
-//importar router do next/navigation
 import { useRouter } from 'next/navigation';
-import ModalCreateCategory from '../modalCreateCategory';
-import { getAllCategories } from '../../../../database/functions/createCategory';
-import { addCourseToCategory } from '../../../../database/functions/createCategory';
+import ModalCreateCategory from '../Modals/modalCreateCategory';
 import { storage } from '../../../../database/firebase';
 import { getDownloadURL, uploadBytesResumable } from 'firebase/storage';
-
-import { convertBlobToBase64 } from "image-conversion";
-
-
 import { ref } from "firebase/storage";
+
 
 const CreateCourses = () => {
 
     const controller = Controller();
-    const router = useRouter();
 
     const [user, setUser] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('');
@@ -36,26 +27,27 @@ const CreateCourses = () => {
         setSelectedCategory(event.target.value);
     };
 
-
-    useEffect(() => {
-
-        // Verifica se o usuário está autenticado
+    // Verifica se o usuário está autenticado
         const checkUser = async () => {
-            const user = await getCookies();
+            const user = await controller.services.manageCookies.getCookies(); // Obtém os dados do usuário
 
 
-            const decryptedUser = decryptObjectData(user.value); // Descriptografa os dados do usuário
+            // Descriptografa os dados do usuário
+            const decryptedUser = controller.encryptionAlgorithm.decryptObjectData(user.value);
             setUser(decryptedUser.userName); // Define o usuário no estado
 
             async function fetchCategories() {
-                const categories = await getAllCategories();
+                const categories = await controller.manageCategories.getAllCategories();
                 setCategories(categories);
-                //console.log(categories);
             }
             fetchCategories();
 
 
         };
+
+    useEffect(() => {
+
+        
         checkUser();
     }, []);
 
@@ -115,16 +107,13 @@ const CreateCourses = () => {
                 coursePremium: coursePremium,
             };
 
-
-
-
-            controller.CreateCourse(courseData, user);
+            controller.manageCourses.createCourse(courseData, user);
 
 
             // Adiciona o curso à categoria selecionada
-            await addCourseToCategory(formData.title, selectedCategory);
+            await controller.manageCategories.addCourseToCategory(formData.title, selectedCategory);
             alert(`Curso ${formData.title} criado com sucesso!`);
-            //console.log('categoria selecionada:', selectedCategory);
+            
             // Limpa o formulário após o envio bem-sucedido
             setFormData({
                 title: '',
@@ -167,8 +156,7 @@ const CreateCourses = () => {
     const handleAddModule = () => {
 
         setModulePermission(modulePermission + 1);
-        
-
+    
         const newModule = {
             nameModule: '',
             description: '',
@@ -186,8 +174,6 @@ const CreateCourses = () => {
 
         //adicionar id unico para cada modulo criado dentro do curso
         newModule.idModule = uuidv4();
-
-        console.log('Nível de persimissao do modulo', newModule.modulePermission);
 
         //se sequencialMoule for false, o modulo é criado com permissão 0
         if (!SequentialModule) {
@@ -244,8 +230,7 @@ const CreateCourses = () => {
     
     //função para lidar com alteração no checkbox
     const handleChangeCheckbox = (e) => {
-        setSequentialModule(e.target.checked);
-        
+        setSequentialModule(e.target.checked); 
     };
 
     //função para lidar com alteração no checkbox de curso premium

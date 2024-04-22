@@ -5,13 +5,10 @@ import { auth } from "../../../database/firebase";
 import { useAuthContext } from "../contexts/Auth";
 import { useRouter } from "next/navigation";
 import Link from 'next/link'
-import { CreateUser } from "../../../database/functions/createUser";
 import styled from 'styled-components';
 import Image from 'next/image';
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { getUserData } from "../../../database/functions/getUserId";
-import { setCookies } from "../services/cookies";
-import { encryptObjectData } from "../services/encryptedAlgorithm";
+import Controller from "@/Controller/controller";
 
 
 
@@ -100,6 +97,8 @@ box-shadow: 0 0 7px #fff,
 
 export default function CreateAccount() {
 
+    const controller = Controller();
+
     const { currentUser, setCurrentUser } = useAuthContext();
 
     const router = useRouter();
@@ -126,7 +125,7 @@ export default function CreateAccount() {
             phone: phoneNumber,
             whatsapp: isWhatsApp
         }
-        CreateUser(userData);
+        controller.manageUsers.createUser(userData);
     }
 
     const handleSubmit = async (e) => {
@@ -152,10 +151,10 @@ export default function CreateAccount() {
             setError(null);
 
             //pegar os dados do usuario e salvar no context
-            const userData = await getUserData(user.uid);
+            const userData = await controller.manageUsers.getUserData(user.uid);
             try {
-                const userDataEncrypt = encryptObjectData(userData);
-                setCookies(userDataEncrypt);
+                const userDataEncrypt = controller.encryptionAlgorithm.encryptObjectData(userData);
+                controller.services.manageCookies.setCookies(userDataEncrypt);
             } catch (error) {
                 console.log('Error setting cookies:', error);
             }
@@ -165,7 +164,7 @@ export default function CreateAccount() {
 
         } catch (error) {
             console.log('Error creating new user:', error);
-            setError(error);
+            setError(error.message);
         }
     };
 

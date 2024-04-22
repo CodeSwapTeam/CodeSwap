@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link'
-import { removeCookies } from '../../services/cookies';
 import { useRouter } from 'next/navigation';
 import { useAuthContext } from '../../contexts/Auth';
+import Controller from '@/Controller/controller';
 
 
 
@@ -72,6 +72,8 @@ const adminButton = {
 
 const NavBarPrivate = (props) => {
 
+  const controller = Controller();
+
   const router = useRouter();
 
   const {currentUser, setCurrentUser} = useAuthContext();
@@ -79,7 +81,6 @@ const NavBarPrivate = (props) => {
   const [painelAdmpermissions, setPainelAdmPermissions] = useState(false);
 
   useEffect(() => {
-    //console.log('props.userData', props.userData);
     // Verifica as permissões do usuário
     if (props.userData && props.userData.permissions > 1) {
       setPainelAdmPermissions(true);
@@ -91,7 +92,7 @@ const NavBarPrivate = (props) => {
   //função para deslogar
   async function logout() {
     //remove os cookies
-    await removeCookies('user');
+    await controller.services.manageCookies.removeCookies('user');
     setCurrentUser(null);
     router.push('/Dashboard');
   }

@@ -1,7 +1,10 @@
 import React, {  useState } from 'react';
-import { ChangePermissionUser } from '../../../database/functions/ChangePermissionUser';
+import Controller from '@/Controller/controller';
 
 const UserList = ({ users  }) => {
+
+    const controller = Controller();
+
     const [selectedUser, setSelectedUser] = useState(null);
     const [selectedPermission, setSelectedPermission] = useState(null);
 
@@ -11,7 +14,7 @@ const UserList = ({ users  }) => {
 
     function handleChangePermission() {
         if (selectedUser && selectedPermission) {
-            ChangePermissionUser(selectedUser.id, selectedPermission);
+            controller.manageUsers.changePermissionUser(selectedUser.id, selectedPermission);
         }
         window.location.reload();
         
@@ -19,7 +22,7 @@ const UserList = ({ users  }) => {
 
    
     return (
-        <div style={{ border: '1px solid #ccc', borderRadius: '5px', padding: '10px', marginBottom: '20px' }}>
+        <div style={{ border: '1px solid #ccc', borderRadius: '5px', padding: '10px', marginBottom: '20px', color:'white'}}>
             <h2>Lista de Usuários:</h2>
             <ul>
                 {users ? users.map(user => (
@@ -39,8 +42,8 @@ const UserList = ({ users  }) => {
                     <p><strong>Pontos de Experiência:</strong> {selectedUser.data.xp}</p>
                     <p><strong>Nível permissão:</strong> {selectedUser.data.permissions}</p>
                     <label htmlFor="permission">Alterar Permissão:</label>
-                    <select id="permission" onChange={(e) => setSelectedPermission(e.target.value)}>
-                        <option value="">Selecione...</option>
+                    <select style={{color: 'black'}} id="permission" onChange={(e) => setSelectedPermission(e.target.value)}>
+                        <option value="" >Selecione...</option>
                         <option value="1">Nível 1</option>
                         <option value="2">Nível 2</option>
                         <option value="3">Nível 3</option>

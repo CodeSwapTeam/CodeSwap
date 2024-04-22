@@ -1,16 +1,13 @@
 "use client"
-//import { useRouter } from "next/router"
-//import { cookies } from 'next/headers'
-import { getCookies, removeCookies } from "../services/cookies"
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "../contexts/Auth";
 import { useEffect, useState } from "react";
-
-
-import { decryptObjectData } from "../services/encryptedAlgorithm";
+import Controller from "@/Controller/controller";
 
 
 export default function Dashboard(){
+
+    const controller = Controller();
 
     const {currentUser, setCurrentUser} = useAuthContext();
 
@@ -21,7 +18,7 @@ export default function Dashboard(){
     async function pegarDadosCookies() {
         // Se o usuário atual não estiver definido, tente pegar os dados do cookie
         if (currentUser == null) {
-            const userCript = await getCookies();
+            const userCript = await controller.services.manageCookies.getCookies();
     
             // Se não houver dados de cookie, redirecione para a página de login
             if (!userCript) {
@@ -30,7 +27,7 @@ export default function Dashboard(){
             }
     
             // Descriptografe os dados do usuário e atualize o estado do usuário
-            const userDescript = decryptObjectData(userCript.value);
+            const userDescript = controller.encryptionAlgorithm.decryptObjectData(userCript.value);
             setUserData(userDescript);
             setCurrentUser(userDescript);
         } else {

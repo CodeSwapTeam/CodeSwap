@@ -1,7 +1,5 @@
-import { doc, getDoc, setDoc, updateDoc, collection, getDocs } from "firebase/firestore";
-import { db } from "../firebase";
-import { getCookies } from "@/app/services/cookies";
-import { decryptObjectData } from "@/app/services/encryptedAlgorithm";
+import { doc, setDoc, updateDoc, collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebase";
 
 
 //criar uma categoria para o curso
@@ -101,7 +99,6 @@ export async function updateCategory(categoryName, courseId) {
 
 
 // função que busca os cursos que tem a idCourse igual ao parametro da url
-
 export async function getCoursesByCategory(idCourse) {
     
     try {
@@ -124,37 +121,30 @@ export async function getCoursesByCategory(idCourse) {
 }
 
 
-
-
-// função para buscar os cursos pela id do curso 
-
-export async function getModuleByCourseAndModuleId(idcourse, idmodule) {
+// função que busca os cursos que tem a idCourse igual ao parametro da url
+/*
+export async function getCoursesByCategory(idCourse) {
     
     try {
         const courses = [];
         const coursesRef = collection(db, 'Modulos');
         const query = await getDocs(coursesRef);
-
+        
         query.forEach((doc) => {
-            if (doc.data().idCourse === idcourse) {
+            if (doc.data().idCourse === idCourse) {
                 courses.push(doc.data());
             }
         });
 
-        //buscar o modulo pelo id dentro course.modules
-        const module = courses[0].modules.filter((module) => module.idModule === idmodule);
-        
-
-        return module;
-
-        
+        return courses;
 
     } catch (error) {
         console.error('Erro ao buscar os cursos:', error);
         throw error; // Lança o erro para tratamento em um nível superior
     }
-    
-    
 }
+*/
+
+
 
 

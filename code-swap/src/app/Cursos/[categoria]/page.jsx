@@ -1,15 +1,12 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getCoursesByCategory } from '../../../../database/functions/createCategory';
-import { getCookies, setCookies } from '@/app/services/cookies';
-import { decryptObjectData, encryptObjectData } from '@/app/services/encryptedAlgorithm';
-import { RegisterUserCourse, SubscribeUserCourse, subscribeUserModule } from '../../../../database/functions/subscribeUserCourse';
-import { getUserData } from '../../../../database/functions/getUserId';
 import { useAuthContext } from '@/app/contexts/Auth';
+import Controller from '@/Controller/controller';
 
 const Page = () => {
 
+    const controller = Controller();
 
     const { currentUser, setCurrentUser } = useAuthContext(); // Contexto de autenticação e dados do usuário
     const router = useRouter(); // Roteador para navegação
@@ -25,7 +22,7 @@ const Page = () => {
         let cookies;
         // Obtém os cookies se o usuário atual não estiver definido
         if (currentUser == null) {
-            cookies = await getCookies();
+            cookies = await controller.services.manageCookies.getCookies();
 
             // Define o usuário como não logado se não houver cookies
             if (!cookies) {
@@ -36,7 +33,7 @@ const Page = () => {
         // Define o usuário como logado se houver cookies
         setUserLogged(true);
         // Descriptografa os dados do usuário ou usa o usuário atual
-        const userDecrypted = !currentUser ? decryptObjectData(cookies.value) : currentUser;
+        const userDecrypted = !currentUser ? controller.encryptionAlgorithm.decryptObjectData(cookies.value) : currentUser;
         // Atualiza o usuário atual com os dados descriptografados
         setCurrentUser(userDecrypted);
 
@@ -76,7 +73,7 @@ const Page = () => {
         // Verifica se o usuário atual não está definido
         if (currentUser == null) {
             // Obtém os cookies do usuário
-            const userCript = await getCookies();
+            const userCript = await controller.services.manageCookies.getCookies();
 
             // Se não houver cookies, define o usuário como não logado e retorna
             if (!userCript) {
@@ -85,7 +82,7 @@ const Page = () => {
             }
 
             // Descriptografa os dados do usuário
-            const userDescript = decryptObjectData(userCript.value);
+            const userDescript = controller.encryptionAlgorithm.decryptObjectData(userCript.value);
 
             // Define o usuário atual com os dados descriptografados
             setCurrentUser(userDescript);
@@ -98,7 +95,7 @@ const Page = () => {
 
     const fetchCourses = async () => {
         // Busca os cursos por categoria
-        const coursesData = await getCoursesByCategory(categoria);
+        const coursesData = await controller.manageCategories.getCoursesByCategory(categoria);
         // Atualiza o estado dos cursos com os dados obtidos
         setCourses(coursesData);
     };
@@ -113,7 +110,8 @@ const Page = () => {
     function redirectToModuleDescription(idModule) {
         router.push(`/Cursos/${categoria}/modulo/${idModule}`);
 
-        subscribeUserModule(categoria, idModule); // Inscreve o usuário no módulo
+       // Inscreve o usuário no módulo
+       controller.manageUsers.subscribeUserModule(categoria, idModule); // Inscreve o usuário no módulo
     }
 
 
@@ -127,26 +125,26 @@ const Page = () => {
         } else {
             try {
                 //inscrever o usuário no curso
-                await SubscribeUserCourse(currentUser.id, course.idCourse, 0, setCurrentUser);
+                await controller.manageUsers.subscribeUserCourse(currentUser.id, course.idCourse, 0, setCurrentUser);
                 //setar o usuário como inscrito
                 setUserSubscribed(true);
 
                 //buscar os dados do usuário novamente no banco de dados e atualizar os cookies
-                const novosDados = await getUserData(currentUser.userId).then((userData) => {
+                const novosDados = await controller.manageUsers.getUserData(currentUser.userId).then((userData) => {
                     return userData;
                 });
                 //atualizar os dados do usuário no contexto
                 setCurrentUser(novosDados);
 
                 // Registra o usuário no curso
-                RegisterUserCourse(course.title, currentUser.userId, 'inscrito');
+                controller.manageUsers.registerUserCourse(course.title, currentUser.userId, 'inscrito');
 
                 //buscar objeto User que tem o userId == user. uid
-                const userData = await getUserData(currentUser.userId);
+                const userData = await controller.manageUsers.getUserData(currentUser.userId);
                 //criptografar o objeto
-                const userDataCript = encryptObjectData(userData);
+                const userDataCript = controller.encryptionAlgorithm.encryptObjectData(userData);
                 //setar nos  cookies o token acess criptografado
-                setCookies(userDataCript);
+                controller.services.manageCookies.setCookies(userDataCript);
 
             } catch (error) {
                 console.error('Erro ao inscrever o usuário no curso:', error);

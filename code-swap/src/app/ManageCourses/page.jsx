@@ -5,55 +5,33 @@ import Controller from '@/Controller/controller';
 import ListCourses from '../Components/ListCoursesAdmPainel';
 import CreateCourse from '../Components/CreateCourse/CreateCourse';
 import { useAuthContext } from '../contexts/Auth';
-
-import { getCookies, removeCookies } from '../services/cookies';
 import { decryptObjectData } from '../services/encryptedAlgorithm';
-import { useRouter } from 'next/navigation';
-
-import { GetAllUsers } from '../../../database/functions/GetAllUsers';
 import UserList from '../Components/ListUsers';
 
 const CourseForm = () => {
 
+    const controller = Controller();
+
     const { currentUser, setCurrentUser } = useAuthContext();
     const [userDataPermission, setuserDataPermission] = useState();
-
-    const router = useRouter();
-
-    function submitLogout() {
-        removeCookies();
-        localStorage.removeItem('user')
-
-        setCurrentUser(null);
-        router.push('/login');
-    }
 
     const [users, setUsers] = useState();
 
     async function getUsersList() {
-        const users = await GetAllUsers();
+
+        const users = await controller.manageUsers.getAllUsers();
         setUsers(users);
     }
 
     async function getUser() {
-        //const users = await GetAllUsers();
-        //console.log(users);
-        //setUsers(users);
-
-        const userCookie = await getCookies();
+        const userCookie = await controller.services.manageCookies.getCookies();
         const userDataDescrypt = decryptObjectData(userCookie.value);
-        //console.log(userDataDescrypt);
         setuserDataPermission(userDataDescrypt.permissions);
         setCurrentUser(userDataDescrypt);
-        //console.log(userDataDescrypt.permissions);
         userDataDescrypt.permissions;   
     }
 
-    
-    //console.log(currentUser);
     useEffect(() => {
-        
-
         getUser();
         getUsersList();
         

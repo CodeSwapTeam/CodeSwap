@@ -1,11 +1,10 @@
 import { doc, updateDoc, arrayUnion, getDocs, collection, getDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "../../firebase";
 import { getCookies, setCookies } from "@/app/services/cookies";
 import { decryptObjectData, encryptObjectData } from "@/app/services/encryptedAlgorithm";
 import { getUserData } from "./getUserId";
 
 export const SubscribeUserCourse = async (userId, courseId, permission, setCurrentUser) => {
-    
     try {
         // Cria uma referência para o documento do usuário no banco de dados
         const userRef = doc(db, "Users", userId);

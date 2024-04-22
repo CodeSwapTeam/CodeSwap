@@ -4,11 +4,13 @@ import {NextResponse} from 'next/server'
 // Importando a função 'cookies' do pacote 'next/headers'
 import { cookies } from 'next/headers'
 
-// Importando a função 'decryptObjectData' do arquivo './app/services/encryptedAlgorithm'
-import { decryptObjectData } from './app/services/encryptedAlgorithm';
+// Importando a classe 'Controller' do arquivo 'controller.js'
+import Controller from './Controller/controller';
 
 // Função middleware que será exportada como padrão
 export default function middleware( NextRequest){
+
+    const controller = Controller();
 
     // Criando um armazenamento para os cookies
     const cookieStore = cookies()
@@ -20,7 +22,7 @@ export default function middleware( NextRequest){
 
     if (userCookie) {
         try {
-          userDecrypted = decryptObjectData(userCookie);
+            userDecrypted = controller.encryptionAlgorithm.decryptObjectData(userCookie);
           
         } catch (error) {
           console.error('Erro ao descriptografar cookie do usuário:', error);
