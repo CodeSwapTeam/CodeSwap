@@ -4,13 +4,11 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../database/firebase";
 import { useAuthContext } from "../contexts/Auth";
 import { useRouter } from "next/navigation";
-import { setCookies } from "../services/cookies";
 import Link from 'next/link'
-import { CreateUser } from "../../../database/functions/createUser";
-import NavBarPublic from "../components/NavBarPublic/page";
 import styled from 'styled-components';
 import Image from 'next/image';
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import Controller from "@/Controller/controller";
 
 
 
@@ -30,7 +28,6 @@ justify-content: space-around;
 align-items: center;
 }
 `
-
 const LeftSide = styled.div`
 display: flex;
 justify-content: center;
@@ -38,13 +35,11 @@ text-align: center;
 flex-direction: column;
 align-items: center;
 `
-
 const LabelText = styled.label`
 color: #fff;
 display: 'block';
 margin-bottom: '5px';
 `
-
 const CodeSwapCadastro = styled.h2`
 font-family: "Play", sans-serif;
 font-weight: 600;
@@ -58,7 +53,6 @@ text-shadow: 0 0 1.5px #fff,
     0 0 20px #0fa,
     0 0 23px #0fa;
 `
-
 const CadastroText = styled.h2`
 text-align: center;
 color: #fff;
@@ -66,14 +60,12 @@ font-size: 1.5rem;
 font-weight: 600;
 font-style: normal;
 `
-
 const InputCadastro = styled.input`
 width: 100%;
 padding: 8px;
 border: 1px solid #ccc;
 border-radius: 4px;
 `
-
 const LogoEffect = styled.div`
 
 animation: animateLogoCodeSwap 2.5s alternate infinite;
@@ -105,14 +97,13 @@ box-shadow: 0 0 7px #fff,
 
 export default function CreateAccount() {
 
+    const controller = Controller();
+
     const { currentUser, setCurrentUser } = useAuthContext();
-
-
 
     const router = useRouter();
 
     useEffect(() => {
-        //console.log('login', currentUser);
         if (currentUser) {
             router.push('/Dashboard');
         }
@@ -134,7 +125,7 @@ export default function CreateAccount() {
             phone: phoneNumber,
             whatsapp: isWhatsApp
         }
-        CreateUser(userData);
+        controller.manageUsers.createUser(userData);
     }
 
     const handleSubmit = async (e) => {
@@ -149,7 +140,7 @@ export default function CreateAccount() {
 
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-
+           
             criarConta(user.uid);
             alert(`Conta criada com sucesso! ${displayName}`);
 
@@ -159,14 +150,20 @@ export default function CreateAccount() {
             setDisplayName('');
             setError(null);
 
-            setCurrentUser(user);// altera o Context
-
-            setCookies(user.accessToken);
-            localStorage.setItem('user', user.accessToken);
-
+            //pegar os dados do usuario e salvar no context
+            const userData = await controller.manageUsers.getUserData(user.uid);
+            try {
+                const userDataEncrypt = controller.encryptionAlgorithm.encryptObjectData(userData);
+                controller.services.manageCookies.setCookies(userDataEncrypt);
+            } catch (error) {
+                console.log('Error setting cookies:', error);
+            }
+            
+            setCurrentUser(userData);// altera o Context
+            router.push('/Dashboard');
 
         } catch (error) {
-            console.log('Error creating new user:', error.message);
+            console.log('Error creating new user:', error);
             setError(error.message);
         }
     };

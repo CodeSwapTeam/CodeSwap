@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useContext } from 'react';
 import Controller from '@/Controller/controller';
-import { getCodeByInteractionType } from '../services/getCodeByInteractionType';
+import { getCodeByInteractionType } from './getCodeByInteractionType';
 
 // Criação do contexto
 // Este é um objeto que será compartilhado por todos os componentes que o utilizam
@@ -60,7 +60,7 @@ export const InteractionProvider = ({ children }) => {
       
       // Se o número de logs exceder MAX_LOGS, salva os logs e redefine o array de logs
       if (logs.length > MAX_LOGS) {
-        controller.saveInteraction(logs);
+        controller.logsRegister.saveInteraction(logs);
         logs = [];
       }
   

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createCategory } from "../../../database/functions/createCategory";
+import { createCategory } from "../../../../database/functions/Category/manageCategorys";
 import { useRouter } from "next/navigation";
 
 function ModalCreateCategory() {

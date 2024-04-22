@@ -18,23 +18,6 @@ function encryptToken(tokenAcessoDescriptografado, chaveInterna) {
     return tokenCriptografado;
 }
 
-export function Algorithm(userTokenAcess) {
-    //console.log(user);
-    let userToken;
-    if(!userTokenAcess){
-        userToken = ''
-    }else{
-        userToken = userTokenAcess
-    }
-    const chaveInterna = '4d5a3w1d@5FD**1/1%7&';
-    const tokenAcessoDescriptografado = userToken;
-
-    // Chamar a função para criptografar o token de acesso
-    const tokenAcessoCriptografado = encryptToken(tokenAcessoDescriptografado, chaveInterna);
-
-    return tokenAcessoCriptografado;
-}
-
 export function decryptToken(tokenCriptografado) {
     let chaveInterna = '4d5a3w1d@5FD**1/1%7&';
     // Garantir que a chave interna tenha o mesmo comprimento que o token criptografado
@@ -54,6 +37,25 @@ export function decryptToken(tokenCriptografado) {
     return tokenDescriptografado;
 }
 
+export function Algorithm(userTokenAcess) {
+    //console.log(user);
+    let userToken;
+    if(!userTokenAcess){
+        userToken = ''
+    }else{
+        userToken = userTokenAcess
+    }
+    const chaveInterna = '4d5a3w1d@5FD**1/1%7&';
+    const tokenAcessoDescriptografado = userToken;
+
+    // Chamar a função para criptografar o token de acesso
+    const tokenAcessoCriptografado = encryptToken(tokenAcessoDescriptografado, chaveInterna);
+
+    return tokenAcessoCriptografado;
+}
+
+
+/////////////////////////////CRIPTOGRAFIA DE DADOS////////////////////////////////////
 
 function encryptData(objeto, chaveInterna) {
     // Convertendo o objeto em uma string JSON
@@ -82,7 +84,6 @@ export function encryptObjectData(objeto) {
 
 
 
-
 function decryptData(dadosCriptografados, chaveInterna) {
     // Descriptografar os dados usando a chave interna e a operação XOR
     let dadosDescriptografados = '';
@@ -101,8 +102,6 @@ function decryptData(dadosCriptografados, chaveInterna) {
         // Você pode definir objetoDescriptografado como um objeto vazio ou qualquer outro valor padrão
         objetoDescriptografado = {};
     }
-
-    
     
     return objetoDescriptografado;
 }
@@ -115,11 +114,19 @@ export function decryptObjectData(dadosCriptografados) {
     // Chamar a função para descriptografar os dados
     const objetoDescriptografado = decryptData(dadosCriptografados, chaveInterna);
     
-    return objetoDescriptografado;
+    //se objetoDescriptografado retornar um erro SyntaxError: retornar false 
+    if(!objetoDescriptografado){
+        console.log('nao encontrou')
+        return false
+    }else{
+        return objetoDescriptografado
+    }
+
+
 }
 
 
-
+/////////////////////////////CRIPTOGRAFIA DE DADOS////////////////////////////////////
 
 
 

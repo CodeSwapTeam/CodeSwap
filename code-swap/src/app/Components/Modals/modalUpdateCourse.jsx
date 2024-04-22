@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { updateCourse } from '../../../database/functions/createCourses';
 import { useRouter } from 'next/navigation';
+import Controller from '@/Controller/controller';
 
 function UpdateCourseModal(props) {
 
-    const router = useRouter();
+    const controller = Controller();
 
     const [show, setShow] = useState(false);
     const [courseTitle, setCourseTitle] = useState('');
@@ -18,7 +18,7 @@ function UpdateCourseModal(props) {
             title: courseTitle,
             description: courseDescription
         };
-        updateCourse(props.courseId, courseData);
+        controller.manageCourses.updateCourse(props.courseId, courseData);
         handleClose();
         window.location.reload();
     };

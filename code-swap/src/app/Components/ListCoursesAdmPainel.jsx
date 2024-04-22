@@ -1,20 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import Controller from '@/Controller/controller';
-import { DeleteCourse, deleteModule, deleteLesson } from '../../../database/functions/deleteCourse';
+import { DeleteCourse } from '../../../database/functions/Courses/manageCourses';
 
-import { ChangeStatusCourse } from '../../../database/functions/ChangeStatusCourse';
-import { useInteractionLogger } from '../contexts/InteractionContext';
 import { useAuthContext } from '../contexts/Auth';
+import AddModuleModal from './Modals/modalAddModule';
+import AddLessonModal from './Modals/modalAddLesson';
 
-import { getAllCategories } from '../../../database/functions/createCategory';
-
-import AddModuleModal from './modalAddModule';
-import AddLessonModal from './modalAddLesson';
-
-import UpdateCourseModal from './modalUpdateCourse';
-import UpdateModuleModal from './modalUpdateModule';
-import UpdateLessonModal from './modalUpdateLesson';
-import EditCourseCategoryModal from './modalEditCategoryCourse';
+import UpdateCourseModal from './Modals/modalUpdateCourse';
+import UpdateModuleModal from './Modals/modalUpdateModule';
+import UpdateLessonModal from './Modals/modalUpdateLesson';
+import EditCourseCategoryModal from './Modals/modalEditCategoryCourse';
 
 const ListCourses = () => {
     const controller = Controller();
@@ -26,17 +21,14 @@ const ListCourses = () => {
     // Função para carregar os cursos do banco de dados ao montar o componente
     const fetchCourses = async () => {
         try {
-            const coursesData = await controller.getAllModulesAndCourses(); // Supondo que existe uma função para obter todos os cursos do banco de dados
+            const coursesData = await controller.manageCourses.getAllModulesAndCourses();
             setCourses(coursesData);
-            //console.log(coursesData);
         } catch (error) {
             console.error('Erro ao carregar os cursos:', error);
         }
     };
 
     useEffect(() => {
-        
-
         fetchCourses();
     }, []);
 
@@ -46,19 +38,18 @@ const ListCourses = () => {
     }
 
     function aprovarCurso(idCourse){
-        ChangeStatusCourse(idCourse);
+        controller.manageCourses.changeStatusCourse(idCourse);
         fetchCourses();
     }
 
-    function deleteSpecificModule(courseId, indexModule) {
-        
-        deleteModule(courseId, indexModule);
+    function deleteSpecificModule(courseId, indexModule) { 
+        controller.manageModules.deleteModule(courseId, indexModule);
         fetchCourses();
     }
 
 
     function deleteSpecificLesson(courseId, moduleId, lessonId) {
-        deleteLesson(courseId, moduleId, lessonId);
+        controller.manageLessons.deleteLesson(courseId, moduleId, lessonId);
         fetchCourses();
     }
 

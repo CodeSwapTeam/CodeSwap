@@ -1,6 +1,6 @@
 
 import { addDoc, collection, doc, getDocs, setDoc, updateDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "../../../database/firebase";
 
 //modelo frase 
 /*

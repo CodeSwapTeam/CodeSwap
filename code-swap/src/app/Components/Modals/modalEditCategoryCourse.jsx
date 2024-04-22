@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { getAllCategories } from '../../../database/functions/createCategory';
-import { updateCategory } from '../../../database/functions/createCategory';
-import { useRouter } from 'next/navigation';
+import Controller from '@/Controller/controller';
 
 
 
 function EditCourseCategoryModal(props) {
-    const router = useRouter();
+
+    const controller = Controller();
+
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [newCategoryName, setNewCategoryName] = useState();
     const [categories, setCategories] = useState([]);
@@ -21,7 +21,7 @@ function EditCourseCategoryModal(props) {
     };
 
     const fetchCategories = async () => {
-        const categories = await getAllCategories();
+        const categories = await controller.manageCategories.getAllCategories();
         setCategories(categories);
         setNewCategoryName(categories[0].name);
     };
@@ -29,7 +29,7 @@ function EditCourseCategoryModal(props) {
     const handleSubmit = (event) => {
         event.preventDefault();
         
-        updateCategory( newCategoryName, props.courseId);
+        controller.manageCategories.updateCategory(newCategoryName, props.courseId);
 
         closeModal();
         
