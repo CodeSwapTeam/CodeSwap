@@ -48,23 +48,16 @@ const CreateCourses = () => {
         },
     });
 
-    if(data){
-        console.log('categorias encontradas no cache local', data);
-    }
 
     const handleChangeCategory = (event) => {
         setSelectedCategory('');
-        setSelectedCategory(event.target.value);
-        //buscar o id da categoria selecionada
-        console.log('categoria selecionada', event.target.value);
-       
+        setSelectedCategory(event.target.value);    
     };
 
 
     
     const deleteCategory = useMutation({
         mutationFn: async (id) => {
-            console.log('deletando categoria...', id);
             controller.manageCategories.DeleteCategory(id);
             //buscar os novos dados no local storage e mesclar com os novos dados
             const localData = controller.manageCategories.GetCategoriesLocal();

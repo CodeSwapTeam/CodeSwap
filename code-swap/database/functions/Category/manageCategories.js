@@ -63,7 +63,6 @@ export const DeleteCategory = async (categoryId) => {
 
 // Função para retornar todas as categorias do banco de dados
 export const GetCategories = async () => {
-    console.log('Buscando categorias...');
     const categories = [];
     try {
         const querySnapshot = await getDocs(collection(db, 'Categories'));
