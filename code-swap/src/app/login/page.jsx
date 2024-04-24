@@ -219,10 +219,8 @@ export default function Login() {
             const user = userCredential.user;
 
             //buscar objeto User que tem o userId == user. uid
-            const userData = await controller.manageUsers.GetUserData(user.uid);
-            console.log(userData);
+            const userData = await controller.QueryRequests.GetUserDataBase(user.uid);
             
-
             setEmail('');
             setPassword('');
             setError('');
@@ -231,10 +229,8 @@ export default function Login() {
             //salvar nos cookies o token de acesso
             controller.services.manageCookies.setCookiesAcessToken(user.uid);
             //salvar no localstorage os dados do usuário
-            localStorage.setItem('currentUserData', JSON.stringify(userData));
+            controller.services.manageLocalCache.saveUserCache(userData);
             router.push('/Dashboard');
-
-            
 
         } catch (error) {
             setError(error.message);

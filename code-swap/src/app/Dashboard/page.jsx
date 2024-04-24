@@ -16,14 +16,12 @@ export default function Dashboard(){
     const router = useRouter();
 
     async function SearchData() {
-        // Se o usuário atual não estiver definido, tente pegar os dados do cookie
+        // Se o usuário atual não estiver definido, tente pegar os dados no cache local
         if (currentUser == null) {
 
-            const queryResponse = await controller.QueryRequests.GetUserData();
-            console.log(queryResponse);
-            //const userCript = await controller.services.manageCookies.getCookiesAcessToken();
-    
-            // Se não houver dados de cookie, nem do cache do contexto e
+            const queryResponse = await controller.manageUsers.GetUserLocalData();
+
+            // Se não houver dados de cookie disponíveis, redirecione para a página de login
             if (!queryResponse) {
                 router.push('/login');
                 return;
@@ -48,8 +46,9 @@ export default function Dashboard(){
 
     return(
         <div style={{color:'white'}}> 
-            <p>Listagem de Cursos do Aluno</p>
+            
             {userData && <p>Bem-vindo(a) <strong>{userData.userName}</strong></p> }
+            <p>PÁGINA DASHBOARD PRINCIPAL DO ALUNO</p>
         </div>
     )
 }

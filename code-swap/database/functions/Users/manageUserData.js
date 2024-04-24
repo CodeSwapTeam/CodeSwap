@@ -1,5 +1,31 @@
-import { addDoc, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, query, updateDoc, where, deleteDoc } from "firebase/firestore";
 import { db } from "../../firebase";
+
+
+//função para buscar os dados do usuário
+export async function GetUserLocalData(){
+    const userData = JSON.parse(localStorage.getItem('currentUserData'));
+    if(userData){
+        return userData;
+    }       
+}
+
+// Função para buscar um usuário no banco de dados
+export const GetUserDataBase = async (userCredential) => {
+    try {
+        //Buscar usuário no banco de dados pelo userCredential 
+        const q = query(collection(db, 'Users'), where('userCredential', '==', userCredential));
+        const querySnapshot = await getDocs(q);
+        
+
+        return querySnapshot.docs[0].data();
+        
+    } catch (error) {
+        console.error('Erro ao buscar o usuário:', error);
+        throw error; // Lança o erro para tratamento em um nível superior
+    }
+};
+
 
 
 // Função para criar um usuário no banco de dados
@@ -31,19 +57,41 @@ export const CreateUser = async (data) => {
     }
 };
 
-// Função para buscar um usuário no banco de dados
-export const GetUserData = async (userCredential) => {
+// Função para atualizar um usuário no banco de dados
+export const UpdateUserData = async (userId, data) => {
     try {
-        //Buscar usuário no banco de dados pelo userCredential 
-        const q = query(collection(db, 'Users'), where('userCredential', '==', userCredential));
-        const querySnapshot = await getDocs(q);
-        
+        const userRef = doc(db, 'Users', userId);
 
-        return querySnapshot.docs[0].data();
-        
+        await updateDoc(userRef, data);
+
     } catch (error) {
-        console.error('Erro ao buscar o usuário:', error);
+        console.error('Erro ao atualizar o usuário:', error);
         throw error; // Lança o erro para tratamento em um nível superior
     }
 };
+
+//função para remover um usuário do banco de dados 
+export const RemoveUser = async (userId) => {
+    try {
+        const userRef = doc(db, 'Users', userId);
+
+        await deleteDoc(userRef);
+
+    } catch (error) {
+        console.error('Erro ao remover o usuário:', error);
+        throw error; // Lança o erro para tratamento em um nível superior
+    }
+};
+
+
+
+ //função para buscar um usuario pelo id
+export  const GetUserById = async (userId) => {
+    //buscar no banco de dados
+   
+}
+
+
+
+
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Controller from '@/Controller/controller';
 import { DeleteCourse } from '../../../database/functions/Courses/manageCourses';
 
-import { useAuthContext } from '../contexts/ContextDataCache';
+import { ContextDataCache } from '../contexts/ContextDataCache';
 import AddModuleModal from './Modals/modalAddModule';
 import AddLessonModal from './Modals/modalAddLesson';
 
@@ -14,43 +14,35 @@ import EditCourseCategoryModal from './Modals/modalEditCategoryCourse';
 const ListCourses = () => {
     const controller = Controller();
 
-    const {currentUser} = useAuthContext();
+    const {currentUser, setCurrentUser} = ContextDataCache();
     
     const [courses, setCourses] = useState([]);
 
-    // Função para carregar os cursos do banco de dados ao montar o componente
-    const fetchCourses = async () => {
-        try {
-            const coursesData = await controller.manageCourses.getAllModulesAndCourses();
-            setCourses(coursesData);
-        } catch (error) {
-            console.error('Erro ao carregar os cursos:', error);
-        }
-    };
+
 
     useEffect(() => {
-        fetchCourses();
+        //fetchCourses();
     }, []);
 
     function deleteCourse(courseId){
-        DeleteCourse(courseId);
-        fetchCourses();
+        
+       
     }
 
     function aprovarCurso(idCourse){
-        controller.manageCourses.changeStatusCourse(idCourse);
-        fetchCourses();
+        
+       
     }
 
     function deleteSpecificModule(courseId, indexModule) { 
-        controller.manageModules.deleteModule(courseId, indexModule);
-        fetchCourses();
+       
+       
     }
 
 
     function deleteSpecificLesson(courseId, moduleId, lessonId) {
-        controller.manageLessons.deleteLesson(courseId, moduleId, lessonId);
-        fetchCourses();
+        
+       
     }
 
 

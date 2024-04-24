@@ -12,9 +12,11 @@ const CreateCourses = () => {
 
     const controller = Controller();
 
+    const [categories, setCategories] = useState([]);
+
     const [user, setUser] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('');
-    const [categories, setCategories] = useState([]);
+    
 
     const [imgUrl, setImgUrl] = useState('');
     const [progress, setProgress] = useState(0);
@@ -27,28 +29,25 @@ const CreateCourses = () => {
         setSelectedCategory(event.target.value);
     };
 
-    // Verifica se o usuário está autenticado
-        const checkUser = async () => {
-            const user = await controller.services.manageCookies.getCookies(); // Obtém os dados do usuário
+    // Função para buscar as categorias no cache local ou no banco de dados
+    const getCategories = async () => {
+        //buscar as categorias no cache local e converter em array de objetos
+        const CategoriesLocal = JSON.parse(localStorage.getItem('categories'));
+
+        if(CategoriesLocal){
+
+            setCategories(CategoriesLocal);
+        }else{
+            const categoriesDataBase = await controller.manageCategories.GetCategories();
+
+            setCategories(categoriesDataBase);
+        }
+    }
 
 
-            // Descriptografa os dados do usuário
-            const decryptedUser = controller.encryptionAlgorithm.decryptObjectData(user.value);
-            setUser(decryptedUser.userName); // Define o usuário no estado
-
-            async function fetchCategories() {
-                const categories = await controller.manageCategories.getAllCategories();
-                setCategories(categories);
-            }
-            fetchCategories();
-
-
-        };
 
     useEffect(() => {
-
-        
-        checkUser();
+        getCategories();
     }, []);
 
     // Estado para armazenar os dados do formulário
@@ -98,21 +97,6 @@ const CreateCourses = () => {
         }
 
         try {
-            // Adiciona a categoria selecionada ao formData antes de criar o curso
-            const courseData = {
-                ...formData,
-                category: selectedCategory,
-                thumbnail: imgUrl,
-                SequentialModule: SequentialModule,
-                coursePremium: coursePremium,
-            };
-
-            controller.manageCourses.createCourse(courseData, user);
-
-
-            // Adiciona o curso à categoria selecionada
-            await controller.manageCategories.addCourseToCategory(formData.title, selectedCategory);
-            alert(`Curso ${formData.title} criado com sucesso!`);
             
             // Limpa o formulário após o envio bem-sucedido
             setFormData({
@@ -142,8 +126,6 @@ const CreateCourses = () => {
                     }
                 ]
             });
-
-            window.location.reload();
         } catch (error) {
             console.error('Erro ao criar o curso:', error);
             alert('Erro ao criar o curso. Por favor, tente novamente mais tarde.');
@@ -245,13 +227,11 @@ const CreateCourses = () => {
             <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#007bff' }}>Criar Novo Curso</h2>
             <h3>Categoria</h3>
             <select value={selectedCategory} onChange={handleChangeCategory}>
-                <option value="">Selecione uma categoria</option>
-                {categories.map((category, index) => (
-                    <option key={index} value={category.name}>
-                        {category.name}
-                    </option>
-                ))}
-            </select>
+
+    {categories && categories.map((category, index) => (
+        <option key={index} value={category.id}>{category.name}</option>
+    ))}
+</select>
             <ModalCreateCategory />
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
                 <div style={{ marginBottom: '20px' }}>

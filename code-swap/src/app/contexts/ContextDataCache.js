@@ -10,11 +10,12 @@ export const ContextDataCache = () => useContext(cacheContext);
 export const AuthProvider = ({ children }) => {
 
   const [currentUser, setCurrentUser] = useState(null); // Estado com dados do usuário autenticado
+  const [categories, setCategories] = useState([]); // Estado com dados das categorias
   
 
 
   return (
-    <cacheContext.Provider value={{ currentUser, setCurrentUser }}>
+    <cacheContext.Provider value={{ currentUser, setCurrentUser ,categories, setCategories }}>
       { children}
     </cacheContext.Provider>
   );

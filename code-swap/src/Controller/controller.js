@@ -1,20 +1,19 @@
 
-import { getCookiesAcessToken, setCookiesAcessToken } from "@/app/services/cookies";
-import { CreateUser, GetUserData } from "../../database/functions/Users/manageUserData";
+import { getCookiesAcessToken, removeCookiesAcessToken, setCookiesAcessToken } from "@/app/services/cookies";
+import { CreateUser, GetUserById, GetUserData, GetUserDataBase, GetUserLocalData, RemoveUser, UpdateUserData } from "../../database/functions/Users/manageUserData";
 //import { QueryRequests } from "@/app/services/QueryRequests";
-import { useQueryRequests } from "@/app/services/QueryRequests";
+
+import { getUserCache, removeUserCache, saveUserCache } from "@/app/services/saveUserCache";
+import { CreateCategory, DeleteCategory, GetCategories, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
 
 
 
 //Controlador geral
 export default function Controller(){
 
-    const queryRequests = useQueryRequests();
+
 
     return{
-        QueryRequests: {
-            GetUserData: queryRequests.GetUserData,
-        },
         /**
          * Gerenciador de cursos,
          * Retorna um objeto com as funções de gerenciamento de cursos
@@ -41,8 +40,14 @@ export default function Controller(){
          * Retorna um objeto com as funções de gerenciamento de usuários
          */
         manageUsers: {
+            GetUserLocalData: GetUserLocalData,
+            GetUserDataBase: GetUserDataBase,
+
             CreateUser: CreateUser,
-            GetUserData: GetUserData
+            UpdateUserData: UpdateUserData,
+            RemoveUser: RemoveUser,
+
+            GetUserById: GetUserById,
 
         },
         /**
@@ -50,8 +55,11 @@ export default function Controller(){
          * Retorna um objeto com as funções de gerenciamento de categorias
          */
         manageCategories: {
+            CreateCategory: CreateCategory,
+            UpdateCategoryData: UpdateCategoryData,
+            DeleteCategory: DeleteCategory,
 
-
+            GetCategories: GetCategories
         },
         /**
          * Serviços de cookies,
@@ -64,7 +72,13 @@ export default function Controller(){
              */
             manageCookies: {
                 getCookiesAcessToken: getCookiesAcessToken,
-                setCookiesAcessToken: setCookiesAcessToken
+                setCookiesAcessToken: setCookiesAcessToken,
+                removeCookiesAcessToken: removeCookiesAcessToken
+            },
+            manageLocalCache: {
+                saveUserCache: saveUserCache,
+                getUserCache: getUserCache,
+                removeUserCache: removeUserCache
             },
             phrases: {
 
