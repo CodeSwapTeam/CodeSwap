@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link'
 import Typewriter from 'typewriter-effect';
-import { useAuthContext } from './contexts/Auth';
+import { ContextDataCache } from '../app/contexts/ContextDataCache';
 
 
 const PageContainer = styled.div`
@@ -142,7 +142,7 @@ export default function Home() {
 
   const router = useRouter();
 
-  const { currentUser } = useAuthContext();
+  const { currentUser } = ContextDataCache();
 
   useEffect(() => {
     if (currentUser) {

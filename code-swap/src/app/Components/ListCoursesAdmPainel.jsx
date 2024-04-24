@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Controller from '@/Controller/controller';
 import { DeleteCourse } from '../../../database/functions/Courses/manageCourses';
 
-import { useAuthContext } from '../contexts/Auth';
+import { useAuthContext } from '../contexts/ContextDataCache';
 import AddModuleModal from './Modals/modalAddModule';
 import AddLessonModal from './Modals/modalAddLesson';
 

@@ -1,17 +1,16 @@
 "use server";
 import { cookies } from 'next/headers'
 
-export  async function setCookies(acessToken){
+export  async function setCookiesAcessToken(acessToken){
     cookies().set('user', acessToken);
 }
 
-export  async function getCookies(){
+export  async function getCookiesAcessToken(){
     const cookieStore = cookies();
     const user = cookieStore.get('user');
-
-   return user
+    return user;
 }
 
-export async function removeCookies(){
+export async function removeCookiesAcessToken(){
     cookies().delete('user');
 }

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useAuthContext } from '@/app/contexts/Auth';
+import { useAuthContext } from '@/app/contexts/ContextDataCache';
 import Controller from '@/Controller/controller';
 
 const Page = () => {

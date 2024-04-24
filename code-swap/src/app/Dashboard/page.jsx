@@ -1,6 +1,6 @@
 "use client"
 import { useRouter } from "next/navigation";
-import { useAuthContext } from "../contexts/Auth";
+import { ContextDataCache } from "../contexts/ContextDataCache";
 import { useEffect, useState } from "react";
 import Controller from "@/Controller/controller";
 
@@ -9,27 +9,30 @@ export default function Dashboard(){
 
     const controller = Controller();
 
-    const {currentUser, setCurrentUser} = useAuthContext();
+    const { currentUser, setCurrentUser } = ContextDataCache();
 
     const [userData, setUserData] = useState();
 
     const router = useRouter();
 
-    async function pegarDadosCookies() {
+    async function SearchData() {
         // Se o usuário atual não estiver definido, tente pegar os dados do cookie
         if (currentUser == null) {
-            const userCript = await controller.services.manageCookies.getCookies();
+
+            const queryResponse = await controller.QueryRequests.GetUserData();
+            console.log(queryResponse);
+            //const userCript = await controller.services.manageCookies.getCookiesAcessToken();
     
-            // Se não houver dados de cookie, redirecione para a página de login
-            if (!userCript) {
+            // Se não houver dados de cookie, nem do cache do contexto e
+            if (!queryResponse) {
                 router.push('/login');
                 return;
             }
     
-            // Descriptografe os dados do usuário e atualize o estado do usuário
-            const userDescript = controller.encryptionAlgorithm.decryptObjectData(userCript.value);
-            setUserData(userDescript);
-            setCurrentUser(userDescript);
+
+            setUserData(queryResponse);
+            setCurrentUser(queryResponse);
+            
         } else {
             // Se o usuário atual já estiver definido, apenas atualize o estado do usuário
             setUserData(currentUser);
@@ -39,7 +42,7 @@ export default function Dashboard(){
     
     useEffect(()=>{
     
-        pegarDadosCookies();
+        SearchData();
        
     },[userData])
 

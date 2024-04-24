@@ -1,19 +1,19 @@
 'use client';
 import { useEffect, useState } from "react";
-import { useAuthContext } from "../contexts/Auth";
+import { ContextDataCache } from "../contexts/ContextDataCache";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../database/firebase";
-import { setCookies } from "../services/cookies";
 import Link from 'next/link'
 
+
 import styled from 'styled-components';
-import { encryptObjectData } from "../services/encryptedAlgorithm";
-import { getUserData } from "../../../database/functions/Users/getUserId";
+
 import Image from 'next/image';
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { GetPhrases } from "../services/phrases";
 import Controller from "@/Controller/controller";
+;
 
 const Container = styled.div`
 margin: 10vh auto;
@@ -187,6 +187,7 @@ width: 100%;
 export default function Login() {
 
     const controller = Controller();
+    const {currentUser, setCurrentUser} = ContextDataCache();
 
     const [fraseAleatoria, setFraseAleatoria] = useState(null);
 
@@ -198,7 +199,7 @@ export default function Login() {
 
 
 
-    const { setCurrentUser } = useAuthContext();
+    
     const router = useRouter();
 
     const [email, setEmail] = useState('');
@@ -206,7 +207,7 @@ export default function Login() {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        getFraseAleatoria();
+        //getFraseAleatoria();
     }, [])
 
 
@@ -218,18 +219,22 @@ export default function Login() {
             const user = userCredential.user;
 
             //buscar objeto User que tem o userId == user. uid
-            const userData = await controller.manageUsers.getUserData(user.uid);
-            //criptografar o objeto
-            const userDataCript = controller.encryptionAlgorithm.encryptObjectData(userData);
-            //setar nos  cookies o o token acess criptografado
-            controller.services.manageCookies.setCookies(userDataCript);
+            const userData = await controller.manageUsers.GetUserData(user.uid);
+            console.log(userData);
+            
 
             setEmail('');
             setPassword('');
             setError('');
 
             setCurrentUser(userData); // atualiza context
+            //salvar nos cookies o token de acesso
+            controller.services.manageCookies.setCookiesAcessToken(user.uid);
+            //salvar no localstorage os dados do usuário
+            localStorage.setItem('currentUserData', JSON.stringify(userData));
             router.push('/Dashboard');
+
+            
 
         } catch (error) {
             setError(error.message);

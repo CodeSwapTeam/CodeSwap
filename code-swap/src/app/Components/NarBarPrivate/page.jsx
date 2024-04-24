@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link'
 import { useRouter } from 'next/navigation';
-import { useAuthContext } from '../../contexts/Auth';
+import { ContextDataCache} from '../../contexts/ContextDataCache';
 import Controller from '@/Controller/controller';
 
 
@@ -76,7 +76,7 @@ const NavBarPrivate = (props) => {
 
   const router = useRouter();
 
-  const {currentUser, setCurrentUser} = useAuthContext();
+  const { currentUser } = ContextDataCache();
   
   const [painelAdmpermissions, setPainelAdmPermissions] = useState(false);
 

@@ -18,18 +18,9 @@ export default function middleware( NextRequest){
     // Obtendo o cookie 'user' e seu valor
     const userCookie = cookieStore.get('user')?.value;
 
-    let userDecrypted = null;
+    let userDecrypted = userCookie;
 
-    if (userCookie) {
-        try {
-            userDecrypted = controller.encryptionAlgorithm.decryptObjectData(userCookie);
-          
-        } catch (error) {
-          console.error('Erro ao descriptografar cookie do usuário:', error);
-          return NextResponse.redirect(new URL('/login', NextRequest.url));
-        }
-      }
-    
+  
     // Verificando se a página atual é a página inicial
     const isHomePage = NextRequest.nextUrl.pathname === '/';
 
