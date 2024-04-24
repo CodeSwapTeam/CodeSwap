@@ -3,6 +3,7 @@ import "./globals.css";
 import { InteractionProvider } from "./contexts/InteractionContext";
 import { AuthProvider } from "./contexts/ContextDataCache";
 import LayoutComponents from "./Components/LayoutComponents";
+import Provider from "./Providers/ProviderQuery";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,7 +16,7 @@ export default function RootLayout({ children }) {
   
   return (
 
-
+    <Provider>
     <InteractionProvider>
 
       <AuthProvider>
@@ -52,6 +53,7 @@ export default function RootLayout({ children }) {
       </AuthProvider>
 
     </InteractionProvider>
+    </Provider>
 
 
   );

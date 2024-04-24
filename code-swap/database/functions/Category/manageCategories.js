@@ -1,11 +1,10 @@
 import { addDoc, collection, doc, getDocs, query, updateDoc, where, deleteDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import { ContextDataCache } from "@/app/contexts/ContextDataCache";
 
 //Funcão para criar uma categoria
 export const CreateCategory = async (data) => {
 
-    const {setCategories} = ContextDataCache();
+    
 
     const categoryData = {
         name: data.name,
@@ -20,11 +19,8 @@ export const CreateCategory = async (data) => {
 
         await updateDoc(categoryRef, {id: docRef.id});
 
-        const categories = await GetCategories();
-        setCategories(categories);
-
         //recarregar a página
-        window.location.reload();
+        //window.location.reload();
 
     } catch (error) {
         console.error('Erro ao Criar categoria:', error);

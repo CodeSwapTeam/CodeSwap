@@ -8,6 +8,8 @@ import { getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import { ref } from "firebase/storage";
 
 
+
+
 const CreateCourses = () => {
 
     const controller = Controller();
@@ -28,6 +30,9 @@ const CreateCourses = () => {
     const handleChangeCategory = (event) => {
         setSelectedCategory(event.target.value);
     };
+
+
+    const queryClient = useQueryClient();
 
     // Função para buscar as categorias no cache local ou no banco de dados
     const getCategories = async () => {
