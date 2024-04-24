@@ -16,13 +16,19 @@ function ModalCreateCategory() {
     const client = useQueryClient();
 
     const createCategory = useMutation({
-        mutationFn: (data) => {
-            controller.manageCategories.CreateCategory(data)
-            //salvar no local storage
-            localStorage.setItem('categories', JSON.stringify(data));
-        },
-        onSuccess: () => {
+        mutationFn: async (data) => {
+             controller.manageCategories.CreateCategory(data)
+            
+             
+            //buscar os dados no local storage mesclar com os novos dados
+            const localData = controller.manageCategories.GetCategoriesLocal();
+
+            const updatedData = [...localData, data];
+            //salvar os novos dados
+            controller.manageCategories.SaveCategoriesLocal(updatedData);
             client.invalidateQueries(["categories"]);
+
+
         }
     });
     

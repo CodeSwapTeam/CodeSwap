@@ -18,6 +18,7 @@ const CreateCourses = () => {
 
     const [user, setUser] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('');
+    const [idCategory, setIdCategory] = useState('');
 
 
     const [imgUrl, setImgUrl] = useState('');
@@ -27,39 +28,69 @@ const CreateCourses = () => {
     const [coursePremium, setCoursePremium] = useState(false);
     const [modulePermission, setModulePermission] = useState(0);
 
-    const handleChangeCategory = (event) => {
-        setSelectedCategory(event.target.value);
-    };
+    const client = useQueryClient();
+
 
     const { data } = useQuery({
         queryKey: ["categories"],
         queryFn: async () => {
-            const categories = await controller.manageCategories.GetCategories();
+            const localCategories = controller.manageCategories.GetCategoriesLocal()
+            if(localCategories){
+                return localCategories;
+            }
+            const dbCategories = await controller.manageCategories.GetCategories();
+            controller.manageCategories.SaveCategoriesLocal(dbCategories);
+            return dbCategories;
 
-            return categories;
         },
-        onSuccess: (data) => {
+        onSuccess: () => {
             setCategories(data);
         },
     });
 
-    // Função para buscar as categorias no cache local ou no banco de dados
-    const getCategories = async () => {
-        //buscar as categorias no cache local e converter em array de objetos
-        const CategoriesLocal = JSON.parse(localStorage.getItem('categories'));
-        if (CategoriesLocal) {
-            setCategories(CategoriesLocal);
-        } else {
-            const categoriesDataBase = await controller.manageCategories.GetCategories();
-            setCategories(categoriesDataBase);
-        }
+    if(data){
+        console.log('categorias encontradas no cache local', data);
     }
 
+    const handleChangeCategory = (event) => {
+        setSelectedCategory('');
+        setSelectedCategory(event.target.value);
+        //buscar o id da categoria selecionada
+        console.log('categoria selecionada', event.target.value);
+       
+    };
 
 
-    useEffect(() => {
-        getCategories();
-    }, []);
+    
+    const deleteCategory = useMutation({
+        mutationFn: async (id) => {
+            console.log('deletando categoria...', id);
+            controller.manageCategories.DeleteCategory(id);
+            //buscar os novos dados no local storage e mesclar com os novos dados
+            const localData = controller.manageCategories.GetCategoriesLocal();
+            const updatedData = localData.filter(category => category.id !== id);
+            //salvar os novos dados
+            controller.manageCategories.SaveCategoriesLocal(updatedData);
+            setSelectedCategory('');
+            client.invalidateQueries(["categories"]);
+        }
+    });
+
+
+        // Função para buscar as categorias no cache local ou no banco de dados
+        const getCategories = async () => {
+            //buscar as categorias no cache local e converter em array de objetos
+            const CategoriesLocal = JSON.parse(localStorage.getItem('categories'));
+            if (CategoriesLocal) {
+                setCategories(CategoriesLocal);
+            } else {
+                const categoriesDataBase = await controller.manageCategories.GetCategories();
+                setCategories(categoriesDataBase);
+            }
+        }
+    
+
+
 
     // Estado para armazenar os dados do formulário
     const [formData, setFormData] = useState({
@@ -238,11 +269,14 @@ const CreateCourses = () => {
             <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#007bff' }}>Criar Novo Curso</h2>
             <h3>Categoria</h3>
             <select value={selectedCategory} onChange={handleChangeCategory}>
-
+                <option value="">Selecione uma categoria</option>
                 {data && data.map((category, index) => (
+                   
                     <option key={index} value={category.id}>{category.name}</option>
                 ))}
             </select>
+            {/** botao para excluir a categoria */}
+            <button onClick={() => deleteCategory.mutate(selectedCategory)} style={{ padding: '5px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }}>Excluir Categoria</button>
             <ModalCreateCategory />
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
                 <div style={{ marginBottom: '20px' }}>

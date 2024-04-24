@@ -19,8 +19,10 @@ export const CreateCategory = async (data) => {
 
         await updateDoc(categoryRef, {id: docRef.id});
 
-        //recarregar a página
-        //window.location.reload();
+        //buscar os novos dados
+        const categories = await GetCategories();
+        //salvar no cache local
+        localStorage.setItem('categories', JSON.stringify(categories));
 
     } catch (error) {
         console.error('Erro ao Criar categoria:', error);
@@ -44,9 +46,13 @@ export const UpdateCategoryData = async (categoryId, data) => {
 // Função para deletar uma categoria no banco de dados
 export const DeleteCategory = async (categoryId) => {
     try {
-        const categoryRef = doc(db, 'Categories', categoryId);
+        console.log('Deletando categoria...', categoryId);
 
-        await deleteDoc(categoryRef);
+        await deleteDoc(doc(db, 'Categories', categoryId));
+        //buscar os novos dados
+        const categories = await GetCategories();
+        //salvar no cache local
+        localStorage.setItem('categories', JSON.stringify(categories));
 
     } catch (error) {
         console.error('Erro ao deletar a categoria:', error);
@@ -66,12 +72,22 @@ export const GetCategories = async () => {
             categories.push(doc.data());
         });
 
-        //salvar as categorias no cache local
-        localStorage.setItem('categories', JSON.stringify(categories));
         return categories;
 
     } catch (error) {
         console.error('Erro ao buscar as categorias:', error);
         throw error; 
     }
+};
+
+//função para buscar as categorias no local storage
+export const GetCategoriesLocal = () => {
+    const categories = localStorage.getItem('categories');
+    return categories ? JSON.parse(categories) : null;
+};
+
+
+//função para salvar as categorias no local storage
+export const SaveCategoriesLocal = (categories) => {
+    localStorage.setItem('categories', JSON.stringify(categories));
 };

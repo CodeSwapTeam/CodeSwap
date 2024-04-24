@@ -4,7 +4,7 @@ import { CreateUser, GetUserById, GetUserData, GetUserDataBase, GetUserLocalData
 //import { QueryRequests } from "@/app/services/QueryRequests";
 
 import { getUserCache, removeUserCache, saveUserCache } from "@/app/services/saveUserCache";
-import { CreateCategory, DeleteCategory, GetCategories, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
+import { CreateCategory, DeleteCategory, GetCategories, GetCategoriesLocal, SaveCategoriesLocal, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
 
 
 
@@ -59,7 +59,9 @@ export default function Controller(){
             UpdateCategoryData: UpdateCategoryData,
             DeleteCategory: DeleteCategory,
 
-            GetCategories: GetCategories
+            GetCategories: GetCategories,
+            GetCategoriesLocal: GetCategoriesLocal,
+            SaveCategoriesLocal: SaveCategoriesLocal
         },
         /**
          * Serviços de cookies,
