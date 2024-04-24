@@ -219,7 +219,7 @@ export default function Login() {
             const user = userCredential.user;
 
             //buscar objeto User que tem o userId == user. uid
-            const userData = await controller.QueryRequests.GetUserDataBase(user.uid);
+            const userData = await controller.manageUsers.GetUserDataBase(user.uid);
             
             setEmail('');
             setPassword('');

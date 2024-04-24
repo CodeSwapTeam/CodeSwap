@@ -4,7 +4,7 @@ import { db } from "../../firebase";
 //Funcão para criar uma categoria
 export const CreateCategory = async (data) => {
 
-    
+    console.log('Criando categoria...', data);
 
     const categoryData = {
         name: data.name,
@@ -68,7 +68,6 @@ export const GetCategories = async () => {
 
         //salvar as categorias no cache local
         localStorage.setItem('categories', JSON.stringify(categories));
-        console.log('Categorias:', categories);
         return categories;
 
     } catch (error) {

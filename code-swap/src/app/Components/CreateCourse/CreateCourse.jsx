@@ -7,7 +7,7 @@ import { storage } from '../../../../database/firebase';
 import { getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import { ref } from "firebase/storage";
 
-
+import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
 
 
 const CreateCourses = () => {
@@ -18,33 +18,39 @@ const CreateCourses = () => {
 
     const [user, setUser] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('');
-    
+
 
     const [imgUrl, setImgUrl] = useState('');
     const [progress, setProgress] = useState(0);
 
     const [SequentialModule, setSequentialModule] = useState(false);
     const [coursePremium, setCoursePremium] = useState(false);
-    const [modulePermission, setModulePermission] = useState(0); 
+    const [modulePermission, setModulePermission] = useState(0);
 
     const handleChangeCategory = (event) => {
         setSelectedCategory(event.target.value);
     };
 
+    const { data } = useQuery({
+        queryKey: ["categories"],
+        queryFn: async () => {
+            const categories = await controller.manageCategories.GetCategories();
 
-    const queryClient = useQueryClient();
+            return categories;
+        },
+        onSuccess: (data) => {
+            setCategories(data);
+        },
+    });
 
     // Função para buscar as categorias no cache local ou no banco de dados
     const getCategories = async () => {
         //buscar as categorias no cache local e converter em array de objetos
         const CategoriesLocal = JSON.parse(localStorage.getItem('categories'));
-
-        if(CategoriesLocal){
-
+        if (CategoriesLocal) {
             setCategories(CategoriesLocal);
-        }else{
+        } else {
             const categoriesDataBase = await controller.manageCategories.GetCategories();
-
             setCategories(categoriesDataBase);
         }
     }
@@ -102,7 +108,7 @@ const CreateCourses = () => {
         }
 
         try {
-            
+
             // Limpa o formulário após o envio bem-sucedido
             setFormData({
                 title: '',
@@ -137,13 +143,13 @@ const CreateCourses = () => {
         }
     };
 
-    
+
 
     // Função para adicionar um novo módulo a um curso existente
     const handleAddModule = () => {
 
         setModulePermission(modulePermission + 1);
-    
+
         const newModule = {
             nameModule: '',
             description: '',
@@ -214,10 +220,10 @@ const CreateCourses = () => {
             });
     };
 
-    
+
     //função para lidar com alteração no checkbox
     const handleChangeCheckbox = (e) => {
-        setSequentialModule(e.target.checked); 
+        setSequentialModule(e.target.checked);
     };
 
     //função para lidar com alteração no checkbox de curso premium
@@ -233,10 +239,10 @@ const CreateCourses = () => {
             <h3>Categoria</h3>
             <select value={selectedCategory} onChange={handleChangeCategory}>
 
-    {categories && categories.map((category, index) => (
-        <option key={index} value={category.id}>{category.name}</option>
-    ))}
-</select>
+                {data && data.map((category, index) => (
+                    <option key={index} value={category.id}>{category.name}</option>
+                ))}
+            </select>
             <ModalCreateCategory />
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
                 <div style={{ marginBottom: '20px' }}>

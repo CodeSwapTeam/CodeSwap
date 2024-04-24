@@ -3,6 +3,8 @@ import { createCategory } from "../../../../database/functions/Category/EXmanage
 import { useRouter } from "next/navigation";
 import Controller from "@/Controller/controller";
 
+import { useQuery,useMutation,useQueryClient, } from "@tanstack/react-query";
+
 function ModalCreateCategory() {
     const controller = Controller();
     const router = useRouter();
@@ -10,11 +12,26 @@ function ModalCreateCategory() {
     const [categoryName, setCategoryName] = useState('');
     const [categoryDescription, setCategoryDescription] = useState('');
 
+
+    const client = useQueryClient();
+
+    const createCategory = useMutation({
+        mutationFn: (data) => {
+            controller.manageCategories.CreateCategory(data)
+            //salvar no local storage
+            localStorage.setItem('categories', JSON.stringify(data));
+        },
+        onSuccess: () => {
+            client.invalidateQueries(["categories"]);
+        }
+    });
+    
+
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
     const handleSubmit = () => {
-        controller.manageCategories.CreateCategory({ name: categoryName, description: categoryDescription });
+        createCategory.mutate({ name: categoryName, description: categoryDescription });
         setCategoryName('');
         setCategoryDescription('');
         handleClose();
