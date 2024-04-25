@@ -29,7 +29,7 @@ const ListCourses = () => {
         queryFn: async () => {
             //Buscar as categorias no cache local
             const categories = controller.manageCategories.GetCategoriesLocal();
-            console.log(categories);
+            //console.log(categories);
             if (categories) {
                 return categories;
             }
@@ -87,7 +87,7 @@ const ListCourses = () => {
     //MUTATION PARA DELETAR UM MODULO
     const handleDeleteModule = useMutation({
         mutationFn: async (data) => {
-            await controller.manageModules.DeleteModule(data);
+            await controller.manageModules.DeleteModule(courseSelected, data);
         },
         onSuccess: (data, variables) => {
             // Invalidate a query 'ListCourses' após a deleção do curso

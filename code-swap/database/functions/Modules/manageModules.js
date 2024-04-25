@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, updateDoc, collection, addDoc, arrayUnion, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, collection, addDoc, arrayUnion, deleteDoc, arrayRemove } from "firebase/firestore";
 import { db } from "../../firebase";
 
 
@@ -98,8 +98,11 @@ export async function updateModule(courseId, moduleId, newModuleData) {
 
 
 //função para deletar um modulo de um curso com base no indice do array modules no curso
-export const deleteModule = async (moduleId) => {
+export const deleteModule = async (courseSelectedId, moduleId) => {
+    console.log('moduleId:', moduleId);
+    console.log('courseSelectedId:', courseSelectedId);
     try {
+
         //deletar o modulo do curso no cache local
         const modules = JSON.parse(sessionStorage.getItem('modules'));
         //pegar o modulo com o id passado
@@ -109,10 +112,19 @@ export const deleteModule = async (moduleId) => {
         //salvar os modulos atualizados no sessionStorage
         sessionStorage.setItem('modules', JSON.stringify(modules));
 
+
+
         //deletar o modulo do curso no database
         await deleteDoc(doc(db, 'Modules', moduleId));
-        alert('Módulo deletado com sucesso');
 
+        //deletar o modulo do array de modulos do curso
+        await updateDoc(doc(db, 'Courses', courseSelectedId.id), {
+            modules: arrayRemove({ id: moduleId, title: module.title, description: module.description })
+        });
+        
+
+
+        //remover 
 
             
         

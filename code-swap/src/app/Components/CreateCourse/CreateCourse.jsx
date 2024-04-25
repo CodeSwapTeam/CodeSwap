@@ -37,7 +37,7 @@ const CreateCourses = () => {
         queryFn: async () => {
             //buscar os dados do usuario no cache local
             const userLocal = await controller.manageUsers.GetUserLocalData();
-            console.log(userLocal);
+           // console.log(userLocal);
             setOwner(userLocal.userName);
 
             const localCategories = await controller.manageCategories.GetCategoriesLocal()
