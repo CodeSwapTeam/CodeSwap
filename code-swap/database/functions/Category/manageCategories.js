@@ -4,8 +4,6 @@ import { db } from "../../firebase";
 //Funcão para criar uma categoria
 export const CreateCategory = async (data) => {
 
-    console.log('Criando categoria...', data);
-
     const categoryData = {
         name: data.name,
         description: data.description,
@@ -22,7 +20,7 @@ export const CreateCategory = async (data) => {
         //buscar os novos dados
         const categories = await GetCategories();
         //salvar no cache local
-        localStorage.setItem('categories', JSON.stringify(categories));
+        sessionStorage.setItem('categories', JSON.stringify(categories));
 
     } catch (error) {
         console.error('Erro ao Criar categoria:', error);
@@ -46,13 +44,11 @@ export const UpdateCategoryData = async (categoryId, data) => {
 // Função para deletar uma categoria no banco de dados
 export const DeleteCategory = async (categoryId) => {
     try {
-        console.log('Deletando categoria...', categoryId);
-
         await deleteDoc(doc(db, 'Categories', categoryId));
         //buscar os novos dados
         const categories = await GetCategories();
         //salvar no cache local
-        localStorage.setItem('categories', JSON.stringify(categories));
+        sessionStorage.setItem('categories', JSON.stringify(categories));
 
     } catch (error) {
         console.error('Erro ao deletar a categoria:', error);
@@ -79,14 +75,14 @@ export const GetCategories = async () => {
     }
 };
 
-//função para buscar as categorias no local storage
+//função para buscar as categorias no sessionStorage
 export const GetCategoriesLocal = () => {
-    const categories = localStorage.getItem('categories');
-    return categories ? JSON.parse(categories) : null;
+    const categories =  JSON.parse(sessionStorage.getItem('categories'));
+    return categories ? categories : null;
 };
 
 
-//função para salvar as categorias no local storage
+//função para salvar as categorias no sessionStorage
 export const SaveCategoriesLocal = (categories) => {
-    localStorage.setItem('categories', JSON.stringify(categories));
+    sessionStorage.setItem('categories', JSON.stringify(categories));
 };

@@ -15,10 +15,11 @@ const PainelAdm = () => {
     const {currentUser, setCurrentUser} = ContextDataCache();
     const [userDataPermission, setuserDataPermission] = useState(0);
 
+    const [selectedPainel, setSelectedPainel] = useState('createCourse');
+
 
     async function getUser() {
         const userCached = await controller.services.manageLocalCache.getUserCache();
-        console.log(userCached);
         setCurrentUser(userCached);
         setuserDataPermission(userCached.permissionAcess);
            
@@ -32,26 +33,26 @@ const PainelAdm = () => {
 
     return (
         <>
-            
-            <div style={{ display: 'flex', gap: '20px' }}>
-                <div>
-                    <div style={{ border: '1px solid black', padding: '20px' }}>
-                        {userDataPermission > 1 ? <CreateCourse /> : <h1>Você não tem permissão para criar cursos</h1>}
-
-                    </div>
-                </div>
-
-                <div style={{ border: '1px solid black', padding: '20px' }}>
-                    {/*userDataPermission > 2 ? <ListCourses /> : <h1>Você não tem permissão para listar cursos</h1>*/}
-
-                </div>
-
-                <div style={{ border: '1px solid black', padding: '20px' }}>
-                    {/*userDataPermission > 3 ?                    
-                           <UserList users={users}  />    : <h1>Você não tem permissão para listar usuários</h1>        */}
-
-                </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color:'white', border:'2px solid white' }}>
+                <button style={{border:'2px solid white', padding: '10px' }} onClick={() => setSelectedPainel('createCourse')}>Criar Curso</button>
+                <button style={{border:'2px solid white', padding: '10px' }} onClick={() => setSelectedPainel('listCourses')}>Listar Cursos</button>
+                <button style={{border:'2px solid white', padding: '10px' }} onClick={() => setSelectedPainel('listUsers')}>Listar Usuários</button>
             </div>
+            
+            {selectedPainel === 'createCourse' ? (
+                <div style={{ border: '1px solid black', padding: '20px' }}>
+                        <CreateCourse /> 
+                </div>
+            ) : selectedPainel === 'listCourses' ? (
+                <div style={{ border: '1px solid black', padding: '20px' }}>
+                 {userDataPermission > 2 ? <ListCourses /> : <h1>Você não tem permissão para listar cursos</h1>}
+                </div>
+            ) : (
+                <div style={{ border: '1px solid black', padding: '20px' }}>
+                {userDataPermission > 3 ?                    
+                    <UserList />: <h1>Você não tem permissão para listar usuários</h1>}
+                 </div>
+            )}
         </>
 
     );

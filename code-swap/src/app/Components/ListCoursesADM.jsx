@@ -10,92 +10,85 @@ import UpdateCourseModal from './Modals/modalUpdateCourse';
 import UpdateModuleModal from './Modals/modalUpdateModule';
 import UpdateLessonModal from './Modals/modalUpdateLesson';
 import EditCourseCategoryModal from './Modals/modalEditCategoryCourse';
+import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
+
 
 const ListCourses = () => {
     const controller = Controller();
 
-    const {currentUser, setCurrentUser} = ContextDataCache();
-    
     const [courses, setCourses] = useState([]);
+    const [category, setCategory] = useState(null);
+
+    const [selectedPainel, setSelectedPainel] = useState('courses');
+
+    const client = useQueryClient();
+
+    const { data : categories} = useQuery({
+        queryKey: ['categories'],
+        queryFn: async () => {
+            //Buscar as categorias no cache local
+            const categories = controller.manageCategories.GetCategoriesLocal();
+            if(categories){
+                return categories;
+            }
+            const dbCategories = await controller.manageCategories.GetCategories();
+            return dbCategories;
+        }
+
+    })
+
+    //if(categories) console.log(categories);
+    
 
 
-
-    useEffect(() => {
-        //fetchCourses();
-    }, []);
-
-    function deleteCourse(courseId){
-        
-       
+    //função para pegar os cursos dentro de uma categoria selecionada pelo usuário
+    const handleCategory = (category) => {
+        console.log(category);
+        setCourses(category.courses);
+        setCategory({name: category.name, id: category.id});
     }
 
-    function aprovarCurso(idCourse){
-        
-       
-    }
-
-    function deleteSpecificModule(courseId, indexModule) { 
-       
-       
-    }
-
-
-    function deleteSpecificLesson(courseId, moduleId, lessonId) {
-        
-       
-    }
 
 
     return (
-        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', border: '1px solid #ccc', borderRadius: '10px', backgroundColor: '#f8f9fa' }}>
-        <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#007bff' }}>Lista de Cursos</h2>
-        {courses.map((course) => (
-            <div key={course.id} style={{backgroundColor: '#83dfc5', marginBottom: '40px', border: '1px solid #007bff', borderRadius: '10px', padding: '20px' }}>
-                <h3 style={{ marginBottom: '10px', color: '#007bff' }}>{course.title} - Status: {course.status}
-                
-                {course.status == 'pending' && <span style={{ padding: '5px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', margin: '5px' }}  onClick={()=>{aprovarCurso(course.title)}}> Aprovar</span> }
-                     <UpdateCourseModal courseId={course.id} />
-                     </h3>
-                     
-                     <p>Criador: {course.owner}</p>
-                     <p>Categoria: {course.category}</p>
-                      <span>
-                        <EditCourseCategoryModal courseId={course.id}  />
-                        </span>
-                <p style={{ marginBottom: '10px' }}><strong>Descrição:</strong> {course.description}</p>
-                <div>
-                    {course.modules.map((module, indexM) => (
-                        <div key={indexM} style={{ marginBottom: '20px', border: '1px solid #ccc', borderRadius: '10px', padding: '15px', backgroundColor: '#a7a7a7' }}>
-                            <h4 style={{ marginBottom: '10px', color: '#007bff' }}>{module.nameModule}</h4><UpdateModuleModal courseId={course.id} moduleId={indexM} />
-                            <p style={{ marginBottom: '10px' }}><strong>Descrição do Módulo:</strong> {module.description}</p>
-                            <ul style={{ paddingLeft: '20px', listStyle: 'none', margin: 0 }}>
-                                {module.lessons.map((lesson, index) => (
-                                    <li key={index} style={{ marginBottom: '10px' }}>
-                                        <strong>{lesson.nameLesson}</strong> - {lesson.description} <button style={{ padding: '5px', backgroundColor: '#916913', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={()=>deleteSpecificLesson(course.id, indexM, index )}>Remover</button>
-                                        <UpdateLessonModal courseId={course.id} moduleId={indexM} lessonId={index} />
-                                    </li>
-                                ))}
-                            </ul>
-                            <button style={{ padding: '5px', backgroundColor: '#a54d67', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={()=> deleteSpecificModule(course.id, indexM)}>Remover Módulo</button>
-                            <AddLessonModal courseId={course.id} moduleId={indexM} />
-                            
-                    
-                        </div>
-                        
-                    ))}
-                    <AddModuleModal courseId={course.id} />
+        <div>
+            <h1 style={{ border: '2px solid white', padding: '10px', color: 'white', textAlign: 'center' }}>{selectedPainel === 'courses' ? `Lista de Cursos ${category ? category.name : ''}` : 'Modulos'}</h1>
+            <div style={{ display: 'flex', marginTop: '10px', border: '2px solid white', padding: '10px', color: 'white', textAlign: 'center' }}>
+                <div style={{ flex: '20%', border: '2px solid white', padding: '10px', color: 'white', textAlign: 'center' }}>
+                    <h3>Categorias</h3>
+                    <div>
+                        {categories && categories.map(category => (
+                            <div key={category.id} style={{ border: '1px solid white', padding: '5px', margin: '5px', cursor: 'pointer' }} onClick={() => {handleCategory(category), setSelectedPainel('courses')}}>
+                                <h4>{category.name}</h4>                             
+                            </div>
+                        ))} 
+                    </div>
                 </div>
-                {currentUser && currentUser.permissions > 3 ? (
-  <button
-    onClick={() => deleteCourse(course.id)}
-    style={{ marginTop: '5px', padding: '5px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-  >
-    Remover Curso
-  </button>
-) : null}
+                {selectedPainel === 'courses' ? (<div style={{ flex: '80%', border: '2px solid white', padding: '10px', color: 'white', textAlign: 'center' }}>
+                        {courses && courses.map(course => (
+                            <div key={course.id} style={{ border: '1px solid white', padding: '5px', margin: '5px' }}>
+                                <h4>{course.title}</h4>
+                                <p>{course.description}</p>
+                                <button style={{ border: '1px solid white', padding: '5px', margin: '5px', cursor: 'pointer' }} onClick={()=> setSelectedPainel('Modules')}>Gerenciar</button>
+                            </div>
+                        ))}
+                </div>) : (
+                    
+                    <div style={{ flex: '80%', border: '2px solid white', padding: '10px', color: 'white', textAlign: 'center' }}>
+                        <h3>Modulos</h3>
+                        <div>
+                            <div style={{ border: '1px solid white', padding: '5px', margin: '5px' }}>
+                                <h4>Modulo 1</h4>
+                                <p>Descrição do modulo</p>
+                                <button style={{ border: '1px solid white', padding: '5px', margin: '5px', cursor: 'pointer' }}>Gerenciar</button>
+                            </div>
+                        </div>
+                    </div>
+                
+                )}
+                
             </div>
-        ))}
-    </div>
+        </div>
     );
 };
 

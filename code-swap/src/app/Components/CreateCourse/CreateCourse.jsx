@@ -14,12 +14,13 @@ const CreateCourses = () => {
 
     const controller = Controller();
 
-    const [categories, setCategories] = useState([]);
+   // const [categories, setCategories] = useState([]);
 
     const [user, setUser] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('');
-    const [idCategory, setIdCategory] = useState('');
 
+    const [courseName, setCourseName] = useState('');
+    const [courseDescription, setCourseDescription] = useState('');
 
     const [imgUrl, setImgUrl] = useState('');
     const [progress, setProgress] = useState(0);
@@ -30,8 +31,8 @@ const CreateCourses = () => {
 
     const client = useQueryClient();
 
-
-    const { data } = useQuery({
+    // Função para buscar as categorias no cache local ou no banco de dados
+    const { data : categories } = useQuery({
         queryKey: ["categories"],
         queryFn: async () => {
             const localCategories = controller.manageCategories.GetCategoriesLocal()
@@ -42,10 +43,7 @@ const CreateCourses = () => {
             controller.manageCategories.SaveCategoriesLocal(dbCategories);
             return dbCategories;
 
-        },
-        onSuccess: () => {
-            setCategories(data);
-        },
+        }
     });
 
 
@@ -53,8 +51,6 @@ const CreateCourses = () => {
         setSelectedCategory('');
         setSelectedCategory(event.target.value);    
     };
-
-
     
     const deleteCategory = useMutation({
         mutationFn: async (id) => {
@@ -65,54 +61,23 @@ const CreateCourses = () => {
             //salvar os novos dados
             controller.manageCategories.SaveCategoriesLocal(updatedData);
             setSelectedCategory('');
-            client.invalidateQueries(["categories"]);
+            client.invalidateQueries(["categories"]); //invalidar a query para buscar os novos dados
         }
     });
-
-
-        // Função para buscar as categorias no cache local ou no banco de dados
-        const getCategories = async () => {
-            //buscar as categorias no cache local e converter em array de objetos
-            const CategoriesLocal = JSON.parse(localStorage.getItem('categories'));
-            if (CategoriesLocal) {
-                setCategories(CategoriesLocal);
-            } else {
-                const categoriesDataBase = await controller.manageCategories.GetCategories();
-                setCategories(categoriesDataBase);
-            }
-        }
-    
 
 
 
     // Estado para armazenar os dados do formulário
     const [formData, setFormData] = useState({
-        title: '',
-        status: 'pending',
-        registrations: [], // Lista de alunos inscritos no curso com ID e status (concluído, desistente, cursando)
-
-        description: '',
+        title: courseName,
+        status: 'pending', // pending, approved, reviewed, rejected
+        description: courseDescription,
         owner: '',
         thumbnail: imgUrl ? imgUrl : '',
         coursePremium: false,
-        idCourse: uuidv4(),
-        category: selectedCategory ? selectedCategory : 'categoria não selecionada',
-        modules: [
-            {
-                nameModule: '',
-                description: '',
-                registrationsModule: [], // Lista de alunos inscritos no módulo com ID e status (concluído, desistente, cursando)
-
-                modulePermission: modulePermission,
-                idModule: uuidv4(),
-                lessons: [
-                    {
-                        nameLesson: '',
-                        description: ''
-                    }
-                ]
-            }
-        ]
+        id: '',
+        category: selectedCategory,
+        modules: []
     });
 
     // Função para lidar com a alteração nos campos do formulário
@@ -131,36 +96,29 @@ const CreateCourses = () => {
             return;
         }
 
+        //converter o courseName para caixa alta
+        const courseNameUp = formData.title.toUpperCase();
+
+        const formData = {
+            title: courseNameUp,
+            status: 'pending', // pending, approved, reviewed, rejected
+            description: courseDescription,
+            owner: '',
+            thumbnail: imgUrl ? imgUrl : '',
+            coursePremium: false,
+            id: '',
+            category: selectedCategory,
+            modules: []
+        }
+
         try {
 
-            // Limpa o formulário após o envio bem-sucedido
-            setFormData({
-                title: '',
-                status: 'pending',
-                registrations: [],
-                coursePremium: false,
-                description: '',
-                owner: '',
-                thumbnail: '',
-                idCourse: uuidv4(),
-                category: selectedCategory,
-                modules: [
-                    {
-                        nameModule: '',
-                        description: '',
-                        registrationsModule: [],
+            //limpar os inputs
+            setCourseName('');
+            setCourseDescription('');
+            
 
-                        modulePermission: modulePermission,
-                        idModule: uuidv4(),
-                        lessons: [
-                            {
-                                nameLesson: '',
-                                description: ''
-                            }
-                        ]
-                    }
-                ]
-            });
+            controller.manageCourses.CreateCourse(formData);
         } catch (error) {
             console.error('Erro ao criar o curso:', error);
             alert('Erro ao criar o curso. Por favor, tente novamente mais tarde.');
@@ -263,7 +221,7 @@ const CreateCourses = () => {
             <h3>Categoria</h3>
             <select value={selectedCategory} onChange={handleChangeCategory}>
                 <option value="">Selecione uma categoria</option>
-                {data && data.map((category, index) => (
+                {categories && categories.map((category, index) => (
                    
                     <option key={index} value={category.id}>{category.name}</option>
                 ))}
@@ -278,8 +236,8 @@ const CreateCourses = () => {
                         type="text"
                         id="title"
                         name="title"
-                        value={formData.title}
-                        onChange={handleChange}
+                        value={courseName}
+                        onChange={(e) => setCourseName(e.target.value)}
                         required
                         style={{ width: '100%', padding: '10px', border: '1px solid #007bff', borderRadius: '5px' }}
                     />
@@ -290,8 +248,8 @@ const CreateCourses = () => {
                     <textarea
                         id="description"
                         name="description"
-                        value={formData.description}
-                        onChange={handleChange}
+                        value={courseDescription}
+                        onChange={(e) => setCourseDescription(e.target.value)}
                         required
                         style={{ width: '100%', padding: '10px', border: '1px solid #007bff', borderRadius: '5px' }}
                     />

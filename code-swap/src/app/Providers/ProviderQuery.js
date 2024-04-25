@@ -10,8 +10,7 @@ const Provider = ({ children }) => {
         //salvar o estado do cache
         { defaultOptions: { 
             queries: { 
-                refetchOnWindowFocus: false,
-                cacheTime: 1000 * 60 * 60 * 24 // 24 horas
+                refetchOnWindowFocus: false
             },
             mutations:{
                 

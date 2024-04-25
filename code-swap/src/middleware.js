@@ -17,7 +17,7 @@ export default function middleware( NextRequest){
 
     // Obtendo o cookie 'user' e seu valor
     const userCookie = cookieStore.get('user')?.value;
-
+    console.log(userCookie)
     let userDecrypted = userCookie;
 
   

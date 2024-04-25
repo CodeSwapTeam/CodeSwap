@@ -1,6 +1,6 @@
 
 
-//Função para salvar o cache do usuário no sessionStorage
+//Função para salvar o cache do usuário no sessionStorage.
 
 export const saveUserCache = (user) => {
     sessionStorage.setItem('currentUserData', JSON.stringify(user));
