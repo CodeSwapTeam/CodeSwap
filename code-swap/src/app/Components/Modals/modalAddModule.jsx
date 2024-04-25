@@ -18,16 +18,15 @@ function AddModuleModal(props) {
         const newModule = {
             nameModule: moduleName,
             description: moduleDescription,
-            idModule: uuidv4(),
-            lessons: [
-                {
-                    nameLesson: '',
-                    description: ''
-                }
-            ]
+            courseId : props.courseId,
+            id: '',
+            lessons: [ ]
         };
-        controller.manageModules.createModule(props.courseId, newModule);
-        
+
+        props.setModules(prevModules => [...prevModules, newModule]);
+
+        controller.manageModules.CreateModule(props.courseId, newModule);
+
         setModuleName('');
         setModuleDescription('');
         handleClose();
@@ -43,12 +42,11 @@ function AddModuleModal(props) {
                 <div className="modal">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title">Adicionar Módulo</h5>
                             
                         </div>
-                        <div className="modal-body">
-                            <input type="text" placeholder="Nome do Módulo" value={moduleName} onChange={(e) => setModuleName(e.target.value)} />
-                            <input type="text" placeholder="Descrição do Módulo" value={moduleDescription} onChange={(e) => setModuleDescription(e.target.value)} />
+                        <div className="modal-body" style={{display:'flex', flexDirection: 'column'}}>
+                            <input style={{margin:'4px', color: 'black'}} type="text" placeholder="Nome do Módulo" value={moduleName} onChange={(e) => setModuleName(e.target.value)} />
+                            <input style={{margin:'4px', color: 'black'}}  type="text" placeholder="Descrição do Módulo" value={moduleDescription} onChange={(e) => setModuleDescription(e.target.value)} />
                         </div>
                         <div className="modal-footer">
                             <button type="button" style={{ padding: '5px', backgroundColor: '#232323', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer'  }} onClick={handleClose}>Fechar</button>
