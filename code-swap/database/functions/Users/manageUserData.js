@@ -4,7 +4,7 @@ import { db } from "../../firebase";
 
 //função para buscar os dados do usuário
 export async function GetUserLocalData(){
-    const userData = JSON.parse(localStorage.getItem('currentUserData'));
+    const userData = JSON.parse(sessionStorage.getItem('currentUserData'));
     if(userData){
         return userData;
     }       

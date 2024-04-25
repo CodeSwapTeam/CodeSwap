@@ -5,7 +5,7 @@ import { CreateUser, GetUserById, GetUserData, GetUserDataBase, GetUserLocalData
 
 import { getUserCache, removeUserCache, saveUserCache } from "@/app/services/saveUserCache";
 import { CreateCategory, DeleteCategory, GetCategories, GetCategoriesLocal, SaveCategoriesLocal, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
-import { CreateCourse } from "../../database/functions/Courses/manageCourses";
+import { CreateCourse, DeleteCourse } from "../../database/functions/Courses/manageCourses";
 
 
 
@@ -20,7 +20,8 @@ export default function Controller(){
          * Retorna um objeto com as funções de gerenciamento de cursos
          */
         manageCourses: {
-            CreateCourse: CreateCourse
+            CreateCourse: CreateCourse,
+            DeleteCourse: DeleteCourse
         },
         /**
          * Gerenciador de módulos,

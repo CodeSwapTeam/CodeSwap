@@ -14,13 +14,13 @@ const CreateCourses = () => {
 
     const controller = Controller();
 
-   // const [categories, setCategories] = useState([]);
+    // const [categories, setCategories] = useState([]);
 
-    const [user, setUser] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('');
 
     const [courseName, setCourseName] = useState('');
     const [courseDescription, setCourseDescription] = useState('');
+    const [owner, setOwner] = useState('');
 
     const [imgUrl, setImgUrl] = useState('');
     const [progress, setProgress] = useState(0);
@@ -32,26 +32,34 @@ const CreateCourses = () => {
     const client = useQueryClient();
 
     // Função para buscar as categorias no cache local ou no banco de dados
-    const { data : categories } = useQuery({
+    const { data } = useQuery({
         queryKey: ["categories"],
         queryFn: async () => {
-            const localCategories = controller.manageCategories.GetCategoriesLocal()
-            if(localCategories){
-                return localCategories;
+            //buscar os dados do usuario no cache local
+            const userLocal = await controller.manageUsers.GetUserLocalData();
+            console.log(userLocal);
+            setOwner(userLocal.userName);
+
+            const localCategories = await controller.manageCategories.GetCategoriesLocal()
+            if (localCategories) {
+                return { categories: localCategories, user: userLocal };
             }
             const dbCategories = await controller.manageCategories.GetCategories();
             controller.manageCategories.SaveCategoriesLocal(dbCategories);
-            return dbCategories;
-
+            return { categories: dbCategories, user: userLocal };
         }
     });
 
+    // Agora você pode acessar as categorias e o usuário assim:
+    const categories = data?.categories;
+    const user = data?.user;
+    
 
     const handleChangeCategory = (event) => {
         setSelectedCategory('');
-        setSelectedCategory(event.target.value);    
+        setSelectedCategory(event.target.value);
     };
-    
+
     const deleteCategory = useMutation({
         mutationFn: async (id) => {
             controller.manageCategories.DeleteCategory(id);
@@ -72,7 +80,7 @@ const CreateCourses = () => {
         title: courseName,
         status: 'pending', // pending, approved, reviewed, rejected
         description: courseDescription,
-        owner: '',
+        owner: 'asdasdasd',
         thumbnail: imgUrl ? imgUrl : '',
         coursePremium: false,
         id: '',
@@ -80,11 +88,7 @@ const CreateCourses = () => {
         modules: []
     });
 
-    // Função para lidar com a alteração nos campos do formulário
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+
 
     // Função para lidar com o envio do formulário
     const handleSubmit = async (e) => {
@@ -97,13 +101,16 @@ const CreateCourses = () => {
         }
 
         //converter o courseName para caixa alta
-        const courseNameUp = formData.title.toUpperCase();
+
+        const courseNameUp = courseName.toUpperCase();
+
+
 
         const formData = {
             title: courseNameUp,
             status: 'pending', // pending, approved, reviewed, rejected
             description: courseDescription,
-            owner: '',
+            owner: owner,
             thumbnail: imgUrl ? imgUrl : '',
             coursePremium: false,
             id: '',
@@ -116,7 +123,7 @@ const CreateCourses = () => {
             //limpar os inputs
             setCourseName('');
             setCourseDescription('');
-            
+
 
             controller.manageCourses.CreateCourse(formData);
         } catch (error) {
@@ -222,7 +229,7 @@ const CreateCourses = () => {
             <select value={selectedCategory} onChange={handleChangeCategory}>
                 <option value="">Selecione uma categoria</option>
                 {categories && categories.map((category, index) => (
-                   
+
                     <option key={index} value={category.id}>{category.name}</option>
                 ))}
             </select>
@@ -241,7 +248,7 @@ const CreateCourses = () => {
                         required
                         style={{ width: '100%', padding: '10px', border: '1px solid #007bff', borderRadius: '5px' }}
                     />
-                    <p>Criador: {user && user}</p>
+                    <p>Criador: {user && user.userName}</p>
                 </div>
                 <div style={{ marginBottom: '20px' }}>
                     <label htmlFor="description" style={{ fontWeight: 'bold', marginBottom: '5px', color: '#007bff' }}>Descrição:</label>
