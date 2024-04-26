@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Controller from '@/Controller/controller';
 
+
+
 function UpdateCourseModal(props) {
 
 
@@ -20,7 +22,12 @@ function UpdateCourseModal(props) {
             description: courseDescription
         };
        await controller.manageCourses.UpdateCourse(props.courseId, props.courseCategory.id, courseData);
-       props.setCourseSelected(courseData);
+       //buscar o curso atualizado no cache local
+         const courseLocal = JSON.parse(sessionStorage.getItem('courses'));
+        //pegar o objeto do curso com o courseId === props.courseId
+        const course = courseLocal.find(course => course.id === props.courseId);
+
+       props.setCourseSelected(course);
        props.setPainelUpdateCourse(false);
          
        

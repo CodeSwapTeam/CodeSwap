@@ -22,8 +22,10 @@ const CreateCourses = () => {
     const [courseDescription, setCourseDescription] = useState('');
     const [owner, setOwner] = useState('');
 
-    const [imgUrl, setImgUrl] = useState('');
+    const [imgUrlThumbnail, setImgUrlThumbnail] = useState('');
+    const [imgUrlCover, setImgUrlCover] = useState('');
     const [progress, setProgress] = useState(0);
+    const [progressCover, setProgressCover] = useState(0);
 
     const [SequentialModule, setSequentialModule] = useState(false);
     const [coursePremium, setCoursePremium] = useState(false);
@@ -82,7 +84,7 @@ const CreateCourses = () => {
         status: 'pending', // pending, approved, reviewed, rejected
         description: courseDescription,
         owner: 'asdasdasd',
-        thumbnail: imgUrl ? imgUrl : '',
+        thumbnail: imgUrlThumbnail ? imgUrlThumbnail : '',
         coursePremium: false,
         id: '',
         category: selectedCategory,
@@ -112,7 +114,8 @@ const CreateCourses = () => {
             status: 'pending', // pending, approved, reviewed, rejected
             description: courseDescription,
             owner: owner,
-            thumbnail: imgUrl ? imgUrl : '',
+            thumbnail: imgUrlThumbnail ? imgUrlThumbnail : '',
+            cover: imgUrlCover ? imgUrlCover : '',
             coursePremium: false,
             id: '',
             category: selectedCategory,
@@ -188,11 +191,11 @@ const CreateCourses = () => {
 
 
 
-    const handleUpload = async (e) => {
+    const handleUploadThumbnail = async (e) => {
         e.preventDefault();
         const file = e.target.file.files[0];
         if (!file) return;
-        const storageRef = ref(storage, `images/${file.name}`);
+        const storageRef = ref(storage, `Courses/Thumbnails/${file.name}`);
         const uploadTask = uploadBytesResumable(storageRef, file);
 
         uploadTask.on('state_changed', (snapshot) => {
@@ -203,7 +206,30 @@ const CreateCourses = () => {
         }
             , () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                    setImgUrl(downloadURL);
+                    setImgUrlThumbnail(downloadURL);
+                    console.log('File available at', downloadURL);
+                });
+                //limpar o campo de upload
+                e.target.file.value = '';
+            });
+    };
+
+    const handleUploadCover = async (e) => {
+        e.preventDefault();
+        const file = e.target.file.files[0];
+        if (!file) return;
+        const storageRef = ref(storage, `Courses/Covers/${file.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        uploadTask.on('state_changed', (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setProgressCover(progress);
+        }, (error) => {
+            console.error(error);
+        }
+            , () => {
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    setImgUrlCover(downloadURL);
                     console.log('File available at', downloadURL);
                 });
                 //limpar o campo de upload
@@ -346,14 +372,25 @@ const CreateCourses = () => {
                 <button type="submit" style={{ padding: '10px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%' }}>Criar Curso</button>
             </form>
             <div>
-                <label style={{ fontWeight: 'bold', color: '#007bff' }}>Upload Arquivos:</label>
-                <form onSubmit={handleUpload} >
+                <label style={{ fontWeight: 'bold', color: '#007bff' }}>Upload Thumbnail:</label>
+                <form onSubmit={handleUploadThumbnail} >
                     <input type="file" name="file" />
                     <button style={{ padding: '5px', backgroundColor: 'blue', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} type="submit">Enviar</button>
                 </form>
                 <br />
-                {!imgUrl && <progress value={progress} max="100" />}
-                {imgUrl && <img src={imgUrl} alt="Imagem do curso" style={{ width: '100px', height: '100px' }} />}
+                {!imgUrlThumbnail && <progress value={progress} max="100" />}
+                {imgUrlThumbnail && <img src={imgUrlThumbnail} alt="Imagem do curso" style={{ width: '100px', height: '100px' }} />}
+            </div>
+
+            <div>
+                <label style={{ fontWeight: 'bold', color: '#007bff' }}>Upload Capa do Curso:</label>
+                <form onSubmit={handleUploadCover} >
+                    <input type="file" name="file" />
+                    <button style={{ padding: '5px', backgroundColor: 'blue', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} type="submit">Enviar</button>
+                </form>
+                <br />
+                {!imgUrlCover&& <progress value={progressCover} max="100" />}
+                {imgUrlCover && <img src={imgUrlCover} alt="Imagem do curso" style={{ width: '100px', height: '100px' }} />}
             </div>
         </div>
     )

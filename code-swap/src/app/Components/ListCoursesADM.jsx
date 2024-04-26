@@ -12,6 +12,10 @@ import UpdateLessonModal from './Modals/modalUpdateLesson';
 import EditCourseCategoryModal from './Modals/modalEditCategoryCourse';
 import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
 
+import { storage } from '../../../database/firebase';
+import { deleteObject, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
+import { ref } from "firebase/storage";
+
 
 const ListCourses = () => {
     const controller = Controller();
@@ -119,6 +123,115 @@ const ListCourses = () => {
         setIsSequential(event.target.checked);
     }
 
+
+    const [difficulty, setDifficulty] = useState('iniciante');
+
+    const handleSelectChange = (event) => {
+        setDifficulty(event.target.value);
+    };
+
+
+    const [imgUrlThumbnail, setImgUrlThumbnail] = useState('');
+    const [progress, setProgress] = useState(0);
+
+    const [imgUrlCover, setImgUrlCover] = useState('');
+    const [progressCover, setProgressCover] = useState(0);
+
+    const handleUpdateThumbnail = async (e) => {
+        e.preventDefault();
+        const file = e.target.file.files[0];
+        if (!file) return;
+
+        // Extrair o nome do arquivo da URL
+        const url = new URL(decodeURIComponent(courseSelected.thumbnail));
+        const pathname = url.pathname;
+        const parts = pathname.split('/');
+        const filename = parts[parts.length - 1];
+        console.log(filename);
+
+        // Deletar a imagem antiga
+        const oldImageRef = ref(storage, `Courses/Thumbnails/${filename}`);
+        deleteObject(oldImageRef).catch((error) => {
+            console.error(error);
+        });
+
+        // Fazer o upload da nova imagem
+        const storageRef = ref(storage, `Courses/Thumbnails/${file.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        uploadTask.on('state_changed', (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setProgress(progress);
+        }, (error) => {
+            console.error(error);
+        }, () => {
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                setImgUrlThumbnail(downloadURL);
+                console.log('File available at', downloadURL);
+                // Atualizar a URL da imagem no banco de dados
+                controller.manageCourses.UpdateThumbnailCourse(courseSelected.id, downloadURL);
+
+                // Invalidate a query 'ListCourses' após a atualização da imagem
+                client.invalidateQueries("ListCourses");
+
+                // Atualizar a imagem no estado local
+                setCourseSelected(courseSelected => ({ ...courseSelected, thumbnail: downloadURL }));
+            });
+
+            // Limpar o campo de upload
+            e.target.file.value = '';
+        });
+    };
+
+    const handleUpdateCover = async (e) => {
+        e.preventDefault();
+        const file = e.target.file.files[0];
+        if (!file) return;
+
+        // Extrair o nome do arquivo da URL
+        const url = new URL(decodeURIComponent(courseSelected.cover));
+        const pathname = url.pathname;
+        const parts = pathname.split('/');
+        const filename = parts[parts.length - 1];
+        console.log(filename);
+
+        // Deletar a imagem antiga
+        const oldImageRef = ref(storage, `Courses/Covers/${filename}`);
+        deleteObject(oldImageRef).catch((error) => {
+            // Ignorar o erro  404 se o arquivo não existir
+            if (error.code === 'storage/object-not-found') {
+                return;
+            }
+        });
+
+        // Fazer o upload da nova imagem
+        const storageRef = ref(storage, `Courses/Covers/${file.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        uploadTask.on('state_changed', (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setProgress(progress);
+        }, (error) => {
+            console.error(error);
+        }, () => {
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                setImgUrlThumbnail(downloadURL);
+                console.log('File available at', downloadURL);
+                // Atualizar a URL da imagem no banco de dados
+                controller.manageCourses.UpdateCoverCourse(courseSelected.id, downloadURL);
+
+                // Invalidate a query 'ListCourses' após a atualização da imagem
+                client.invalidateQueries("ListCourses");
+
+                // Atualizar a imagem no estado local
+                setCourseSelected(courseSelected => ({ ...courseSelected, cover: downloadURL }));
+            });
+
+            // Limpar o campo de upload
+            e.target.file.value = '';
+        });
+    };
+
     return (
         <div>
             <h1 style={{ border: '2px solid white', padding: '10px', color: 'white', textAlign: 'center' }}>{selectedPainel === 'courses' ? `Lista de Cursos ${category ? category.name : ''}` : 'Modulos'}</h1>
@@ -149,10 +262,6 @@ const ListCourses = () => {
 
                     <div style={{ flex: '80%', border: '2px solid white', padding: '10px', color: 'white', textAlign: 'center' }}>
 
-
-
-
-
                         <h3>Modulos do curso {courseSelected.title}</h3>
                         <div>
                             <div style={{ border: '2px solid white', padding: '5px', margin: '5px' }}>
@@ -167,7 +276,7 @@ const ListCourses = () => {
                                         <div >
                                             <p style={{ border: '1px solid white', padding: '5px', margin: '5px' }}>Configurações do Curso</p>
 
-                                            <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
+                                            <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', justifyContent: 'space-between' }}>
 
                                                 <div style={{ width: '30%', marginLeft: '10px' }}>
                                                     <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
@@ -184,14 +293,61 @@ const ListCourses = () => {
                                                     </label>
                                                     <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
                                                         Módulos sequenciais?
-                                                        <input type="checkbox" checked={isSequential} onChange={handleCheckboxChangeSequential}/>
+                                                        <input type="checkbox" checked={isSequential} onChange={handleCheckboxChangeSequential} />
                                                     </label>
+                                                    <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
+                                                        XP do curso:
+                                                        <span type="text" > 100 </span>
+                                                    </label>
+                                                    <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
+                                                        Codes do curso:
+                                                        <span type="text" > 150 </span>
+                                                    </label>
+                                                    <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
+                                                        Nível de dificuldade do curso:
+                                                        <select style={{ color: 'black' }} value={difficulty} onChange={handleSelectChange}>
+                                                            <option value="iniciante">Iniciante</option>
+                                                            <option value="intermediário">Intermediário</option>
+                                                            <option value="avançado">Avançado</option>
+                                                        </select>
+                                                    </label>
+
+
+
+
+                                                    <label style={{ width: '60%', border: '1px solid white', display: 'flex', flexDirection: 'column', gap: '5px', marginRight: '10px' }}>
+                                                        Thumbnail
+                                                        <img src={courseSelected.thumbnail} alt="imagem" />
+                                                    </label>
+
+                                                    <div>
+                                                        <label style={{ fontWeight: 'bold', color: '#007bff' }}>Atualizar Thumbnail:</label>
+                                                        <form onSubmit={handleUpdateThumbnail} >
+                                                            <input type="file" name="file" />
+                                                            <button style={{ padding: '5px', backgroundColor: 'blue', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} type="submit">Enviar</button>
+                                                        </form>
+                                                        <br />
+
+                                                    </div>
                                                 </div>
 
-                                                <label style={{ width: '60%', border: '1px solid white', display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                                    Thumbnail
-                                                    <img src="" alt="imagem" />
+                                                <label style={{ width: '60%', border: '1px solid white', display: 'flex', flexDirection: 'column', gap: '5px', marginRight: '10px' }}>
+                                                    Capa do Curso
+                                                    <img src={courseSelected.cover
+                                                    } alt="imagem" />
+
+                                                    <div>
+                                                        <label style={{ fontWeight: 'bold', color: '#007bff' }}>Atualizar capa do curso:</label>
+                                                        <form onSubmit={handleUpdateCover} >
+                                                            <input type="file" name="file" />
+                                                            <button style={{ padding: '5px', backgroundColor: 'blue', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} type="submit">Enviar</button>
+                                                        </form>
+                                                        <br />
+
+                                                    </div>
                                                 </label>
+
+
 
                                             </div>
                                         </div>
@@ -199,8 +355,6 @@ const ListCourses = () => {
                                     </>
                                 ) : (
                                     <UpdateCourseModal courseCategory={category} courseId={courseSelected.id} dataCourse={courseSelected} setPainelUpdateCourse={setPainelUpdateCourse} setCourseSelected={setCourseSelected} />
-
-
                                 )}
 
                                 <div style={{ border: '1px solid white', padding: '5px', margin: '5px' }}>

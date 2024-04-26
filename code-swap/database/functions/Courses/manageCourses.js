@@ -16,6 +16,7 @@ export async function CreateCourse(formData) {
             owner: formData.owner,
             id: '',
             thumbnail: formData.thumbnail,
+            cover: formData.cover,
             coursePremium: formData.coursePremium,
             category: formData.category,
             SequentialModule: formData.SequentialModule,
@@ -169,13 +170,72 @@ export async function DeleteCourse(docId){
 //função para buscar um curso pelo id
 export async function GetCourseById(courseId) {
     try {
+
+        //primeiro buscar o curso no cache local
+        const categoriesLocal = JSON.parse(sessionStorage.getItem('courses'));
+        if(categoriesLocal){
+            const course = categoriesLocal.find(course => course.id === courseId);
+            if (course) {
+                return course;
+            }
+        }
+        //se não encontrar buscar no banco de dados
         const docRef = doc(db, 'Courses', courseId);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
+            //salvar no cache local em 'courses', se não existir criar o array
+            const coursesLocal = JSON.parse(sessionStorage.getItem('courses')) || [];
+            coursesLocal.push(docSnap.data());
+            sessionStorage.setItem('courses', JSON.stringify(coursesLocal));
+
+            
+
             return docSnap.data();
+            
+
         }
     } catch (error) {
         console.error('Erro ao buscar o curso:', error);
+        throw error;
+    }
+};
+
+//função para atualizar a thumbnail do curso
+export async function UpdateThumbnail(courseId, thumbnail) {
+    try {
+        await updateDoc(doc(db, 'Courses', courseId), {
+            thumbnail: thumbnail
+        });
+        //atualizar a thumbnail no cache local
+        const coursesLocal = JSON.parse(sessionStorage.getItem('courses'));
+        const course = coursesLocal.find(course => course.id === courseId);
+        course.thumbnail = thumbnail;
+        sessionStorage.setItem('courses', JSON.stringify(coursesLocal));
+
+        alert('Thumbnail atualizada com sucesso');
+    }
+    catch (error) {
+        console.error('Erro ao atualizar a thumbnail:', error);
+        throw error;
+    }
+};
+
+//função para atualizar a capa do curso
+export async function UpdateCover(courseId, cover) {
+    try {
+        await updateDoc(doc(db, 'Courses', courseId), {
+            cover: cover
+        });
+        //atualizar a capa no cache local
+        const coursesLocal = JSON.parse(sessionStorage.getItem('courses'));
+        const course = coursesLocal.find(course => course.id === courseId);
+        course.cover = cover;
+        sessionStorage.setItem('courses', JSON.stringify(coursesLocal));
+
+        alert('Capa atualizada com sucesso');
+    }
+    catch (error) {
+        console.error('Erro ao atualizar a capa:', error);
         throw error;
     }
 };
