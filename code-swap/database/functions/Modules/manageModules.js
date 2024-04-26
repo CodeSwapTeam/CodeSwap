@@ -70,24 +70,28 @@ export async function GetModulesLocal(){
 
 export async function updateModule(courseId, moduleId, newModuleData) {
     try {
-        const docRef = doc(db, 'Modulos', courseId);
         
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-            const courseData = docSnap.data();
-            const moduleData = courseData.modules;
-            //atualizar o description e o nameModule do modulo com os dados passados no moduleData
-            moduleData[moduleId].description = newModuleData.description;
-            moduleData[moduleId].nameModule = newModuleData.nameModule;
 
-            await updateDoc(docRef, courseData);
-            alert(`Módulo ${newModuleData.nameModule} atualizado com sucesso!`);
-            
-            window.location.reload();
+        //atualizar o modulo no cache local
+        const modules = JSON.parse(sessionStorage.getItem('modules'));
+        //pegar o modulo com o id passado
+        const module = modules.find(module => module.id === moduleId);
+        //atualizar os dados do modulo
+        module.title = newModuleData.nameModule;
+        module.description = newModuleData.description;
+        //salvar os modulos atualizados no sessionStorage
+        sessionStorage.setItem('modules', JSON.stringify(modules));
 
-            
-            
-        }
+        //atualizar o modulo no database
+        await updateDoc(doc(db, 'Modules', moduleId), newModuleData);
+
+        //atualizar o modulo no array de modulos do curso
+        await updateDoc(doc(db, 'Courses', courseId), {
+            modules: arrayUnion({ id: moduleId, title: newModuleData.nameModule, description: newModuleData.description })
+        });
+
+        alert('Módulo atualizado com sucesso');
+        
         
 
     } catch (error) {

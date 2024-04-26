@@ -22,6 +22,8 @@ const ListCourses = () => {
     const [category, setCategory] = useState(null);
 
     const [selectedPainel, setSelectedPainel] = useState('courses');
+
+    const [painelUpdateCourse, setPainelUpdateCourse] = useState(false);
     const client = useQueryClient();
 
     const { data: categories } = useQuery({
@@ -39,6 +41,7 @@ const ListCourses = () => {
         }
 
     })
+
 
 
 
@@ -65,6 +68,9 @@ const ListCourses = () => {
         setCategory({ name: category.name, id: category.id });
     }
 
+
+    
+
     const handleGetModules = useMutation({
         mutationFn: async (course) => {
             //Buscar os módulos do curso no cache local
@@ -80,7 +86,7 @@ const ListCourses = () => {
         onSuccess: (data) => {
             client.invalidateQueries("ListCourses");
             setModules(data);
-            
+
         }
     })
 
@@ -97,6 +103,8 @@ const ListCourses = () => {
             setModules(modules => modules.filter(module => module.id !== variables));
         }
     })
+
+
 
 
 
@@ -132,23 +140,32 @@ const ListCourses = () => {
                         <h3>Modulos</h3>
                         <div>
                             <div style={{ border: '1px solid white', padding: '5px', margin: '5px' }}>
-                                <h4>{courseSelected.title}</h4>
-                                <p>{courseSelected.description}</p>
+
+
+                                {!painelUpdateCourse ? (
+                                    <>
+                                        <h4>{courseSelected.title}</h4>
+                                        <p>{courseSelected.description}</p>
+                                        <button style={{ padding: '5px', backgroundColor: '#5150e1', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={() => setPainelUpdateCourse(true)}>Atualizar Curso</button>
+                                    </>
+                                ) : (
+                                    <UpdateCourseModal courseId={courseSelected.id} dataCourse={courseSelected} setPainelUpdateCourse={setPainelUpdateCourse} />
+                                )}
 
                                 <div style={{ border: '1px solid white', padding: '5px', margin: '5px' }}>
                                     <div style={{ border: '1px solid white', padding: '5px', margin: '5px' }}>
                                         {modules && modules.map((module, index) => (
                                             <div key={index} style={{ position: 'relative', border: '1px solid white', padding: '5px', margin: '5px' }}>
-                                            <button style={{ position: 'absolute', top: '5px', right: '5px' }} onClick={()=> handleDeleteModule.mutate(module.id)}>Deletar Módulo</button>
-                                            <h4>{module.title}</h4>
-                                            <p>{module.description}</p>
-                                            <button style={{ border: '1px solid white', padding: '5px', margin: '5px', cursor: 'pointer' }}>Gerenciar</button>
-                                        </div>
+                                                <button style={{ position: 'absolute', top: '5px', right: '5px' }} onClick={() => handleDeleteModule.mutate(module.id)}>Deletar Módulo</button>
+                                                <h4>{module.title}</h4>
+                                                
+                                                <button style={{ border: '1px solid white', padding: '5px', margin: '5px', cursor: 'pointer' }}>Gerenciar</button>
+                                            </div>
                                         ))}
                                     </div>
                                     <p>Criar Módulos</p>
 
-                                    <AddModuleModal courseId={courseSelected.id}  setModules= {setModules}/>
+                                    <AddModuleModal courseId={courseSelected.id} />
                                 </div>
 
 

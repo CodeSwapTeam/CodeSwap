@@ -56,8 +56,9 @@ const CreateCourses = () => {
     
 
     const handleChangeCategory = (event) => {
-        setSelectedCategory('');
+        console.log(event.target.value);
         setSelectedCategory(event.target.value);
+
     };
 
     const deleteCategory = useMutation({
@@ -230,7 +231,7 @@ const CreateCourses = () => {
                 <option value="">Selecione uma categoria</option>
                 {categories && categories.map((category, index) => (
 
-                    <option key={index} value={category.id}>{category.name}</option>
+                    <option onClick={()=>selectedCategory(category.id)} key={index} value={category.id}>{category.name}</option>
                 ))}
             </select>
             {/** botao para excluir a categoria */}

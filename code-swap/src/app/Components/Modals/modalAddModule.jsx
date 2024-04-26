@@ -23,7 +23,11 @@ function AddModuleModal(props) {
             lessons: [ ]
         };
 
-        props.setModules(prevModules => [...prevModules, newModule]);
+        //prev => prev.concat(newModule)
+
+        props.setModules(prev => [...prev, newModule]);
+        
+
 
         controller.manageModules.CreateModule(props.courseId, newModule);
 

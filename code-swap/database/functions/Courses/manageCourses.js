@@ -72,6 +72,9 @@ export async function GetCourses() {
 //função para atualizar um curso
 export async function updateCourse(courseId, courseData) {
 
+
+    
+
 };
 
 export async function DeleteCourse(docId){
