@@ -16,8 +16,9 @@ export async function CreateCourse(formData) {
             owner: formData.owner,
             id: '',
             thumbnail: formData.thumbnail,
-            coursePremium: false,
+            coursePremium: formData.coursePremium,
             category: formData.category,
+            SequentialModule: formData.SequentialModule,
             modules: [],
         };
         const docRef = await addDoc(collection(db, 'Courses'), courseData);

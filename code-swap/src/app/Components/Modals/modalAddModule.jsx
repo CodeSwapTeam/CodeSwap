@@ -25,7 +25,7 @@ function AddModuleModal(props) {
 
         //prev => prev.concat(newModule)
 
-        props.setModules(prev => [...prev, newModule]);
+        //props.setModules(prev => [...prev, newModule]);
         
 
 

@@ -36,7 +36,7 @@ function UpdateCourseModal(props) {
                 <div className="modal">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title">Atualizar Curso</h5>
+                            <h5 className="modal-title">Atualizar informações</h5>
                             
                         </div>
                         <div className="modal-body" style={{display: 'flex', flexDirection: 'column'}}>

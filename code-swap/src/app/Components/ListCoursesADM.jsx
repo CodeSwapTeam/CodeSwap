@@ -62,7 +62,7 @@ const ListCourses = () => {
     const handleCategory = (category) => {
         setCourses(category.courses);
         setCategory({ name: category.name, id: category.id });
-    }  
+    }
 
     //função para buscar os modulos de um curso
     const GetModules = async (course) => {
@@ -70,11 +70,11 @@ const ListCourses = () => {
         handleGetModules.mutate(course);
 
         console.log(course.id)
-            const courseSelected = await controller.manageCourses.GetCourseById(course.id);
-            setCourseSelected(courseSelected);
-            console.log(courseSelected);
+        const courseSelected = await controller.manageCourses.GetCourseById(course.id);
+        setCourseSelected(courseSelected);
+        console.log(courseSelected);
     }
-    
+
     const handleGetModules = useMutation({
         mutationFn: async (course) => {
             //Buscar os módulos do curso no cache local
@@ -84,7 +84,7 @@ const ListCourses = () => {
             }
 
             const modules = await controller.manageModules.GetModules(course.id);
-            
+
             return modules;
         },
         onSuccess: (data) => {
@@ -108,6 +108,16 @@ const ListCourses = () => {
         }
     })
 
+    const [isPremium, setIsPremium] = useState(false);
+    const [isSequential, setIsSequential] = useState(false);
+
+    const handleCheckboxChange = (event) => {
+        setIsPremium(event.target.checked);
+    };
+
+    const handleCheckboxChangeSequential = (event) => {
+        setIsSequential(event.target.checked);
+    }
 
     return (
         <div>
@@ -138,32 +148,72 @@ const ListCourses = () => {
                 </div>) : (
 
                     <div style={{ flex: '80%', border: '2px solid white', padding: '10px', color: 'white', textAlign: 'center' }}>
-                        <h3>Modulos</h3>
+
+
+
+
+
+                        <h3>Modulos do curso {courseSelected.title}</h3>
                         <div>
-                            <div style={{ border: '1px solid white', padding: '5px', margin: '5px' }}>
+                            <div style={{ border: '2px solid white', padding: '5px', margin: '5px' }}>
 
 
                                 {!painelUpdateCourse ? (
                                     <>
                                         <h4>{courseSelected.title}</h4>
                                         <p>{courseSelected.description}</p>
-                                        <button style={{ padding: '5px', backgroundColor: '#5150e1', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={() => setPainelUpdateCourse(true)}>Atualizar Curso</button>
+                                        <button style={{ padding: '5px', backgroundColor: '#5150e1', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={() => setPainelUpdateCourse(true)}>Atualizar informações</button>
+
+                                        <div >
+                                            <p style={{ border: '1px solid white', padding: '5px', margin: '5px' }}>Configurações do Curso</p>
+
+                                            <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
+
+                                                <div style={{ width: '30%', marginLeft: '10px' }}>
+                                                    <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
+                                                        Criador:
+                                                        <span type="text" >{courseSelected.owner}</span>
+                                                    </label>
+                                                    <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
+                                                        Status:
+                                                        <span type="text" >{courseSelected.status}</span>
+                                                    </label>
+                                                    <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
+                                                        Curso premium?
+                                                        <input type="checkbox" checked={isPremium} onChange={handleCheckboxChange} />
+                                                    </label>
+                                                    <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
+                                                        Módulos sequenciais?
+                                                        <input type="checkbox" checked={isSequential} onChange={handleCheckboxChangeSequential}/>
+                                                    </label>
+                                                </div>
+
+                                                <label style={{ width: '60%', border: '1px solid white', display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                                                    Thumbnail
+                                                    <img src="" alt="imagem" />
+                                                </label>
+
+                                            </div>
+                                        </div>
+
                                     </>
                                 ) : (
-                                    <UpdateCourseModal courseCategory={category} courseId={courseSelected.id} dataCourse={courseSelected} setPainelUpdateCourse={setPainelUpdateCourse} setCourseSelected={setCourseSelected}/>
+                                    <UpdateCourseModal courseCategory={category} courseId={courseSelected.id} dataCourse={courseSelected} setPainelUpdateCourse={setPainelUpdateCourse} setCourseSelected={setCourseSelected} />
+
+
                                 )}
 
                                 <div style={{ border: '1px solid white', padding: '5px', margin: '5px' }}>
-                                    <div style={{ border: '1px solid white', padding: '5px', margin: '5px' }}>
-                                        {modules && modules.map((module, index) => (
-                                            <div key={index} style={{ position: 'relative', border: '1px solid white', padding: '5px', margin: '5px' }}>
-                                                <button style={{ position: 'absolute', top: '5px', right: '5px' }} onClick={() => handleDeleteModule.mutate(module.id)}>Deletar Módulo</button>
-                                                <h4>{module.title}</h4>
-                                                
-                                                <button style={{ border: '1px solid white', padding: '5px', margin: '5px', cursor: 'pointer' }}>Gerenciar</button>
-                                            </div>
-                                        ))}
-                                    </div>
+
+                                    {modules && modules.map((module, index) => (
+                                        <div key={index} style={{ position: 'relative', border: '1px solid white', padding: '5px', margin: '5px' }}>
+                                            <button style={{ position: 'absolute', top: '5px', right: '5px' }} onClick={() => handleDeleteModule.mutate(module.id)}>Deletar Módulo</button>
+                                            <h4>{module.title}</h4>
+
+                                            <button style={{ border: '1px solid white', padding: '5px', margin: '5px', cursor: 'pointer' }}>Gerenciar</button>
+                                        </div>
+                                    ))}
+
                                     <p>Criar Módulos</p>
 
                                     <AddModuleModal courseId={courseSelected.id} />

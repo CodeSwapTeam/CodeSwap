@@ -116,6 +116,7 @@ const CreateCourses = () => {
             coursePremium: false,
             id: '',
             category: selectedCategory,
+            SequentialModule: false,
             modules: []
         }
 
