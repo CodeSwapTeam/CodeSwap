@@ -27,7 +27,17 @@ function UpdateCourseModal(props) {
         //pegar o objeto do curso com o courseId === props.courseId
         const course = courseLocal.find(course => course.id === props.courseId);
 
+        //atualizar o cache local com o curso atualizado
+        course.title = courseData.title;
+        course.description = courseData.description;
+
+        //salvar o cache local
+        sessionStorage.setItem('courses', JSON.stringify(courseLocal));
+
+
+        console.log('curso setado', course);
        props.setCourseSelected(course);
+       props.setCourses(courseLocal);
        props.setPainelUpdateCourse(false);
          
        

@@ -47,8 +47,17 @@ export async function CreateCourse(formData) {
         alert('Curso criado com sucesso');
     }
     catch (error) {
-        console.error('Erro ao criar o curso:', error);
+        //console.error('Erro ao criar o curso:', error);
+        //throw error;
+        alert('Por favor selecione a categoria novamente!');
+        //recarregar a página
+        window.location.reload();
+
+        //salvar no cache local os dados da categoria para recuperação em caso de erro
+        sessionStorage.setItem('erro_save', JSON.stringify(formData));
+
         throw error;
+
     }
 
     
@@ -113,7 +122,8 @@ export async function updateCourse(courseId, courseCategoryId, courseData) {
 
         //atualizar o curso na categoria no banco de dados com a categoria courseCategoryId
         await updateDoc(doc(db, 'Categories', courseCategoryId), {
-            courses: arrayUnion({ id: courseId, title: courseData.title, description: courseData.description })
+            //buscar o no array de cursos da categoria o curso com o id courseId e atualizar o title e a descrição
+            courses: categorie.courses.map(course => course.id === courseId ? { id: courseId, title: courseData.title, description: courseData.description } : course)
         });
 
 
@@ -123,7 +133,8 @@ export async function updateCourse(courseId, courseCategoryId, courseData) {
         //alert('Curso atualizado com sucesso');
     }
     catch (error) {
-        console.error('Erro ao atualizar o curso:', error);
+        //console.error('Erro ao atualizar o curso:', error);
+        alert('Por favor selecione a categoria novamente!');
  
     }
 

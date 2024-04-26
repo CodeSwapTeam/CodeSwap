@@ -25,6 +25,12 @@ const ListCourses = () => {
     const [modules, setModules] = useState([{}]);
     const [category, setCategory] = useState(null);
 
+    const [imgUrlThumbnail, setImgUrlThumbnail] = useState('');
+    const [progress, setProgress] = useState(0);
+
+    const [imgUrlCover, setImgUrlCover] = useState('');
+    const [progressCover, setProgressCover] = useState(0);
+
     const [selectedPainel, setSelectedPainel] = useState('courses');
 
     const [painelUpdateCourse, setPainelUpdateCourse] = useState(false);
@@ -33,14 +39,18 @@ const ListCourses = () => {
     const { data: categories } = useQuery({
         queryKey: ["ListCourses"],
         queryFn: async () => {
+            
             //Buscar as categorias no cache local
             const categories = controller.manageCategories.GetCategoriesLocal();
             //console.log(categories);
             if (categories) {
+                console.log('Buscando categorias Locais', categories);
+                //setCourses(category.courses);
                 return categories;
             }
             //setCourses(category.courses);
             const dbCategories = await controller.manageCategories.GetCategories();
+            //setCourses(dbCategories.courses);
             return dbCategories;
         }
 
@@ -65,6 +75,8 @@ const ListCourses = () => {
     //função para pegar os cursos dentro de uma categoria selecionada pelo usuário
     const handleCategory = (category) => {
         setCourses(category.courses);
+        console.log("setar os cursos", category.courses);
+        //console.log("setar a categoria", { name: category.name, id: category.id });
         setCategory({ name: category.name, id: category.id });
     }
 
@@ -131,11 +143,7 @@ const ListCourses = () => {
     };
 
 
-    const [imgUrlThumbnail, setImgUrlThumbnail] = useState('');
-    const [progress, setProgress] = useState(0);
 
-    const [imgUrlCover, setImgUrlCover] = useState('');
-    const [progressCover, setProgressCover] = useState(0);
 
     const handleUpdateThumbnail = async (e) => {
         e.preventDefault();
@@ -354,7 +362,7 @@ const ListCourses = () => {
 
                                     </>
                                 ) : (
-                                    <UpdateCourseModal courseCategory={category} courseId={courseSelected.id} dataCourse={courseSelected} setPainelUpdateCourse={setPainelUpdateCourse} setCourseSelected={setCourseSelected} />
+                                    <UpdateCourseModal courseCategory={category} courseId={courseSelected.id} dataCourse={courseSelected} setPainelUpdateCourse={setPainelUpdateCourse} setCourseSelected={setCourseSelected} setCourses={setCourses}/>
                                 )}
 
                                 <div style={{ border: '1px solid white', padding: '5px', margin: '5px' }}>

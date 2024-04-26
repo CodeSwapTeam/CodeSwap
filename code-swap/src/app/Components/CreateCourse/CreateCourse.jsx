@@ -37,6 +37,17 @@ const CreateCourses = () => {
     const { data } = useQuery({
         queryKey: ["categories"],
         queryFn: async () => {
+            //verificar se existe algum erro ao salvar o curso buscando no cache local o erro_save
+            const erroData = JSON.parse(sessionStorage.getItem('erro_save'));
+            if (erroData) {
+                //se existir erro, setar nos campos do formulário os dados salvos
+                setCourseName(erroData.title);
+                setCourseDescription(erroData.description);
+
+                //limpar o cache local
+                sessionStorage.removeItem('erro_save');
+            }
+
             //buscar os dados do usuario no cache local
             const userLocal = await controller.manageUsers.GetUserLocalData();
            // console.log(userLocal);
@@ -132,7 +143,9 @@ const CreateCourses = () => {
 
             controller.manageCourses.CreateCourse(formData);
         } catch (error) {
-            console.error('Erro ao criar o curso:', error);
+            //se retornar erro buscar os dados salvos no cache local
+            const erroData = JSON.parse(sessionStorage.getItem('erro_save'));
+            console.log(erroData);
             alert('Erro ao criar o curso. Por favor, tente novamente mais tarde.');
         }
     };
