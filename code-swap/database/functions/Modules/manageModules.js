@@ -69,28 +69,11 @@ export async function GetModulesLocal(){
 //função para atualizar um modulo dentro de um curso
 
 export async function updateModule(courseId, moduleId, newModuleData) {
-    try {
+    
+    
         
 
-        //atualizar o modulo no cache local
-        const modules = JSON.parse(sessionStorage.getItem('modules'));
-        //pegar o modulo com o id passado
-        const module = modules.find(module => module.id === moduleId);
-        //atualizar os dados do modulo
-        module.title = newModuleData.nameModule;
-        module.description = newModuleData.description;
-        //salvar os modulos atualizados no sessionStorage
-        sessionStorage.setItem('modules', JSON.stringify(modules));
-
-        //atualizar o modulo no database
-        await updateDoc(doc(db, 'Modules', moduleId), newModuleData);
-
-        //atualizar o modulo no array de modulos do curso
-        await updateDoc(doc(db, 'Courses', courseId), {
-            modules: arrayUnion({ id: moduleId, title: newModuleData.nameModule, description: newModuleData.description })
-        });
-
-        alert('Módulo atualizado com sucesso');
+        try {
         
         
 

@@ -1,4 +1,4 @@
-import { deleteDoc, doc, setDoc, updateDoc, addDoc, collection, arrayUnion } from "firebase/firestore";
+import { deleteDoc, doc, setDoc, updateDoc, addDoc, collection, arrayUnion, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import Controller from "@/Controller/controller";
 import { GetCategories } from "../Category/manageCategories";
@@ -70,10 +70,61 @@ export async function GetCourses() {
 };
 
 //função para atualizar um curso
-export async function updateCourse(courseId, courseData) {
+export async function updateCourse(courseId, courseCategoryId, courseData) {
+
+    const controller = Controller();
+
+    try {
+
+        //atualizar o curso no cache local
+        const categoriesLocal = JSON.parse(sessionStorage.getItem('categories'));
+        const categorie = categoriesLocal.find(category => category.id === courseCategoryId);
+
+        console.log('categorie', categorie);
+
+        let courseDataCache;
+
+        if (categorie && categorie.courses) {
+            courseDataCache = categorie.courses.find(course => course.id === courseId);
+            console.log('curso', courseDataCache);
+            if (courseDataCache) {
+                courseDataCache.title = courseData.title;
+                courseDataCache.description = courseData.description;
+            }
+            
+        } else {
+            console.log('Categoria não encontrada ou não possui cursos');
+        }
+        
+       
+        //salvar no cache local   
+        sessionStorage.setItem('categories', JSON.stringify(categoriesLocal));
+        
+
+        //atualizar o title e a descrição do curso no banco de dados
+        await updateDoc(doc(db, 'Courses', courseId), {
+            title: courseData.title,
+            description: courseData.description
+        });
+        
 
 
-    
+        //atualizar o curso na categoria no banco de dados com a categoria courseCategoryId
+        await updateDoc(doc(db, 'Categories', courseCategoryId), {
+            courses: arrayUnion({ id: courseId, title: courseData.title, description: courseData.description })
+        });
+
+
+        
+        //salvar no banco de dados
+        
+        //alert('Curso atualizado com sucesso');
+    }
+    catch (error) {
+        console.error('Erro ao atualizar o curso:', error);
+ 
+    }
+
 
 };
 
@@ -109,6 +160,21 @@ export async function DeleteCourse(docId){
     }
     catch (error) {
         console.error('Erro ao deletar o curso:', error);
+        throw error;
+    }
+};
+
+
+//função para buscar um curso pelo id
+export async function GetCourseById(courseId) {
+    try {
+        const docRef = doc(db, 'Courses', courseId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            return docSnap.data();
+        }
+    } catch (error) {
+        console.error('Erro ao buscar o curso:', error);
         throw error;
     }
 };

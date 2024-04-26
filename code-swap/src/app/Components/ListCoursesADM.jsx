@@ -42,11 +42,7 @@ const ListCourses = () => {
 
     })
 
-
-
-
     // if(categories) console.log(categories);
-
 
     //função para deletar um curso
     const handleDeleteCourse = useMutation({
@@ -66,21 +62,29 @@ const ListCourses = () => {
     const handleCategory = (category) => {
         setCourses(category.courses);
         setCategory({ name: category.name, id: category.id });
+    }  
+
+    //função para buscar os modulos de um curso
+    const GetModules = async (course) => {
+
+        handleGetModules.mutate(course);
+
+        console.log(course.id)
+            const courseSelected = await controller.manageCourses.GetCourseById(course.id);
+            setCourseSelected(courseSelected);
+            console.log(courseSelected);
     }
-
-
     
-
     const handleGetModules = useMutation({
         mutationFn: async (course) => {
             //Buscar os módulos do curso no cache local
             const modulesLocal = await controller.manageModules.GetModulesLocal(course.id);
             if (modulesLocal && modulesLocal.length > 0) {
-                console.log('modulesLocal,', modulesLocal);
                 return modulesLocal;
             }
 
             const modules = await controller.manageModules.GetModules(course.id);
+            
             return modules;
         },
         onSuccess: (data) => {
@@ -103,9 +107,6 @@ const ListCourses = () => {
             setModules(modules => modules.filter(module => module.id !== variables));
         }
     })
-
-
-
 
 
     return (
@@ -131,7 +132,7 @@ const ListCourses = () => {
                         <div key={course.id} style={{ border: '1px solid white', padding: '5px', margin: '5px', position: 'relative' }}>
                             <button style={{ position: 'absolute', top: '5px', right: '5px' }} onClick={() => handleDeleteCourse.mutate(course.id)}>Deletar Curso</button>
                             <h4>{course.title}</h4>
-                            <button style={{ border: '1px solid white', padding: '5px', margin: '5px', cursor: 'pointer' }} onClick={() => { setSelectedPainel('Modules'), setCourseSelected(course), handleGetModules.mutate(course) }}>Gerenciar</button>
+                            <button style={{ border: '1px solid white', padding: '5px', margin: '5px', cursor: 'pointer' }} onClick={() => { setSelectedPainel('Modules'), setCourseSelected(course), GetModules(course) }}>Gerenciar</button>
                         </div>
                     ))}
                 </div>) : (
@@ -149,7 +150,7 @@ const ListCourses = () => {
                                         <button style={{ padding: '5px', backgroundColor: '#5150e1', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={() => setPainelUpdateCourse(true)}>Atualizar Curso</button>
                                     </>
                                 ) : (
-                                    <UpdateCourseModal courseId={courseSelected.id} dataCourse={courseSelected} setPainelUpdateCourse={setPainelUpdateCourse} />
+                                    <UpdateCourseModal courseCategory={category} courseId={courseSelected.id} dataCourse={courseSelected} setPainelUpdateCourse={setPainelUpdateCourse} setCourseSelected={setCourseSelected}/>
                                 )}
 
                                 <div style={{ border: '1px solid white', padding: '5px', margin: '5px' }}>

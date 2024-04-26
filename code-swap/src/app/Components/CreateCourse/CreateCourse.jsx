@@ -41,7 +41,7 @@ const CreateCourses = () => {
             setOwner(userLocal.userName);
 
             const localCategories = await controller.manageCategories.GetCategoriesLocal()
-            if (localCategories) {
+            if (localCategories && localCategories.length > 0) {
                 return { categories: localCategories, user: userLocal };
             }
             const dbCategories = await controller.manageCategories.GetCategories();
