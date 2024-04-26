@@ -139,17 +139,11 @@ const CreateCourses = () => {
             setCourseName('');
             setCourseDescription('');
 
-
             controller.manageCourses.CreateCourse(formData);
         } catch (error) {
-            //se retornar erro buscar os dados salvos no cache local
-            const erroData = JSON.parse(sessionStorage.getItem('erro_save'));
-            console.log(erroData);
             alert('Erro ao criar o curso. Por favor, tente novamente mais tarde.');
         }
     };
-
-
 
     // Função para adicionar um novo módulo a um curso existente
     const handleAddModule = () => {
@@ -219,7 +213,7 @@ const CreateCourses = () => {
             , () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                     setImgUrlThumbnail(downloadURL);
-                    console.log('File available at', downloadURL);
+                    //console.log('File available at', downloadURL);
                 });
                 //limpar o campo de upload
                 e.target.file.value = '';
@@ -242,7 +236,7 @@ const CreateCourses = () => {
             , () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                     setImgUrlCover(downloadURL);
-                    console.log('File available at', downloadURL);
+                    //console.log('File available at', downloadURL);
                 });
                 //limpar o campo de upload
                 e.target.file.value = '';

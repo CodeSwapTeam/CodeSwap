@@ -6,10 +6,7 @@ import { db } from "../../firebase";
 
 export async function createModule(courseId, moduleData) {
     try {
-        console.log(moduleData);
-        console.log(courseId);
         const docRef = await addDoc(collection(db, 'Modules'), moduleData ,{merge: true})
-
         const moduleRef = doc(db, 'Modules', docRef.id);
 
         await updateDoc(moduleRef, {id: docRef.id});
@@ -28,8 +25,7 @@ export async function createModule(courseId, moduleData) {
         sessionStorage.setItem('modules', JSON.stringify(modules));
 
         alert('Módulo criado com sucesso');
-
-        
+       
     } catch (error) {
         console.error('Erro ao criar o módulo:', error);
         throw error; // Lança o erro para tratamento em um nível superior
@@ -57,7 +53,6 @@ export async function GetModules(courseId) {
     }
 };
 
-
 //função para buscar os modulos do curso no cache local
 export async function GetModulesLocal(){
     const modules = JSON.parse(sessionStorage.getItem('modules'));
@@ -67,12 +62,7 @@ export async function GetModulesLocal(){
 }
 
 //função para atualizar um modulo dentro de um curso
-
 export async function updateModule(courseId, moduleId, newModuleData) {
-    
-    
-        
-
         try {
         
         
@@ -86,10 +76,7 @@ export async function updateModule(courseId, moduleId, newModuleData) {
 
 //função para deletar um modulo de um curso com base no indice do array modules no curso
 export const deleteModule = async (courseSelectedId, moduleId) => {
-    console.log('moduleId:', moduleId);
-    console.log('courseSelectedId:', courseSelectedId);
     try {
-
         //deletar o modulo do curso no cache local
         const modules = JSON.parse(sessionStorage.getItem('modules'));
         //pegar o modulo com o id passado
@@ -99,8 +86,6 @@ export const deleteModule = async (courseSelectedId, moduleId) => {
         //salvar os modulos atualizados no sessionStorage
         sessionStorage.setItem('modules', JSON.stringify(modules));
 
-
-
         //deletar o modulo do curso no database
         await deleteDoc(doc(db, 'Modules', moduleId));
 
@@ -108,12 +93,6 @@ export const deleteModule = async (courseSelectedId, moduleId) => {
         await updateDoc(doc(db, 'Courses', courseSelectedId.id), {
             modules: arrayRemove({ id: moduleId, title: module.title, description: module.description })
         });
-        
-
-
-        //remover 
-
-            
         
     } catch (error) {
         console.error('Erro ao deletar o módulo:', error);
