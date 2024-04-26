@@ -25,8 +25,12 @@ const ListCourses = () => {
     const [setImgUrlThumbnail] = useState('');
     const [selectedPainel, setSelectedPainel] = useState('courses');
     const [difficulty, setDifficulty] = useState('iniciante');
+    const [courseObservations, setCourseObservations] = useState('');
+    const [statusCourse, setStatusCourse] = useState('Pendente');
 
     const [setProgress] = useState(0);
+    const [experienceCourse, setExperienceCourse] = useState(100);
+    const [codesCourse, setCodesCourse] = useState(150);
 
     const [isPremium, setIsPremium] = useState(false);
     const [isSequential, setIsSequential] = useState(false);
@@ -79,6 +83,18 @@ const ListCourses = () => {
 
             // Remove o curso deletado do estado local
             setModules(modules => modules.filter(module => module.id !== variables));
+        }
+    });
+
+    const handleUpdateStatusCourseData = useMutation({
+        mutationFn: async (courseId, categoryId, courseData
+        ) => {
+            await controller.manageCourses.UpdateStatusCourseData(courseId, categoryId, courseData);
+        },
+        onSuccess: (data, variables) => {
+            // Invalidate a query 'ListCourses' após a atualização do curso
+            client.invalidateQueries("ListCourses");
+            alert('Curso atualizado com sucesso');
         }
     });
 
@@ -230,6 +246,22 @@ const ListCourses = () => {
 
 
 
+    //Função para atualizar as informações do curso e status
+    const handleStatusCourse = async (e) => {
+        e.preventDefault();
+        const courseData = {
+            status: statusCourse,
+            isPremium: isPremium,
+            isSequential: isSequential,
+            difficulty: difficulty,
+            experience: experienceCourse,
+            codes: codesCourse,
+            observations: courseObservations
+        };
+
+        handleUpdateStatusCourseData.mutate(courseSelected.id, category.id, courseData);
+    };
+
     return (
         <div>
             <h1 style={{ border: '2px solid white', padding: '10px', color: 'white', textAlign: 'center' }}>{selectedPainel === 'courses' ? `Lista de Cursos ${category ? category.name : ''}` : 'Modulos'}</h1>
@@ -275,31 +307,44 @@ const ListCourses = () => {
                                             <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', justifyContent: 'space-between' }}>
 
                                                 <div style={{ width: '30%', marginLeft: '10px' }}>
+                                                   
                                                     <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
                                                         Criador:
                                                         <span type="text" >{courseSelected.owner}</span>
                                                     </label>
+                                                    
                                                     <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
                                                         Status:
                                                         <span type="text" >{courseSelected.status}</span>
+                                                        <select style={{ color: 'black' }} value={difficulty} onChange={setStatusCourse}>
+                                                            <option value="Pendente">Pendente</option>
+                                                            <option value="Aprovado">Aprovado</option>
+                                                            <option value="Revisão">Revisão</option>
+                                                            <option value="Recusado">Recusado</option>
+                                                        </select>
                                                     </label>
-                                                    <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
+                                                    
+                                                    <label style={{ display: 'flex', flexDirection: 'row', gap: '10px', justifyContent: 'flex-start' }}>
                                                         Curso premium?
                                                         <input type="checkbox" checked={isPremium} onChange={handleCheckboxChange} />
                                                     </label>
+                                                    
                                                     <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
                                                         Módulos sequenciais?
                                                         <input type="checkbox" checked={isSequential} onChange={handleCheckboxChangeSequential} />
                                                     </label>
-                                                    <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
+                                                    
+                                                    <label style={{ marginTop:'5px', display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
                                                         XP do curso:
-                                                        <span type="text" > 100 </span>
+                                                        <input type="number" style={{ width: '100px', color:"black" }} value={experienceCourse} onChange={(e) => setExperienceCourse(e.target.value)} />
                                                     </label>
-                                                    <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
+                                                    
+                                                    <label style={{marginTop:'5px', display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
                                                         Codes do curso:
-                                                        <span type="text" > 150 </span>
+                                                        <input type="number" style={{ width: '100px', color:"black" }} value={codesCourse} onChange={(e) => setCodesCourse(e.target.value)} />
                                                     </label>
-                                                    <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
+                                                    
+                                                    <label style={{marginTop:'5px', display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
                                                         Nível de dificuldade do curso:
                                                         <select style={{ color: 'black' }} value={difficulty} onChange={handleSelectChange}>
                                                             <option value="iniciante">Iniciante</option>
@@ -321,7 +366,11 @@ const ListCourses = () => {
                                                             <button style={{ padding: '5px', backgroundColor: 'blue', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} type="submit">Enviar</button>
                                                         </form>
                                                         <br />
+                                                    </div>
 
+                                                    <div>
+                                                        <textarea style={{ color: 'black', margin: '5px', height: '10rem', width: '100%' }} type="text" placeholder="Observações do Curso" value={courseObservations} onChange={(e) => setCourseObservations(e.target.value)} />
+                                                        <button style={{ padding: '5px', backgroundColor: '#16ff66', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }}>Salvar Curso</button>
                                                     </div>
                                                 </div>
 
@@ -334,7 +383,7 @@ const ListCourses = () => {
                                                         <form onSubmit={handleUpdateCover} >
                                                             <input type="file" name="file" />
                                                             <button style={{ padding: '5px', backgroundColor: 'blue', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} type="submit">Enviar</button>
-                                                        </form> 
+                                                        </form>
                                                     </div>
                                                 </label>
                                             </div>

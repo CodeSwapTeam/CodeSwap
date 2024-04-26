@@ -124,6 +124,10 @@ const CreateCourses = () => {
             status: 'pending', // pending, approved, reviewed, rejected
             description: courseDescription,
             owner: owner,
+            experience: 0,
+            difficulty: '',
+            codes: 0,
+            courseObservations: '',
             thumbnail: imgUrlThumbnail ? imgUrlThumbnail : '',
             cover: imgUrlCover ? imgUrlCover : '',
             coursePremium: false,
@@ -196,7 +200,7 @@ const CreateCourses = () => {
     };
 
 
-
+    // Função para lidar com o upload de uma imagem de thumbnail
     const handleUploadThumbnail = async (e) => {
         e.preventDefault();
         const file = e.target.file.files[0];
@@ -219,7 +223,7 @@ const CreateCourses = () => {
                 e.target.file.value = '';
             });
     };
-
+    // Função para lidar com o upload de uma imagem de capa
     const handleUploadCover = async (e) => {
         e.preventDefault();
         const file = e.target.file.files[0];

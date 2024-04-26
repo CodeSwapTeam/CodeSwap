@@ -92,8 +92,6 @@ export async function GetCourses() {
 //função para atualizar um curso
 export async function updateCourse(courseId, courseCategoryId, courseData) {
 
-    const controller = Controller();
-
     try {
 
         //atualizar o curso no cache local
@@ -149,6 +147,18 @@ export async function updateCourse(courseId, courseCategoryId, courseData) {
 
 
 };
+
+//função para atualizar as informações de um curso e status
+export async function UpdateStatusCourseData(courseId, courseCategoryId, courseData) {
+    try {
+        
+    }
+    catch (error) {
+        console.error('Erro ao atualizar o curso:', error);
+        throw error;
+    }
+
+}
 
 export async function DeleteCourse(docId){
 
