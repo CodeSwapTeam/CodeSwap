@@ -6,7 +6,7 @@ import { GetCategories } from "../Category/manageCategories";
 
 
 export async function CreateCourse(formData) {
-
+    let courseID;
    
     try {
         const courseData = {
@@ -27,6 +27,7 @@ export async function CreateCourse(formData) {
         await updateDoc(doc(db, 'Courses', docRef.id), {
             id: docRef.id
         });
+        courseID = docRef.id;
         
         //adicionar no database em'categories' dentro de courses que é um array de objetos com o id do curso, o titulo e a descrição
         await updateDoc(doc(db, 'Categories', courseData.category), {
@@ -47,14 +48,22 @@ export async function CreateCourse(formData) {
         alert('Curso criado com sucesso');
     }
     catch (error) {
-        //console.error('Erro ao criar o curso:', error);
+        //se ocorrer um erro deletar o curso criado no banco de dados
+       
+        //deletar o curso do banco de dados
+        //await deleteDoc(doc(db, 'Courses', docRef.id));
+
         //throw error;
         alert('Por favor selecione a categoria novamente!');
         //recarregar a página
         window.location.reload();
 
-        //salvar no cache local os dados da categoria para recuperação em caso de erro
-        sessionStorage.setItem('erro_save', JSON.stringify(formData));
+        //salvar no cache local o formData com dados da categoria para recuperação e o courseID em caso de erro
+        //mesclar o formdata com o courseID
+        const courseData = { ...formData, id: courseID };
+        //salvar no cache local
+        //salvar no cache local o formData com dados da categoria para recuperação e o courseID em caso de erro
+        sessionStorage.setItem('erro_save', JSON.stringify(courseData));
 
         throw error;
 
@@ -168,7 +177,7 @@ export async function DeleteCourse(docId){
                 courses: category.courses
             });
         });
-        alert('Curso deletado com sucesso');
+        
         return true;
     }
     catch (error) {

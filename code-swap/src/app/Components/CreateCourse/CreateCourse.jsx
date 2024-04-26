@@ -43,7 +43,8 @@ const CreateCourses = () => {
                 //se existir erro, setar nos campos do formulário os dados salvos
                 setCourseName(erroData.title);
                 setCourseDescription(erroData.description);
-
+                //excluir o curso no database com o id do erroData
+                controller.manageCourses.DeleteCourse(erroData.id);
                 //limpar o cache local
                 sessionStorage.removeItem('erro_save');
             }
@@ -69,9 +70,7 @@ const CreateCourses = () => {
     
 
     const handleChangeCategory = (event) => {
-        console.log(event.target.value);
         setSelectedCategory(event.target.value);
-
     };
 
     const deleteCategory = useMutation({

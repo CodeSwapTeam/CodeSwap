@@ -1,8 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Controller from '@/Controller/controller';
-import { DeleteCourse } from '../../../database/functions/Courses/manageCourses';
-
-import { ContextDataCache } from '../contexts/ContextDataCache';
 import AddModuleModal from './Modals/modalAddModule';
 import AddLessonModal from './Modals/modalAddLesson';
 
@@ -19,44 +16,42 @@ import { ref } from "firebase/storage";
 
 const ListCourses = () => {
     const controller = Controller();
+    const client = useQueryClient();
 
     const [courses, setCourses] = useState([]);
     const [courseSelected, setCourseSelected] = useState(null);
     const [modules, setModules] = useState([{}]);
+
+    const [setImgUrlThumbnail] = useState('');
+    const [selectedPainel, setSelectedPainel] = useState('courses');
+    const [difficulty, setDifficulty] = useState('iniciante');
+
+    const [setProgress] = useState(0);
+
+    const [isPremium, setIsPremium] = useState(false);
+    const [isSequential, setIsSequential] = useState(false);
+    const [painelUpdateCourse, setPainelUpdateCourse] = useState(false);
+
     const [category, setCategory] = useState(null);
 
-    const [imgUrlThumbnail, setImgUrlThumbnail] = useState('');
-    const [progress, setProgress] = useState(0);
 
-    const [imgUrlCover, setImgUrlCover] = useState('');
-    const [progressCover, setProgressCover] = useState(0);
 
-    const [selectedPainel, setSelectedPainel] = useState('courses');
 
-    const [painelUpdateCourse, setPainelUpdateCourse] = useState(false);
-    const client = useQueryClient();
-
+    //Buscar as categorias ao iniciar a página
     const { data: categories } = useQuery({
         queryKey: ["ListCourses"],
         queryFn: async () => {
-            
+
             //Buscar as categorias no cache local
             const categories = controller.manageCategories.GetCategoriesLocal();
-            //console.log(categories);
             if (categories) {
-                console.log('Buscando categorias Locais', categories);
-                //setCourses(category.courses);
                 return categories;
             }
-            //setCourses(category.courses);
             const dbCategories = await controller.manageCategories.GetCategories();
-            //setCourses(dbCategories.courses);
             return dbCategories;
         }
 
-    })
-
-    // if(categories) console.log(categories);
+    });
 
     //função para deletar um curso
     const handleDeleteCourse = useMutation({
@@ -69,28 +64,40 @@ const ListCourses = () => {
 
             // Remove o curso deletado do estado local
             setCourses(courses => courses.filter(course => course.id !== variables));
+            alert('Curso deletado com sucesso');
         }
-    })
+    });
+
+    //Função para deletar um módulo
+    const handleDeleteModule = useMutation({
+        mutationFn: async (data) => {
+            await controller.manageModules.DeleteModule(courseSelected, data);
+        },
+        onSuccess: (data, variables) => {
+            // Invalidate a query 'ListCourses' após a deleção do curso
+            client.invalidateQueries("ListCourses");
+
+            // Remove o curso deletado do estado local
+            setModules(modules => modules.filter(module => module.id !== variables));
+        }
+    });
 
     //função para pegar os cursos dentro de uma categoria selecionada pelo usuário
     const handleCategory = (category) => {
         setCourses(category.courses);
-        console.log("setar os cursos", category.courses);
         //console.log("setar a categoria", { name: category.name, id: category.id });
         setCategory({ name: category.name, id: category.id });
-    }
+    };
+    /////////////////////////////////////////////
 
-    //função para buscar os modulos de um curso
+
+
+    //funções para buscar os modulos de um curso
     const GetModules = async (course) => {
-
         handleGetModules.mutate(course);
-
-        console.log(course.id)
         const courseSelected = await controller.manageCourses.GetCourseById(course.id);
         setCourseSelected(courseSelected);
-        console.log(courseSelected);
-    }
-
+    };
     const handleGetModules = useMutation({
         mutationFn: async (course) => {
             //Buscar os módulos do curso no cache local
@@ -106,27 +113,13 @@ const ListCourses = () => {
         onSuccess: (data) => {
             client.invalidateQueries("ListCourses");
             setModules(data);
-
         }
-    })
+    });
+    /////////////////////////////////////////////
 
-    //MUTATION PARA DELETAR UM MODULO
-    const handleDeleteModule = useMutation({
-        mutationFn: async (data) => {
-            await controller.manageModules.DeleteModule(courseSelected, data);
-        },
-        onSuccess: (data, variables) => {
-            // Invalidate a query 'ListCourses' após a deleção do curso
-            client.invalidateQueries("ListCourses");
 
-            // Remove o curso deletado do estado local
-            setModules(modules => modules.filter(module => module.id !== variables));
-        }
-    })
 
-    const [isPremium, setIsPremium] = useState(false);
-    const [isSequential, setIsSequential] = useState(false);
-
+    //Funções para atualizar um curso
     const handleCheckboxChange = (event) => {
         setIsPremium(event.target.checked);
     };
@@ -135,15 +128,9 @@ const ListCourses = () => {
         setIsSequential(event.target.checked);
     }
 
-
-    const [difficulty, setDifficulty] = useState('iniciante');
-
     const handleSelectChange = (event) => {
         setDifficulty(event.target.value);
     };
-
-
-
 
     const handleUpdateThumbnail = async (e) => {
         e.preventDefault();
@@ -239,6 +226,9 @@ const ListCourses = () => {
             e.target.file.value = '';
         });
     };
+    /////////////////////////////////////////////
+
+
 
     return (
         <div>
@@ -273,11 +263,9 @@ const ListCourses = () => {
                         <h3>Modulos do curso {courseSelected.title}</h3>
                         <div>
                             <div style={{ border: '2px solid white', padding: '5px', margin: '5px' }}>
-
-
                                 {!painelUpdateCourse ? (
                                     <>
-                                        <h4>{courseSelected.title}</h4>
+                                        <h4>Descrição: </h4>
                                         <p>{courseSelected.description}</p>
                                         <button style={{ padding: '5px', backgroundColor: '#5150e1', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={() => setPainelUpdateCourse(true)}>Atualizar informações</button>
 
@@ -321,8 +309,6 @@ const ListCourses = () => {
                                                     </label>
 
 
-
-
                                                     <label style={{ width: '60%', border: '1px solid white', display: 'flex', flexDirection: 'column', gap: '5px', marginRight: '10px' }}>
                                                         Thumbnail
                                                         <img src={courseSelected.thumbnail} alt="imagem" />
@@ -341,28 +327,22 @@ const ListCourses = () => {
 
                                                 <label style={{ width: '60%', border: '1px solid white', display: 'flex', flexDirection: 'column', gap: '5px', marginRight: '10px' }}>
                                                     Capa do Curso
-                                                    <img src={courseSelected.cover
-                                                    } alt="imagem" />
+                                                    <img src={courseSelected.cover} alt="imagem" />
 
                                                     <div>
                                                         <label style={{ fontWeight: 'bold', color: '#007bff' }}>Atualizar capa do curso:</label>
                                                         <form onSubmit={handleUpdateCover} >
                                                             <input type="file" name="file" />
                                                             <button style={{ padding: '5px', backgroundColor: 'blue', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} type="submit">Enviar</button>
-                                                        </form>
-                                                        <br />
-
+                                                        </form> 
                                                     </div>
                                                 </label>
-
-
-
                                             </div>
                                         </div>
 
                                     </>
                                 ) : (
-                                    <UpdateCourseModal courseCategory={category} courseId={courseSelected.id} dataCourse={courseSelected} setPainelUpdateCourse={setPainelUpdateCourse} setCourseSelected={setCourseSelected} setCourses={setCourses}/>
+                                    <UpdateCourseModal courseCategory={category} courseId={courseSelected.id} dataCourse={courseSelected} setPainelUpdateCourse={setPainelUpdateCourse} setCourseSelected={setCourseSelected} setCourses={setCourses} />
                                 )}
 
                                 <div style={{ border: '1px solid white', padding: '5px', margin: '5px' }}>
@@ -380,7 +360,6 @@ const ListCourses = () => {
 
                                     <AddModuleModal courseId={courseSelected.id} />
                                 </div>
-
 
                             </div>
                         </div>
