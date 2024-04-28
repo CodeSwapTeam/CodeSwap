@@ -16,12 +16,13 @@ function UpdateCourseModal(props) {
     const handleClose = () => props.setPainelUpdateCourse(false);
     const handleShow = () => setShow(true);
 
-    const handleSubmit = async () => {
+    const handleSubmitUpdateInfoCourse = async () => {
         const courseData = {
             title: courseTitle,
             description: courseDescription
         };
-       await controller.manageCourses.UpdateCourse(props.courseId, props.courseCategory.id, courseData);
+        //atualizar Titulo e descrição do curso no banco de dados
+       await controller.manageCourses.UpdateInfoCourse(props.courseId, props.courseCategory.id, courseData);
        //buscar o curso atualizado no cache local
          const courseLocal = JSON.parse(sessionStorage.getItem('courses'));
         //pegar o objeto do curso com o courseId === props.courseId
@@ -33,9 +34,8 @@ function UpdateCourseModal(props) {
 
         //salvar o cache local
         sessionStorage.setItem('courses', JSON.stringify(courseLocal));
-
-
-        console.log('curso setado', course);
+        
+        //atualizar o estado do curso selecionado
        props.setCourseSelected(course);
        props.setCourses(courseLocal);
        props.setPainelUpdateCourse(false);
@@ -62,7 +62,7 @@ function UpdateCourseModal(props) {
                         </div>
                         <div className="modal-footer">
                             <button type="button" style={{ padding: '5px', backgroundColor: '#232323', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer'  }} onClick={()=> props.setPainelUpdateCourse(false)}>Fechar</button>
-                            <button type="button" style={{ padding: '5px', backgroundColor: '#16ff66', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }} onClick={handleSubmit}>Salvar Alterações</button>
+                            <button type="button" style={{ padding: '5px', backgroundColor: '#16ff66', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }} onClick={handleSubmitUpdateInfoCourse}>Salvar Alterações</button>
                         </div>
                     </div>
                 </div>

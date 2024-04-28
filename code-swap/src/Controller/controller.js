@@ -1,11 +1,11 @@
 
 import { getCookiesAcessToken, removeCookiesAcessToken, setCookiesAcessToken } from "@/app/services/cookies";
-import { CreateUser, GetUserById, GetUserData, GetUserDataBase, GetUserLocalData, RemoveUser, UpdateUserData } from "../../database/functions/Users/manageUserData";
+import { CreateUser, GetUserById, GetUserDataBase, GetUserLocalData, RemoveUser, UpdateUserData } from "../../database/functions/Users/manageUserData";
 //import { QueryRequests } from "@/app/services/QueryRequests";
 
 import { getUserCache, removeUserCache, saveUserCache } from "@/app/services/saveUserCache";
-import { CreateCategory, DeleteCategory, GetCategories, GetCategoriesLocal, SaveCategoriesLocal, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
-import { CreateCourse, DeleteCourse, GetCourseById, UpdateCover, UpdateStatusCourseData, UpdateThumbnail, updateCourse } from "../../database/functions/Courses/manageCourses";
+import { CreateCategory, DeleteCategory, GetCategories, GetCategoriesLocal, SaveCategoriesLocal, SaveImgUrlThumbnail, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
+import { CreateCourse, DeleteCourse, GetCourseById, UpdateConfigCourseData, UpdateCover, UpdateInfoCourse,  UpdateThumbnail } from "../../database/functions/Courses/manageCourses";
 import { GetModules, GetModulesLocal, createModule, deleteModule, updateModule } from "../../database/functions/Modules/manageModules";
 
 
@@ -23,11 +23,11 @@ export default function Controller(){
         manageCourses: {
             CreateCourse: CreateCourse,
             DeleteCourse: DeleteCourse,
-            UpdateCourse: updateCourse,
+            UpdateInfoCourse: UpdateInfoCourse,
             GetCourseById: GetCourseById,
             UpdateThumbnailCourse: UpdateThumbnail,
             UpdateCoverCourse: UpdateCover,
-            UpdateStatusCourseData: UpdateStatusCourseData
+            UpdateConfigCourseData: UpdateConfigCourseData
             
         },
         /**
@@ -75,7 +75,8 @@ export default function Controller(){
 
             GetCategories: GetCategories,
             GetCategoriesLocal: GetCategoriesLocal,
-            SaveCategoriesLocal: SaveCategoriesLocal
+            SaveCategoriesLocal: SaveCategoriesLocal,
+            SaveImgUrlThumbnail: SaveImgUrlThumbnail
         },
         /**
          * Serviços de cookies,

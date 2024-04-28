@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { createCategory } from "../../../../database/functions/Category/EXmanageCategorys";
 import { useRouter } from "next/navigation";
 import Controller from "@/Controller/controller";
 
@@ -7,7 +6,6 @@ import { useQuery,useMutation,useQueryClient, } from "@tanstack/react-query";
 
 function ModalCreateCategory() {
     const controller = Controller();
-    const router = useRouter();
     const [show, setShow] = useState(false);
     const [categoryName, setCategoryName] = useState('');
     const [categoryDescription, setCategoryDescription] = useState('');

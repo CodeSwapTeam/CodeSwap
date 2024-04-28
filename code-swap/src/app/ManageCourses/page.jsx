@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Controller from '@/Controller/controller';
 import ListCourses from '../Components/ListCoursesADM';
-import CreateCourse from '../Components/CreateCourse/CreateCourse';
+import CreateCourse from '../Components/PainelADM/CreateCourse/CreateCourse';
 import { ContextDataCache } from '../contexts/ContextDataCache';
 import { decryptObjectData } from '../services/encryptedAlgorithm';
 import UserList from '../Components/ListUsers';

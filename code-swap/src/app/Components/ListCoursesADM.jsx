@@ -1,17 +1,45 @@
 import React, { useState } from 'react';
+import styled from 'styled-components';
+
 import Controller from '@/Controller/controller';
 import AddModuleModal from './Modals/modalAddModule';
 import AddLessonModal from './Modals/modalAddLesson';
 
 import UpdateCourseModal from './Modals/modalUpdateCourse';
-import UpdateModuleModal from './Modals/modalUpdateModule';
-import UpdateLessonModal from './Modals/modalUpdateLesson';
-import EditCourseCategoryModal from './Modals/modalEditCategoryCourse';
 import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
 
 import { storage } from '../../../database/firebase';
 import { deleteObject, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import { ref } from "firebase/storage";
+import { CategoriesList } from './PainelADM/ListCoursesCamponents/CategoriesList';
+import { CoursesCategoryList } from './PainelADM/ListCoursesCamponents/CoursesCategoryList';
+import { ConfigCourse } from './PainelADM/ListCoursesCamponents/ConfigCourse';
+import { ModulesCourseList } from './PainelADM/ListCoursesCamponents/ModulesCourseList';
+
+
+export const H1 = styled.h1`
+  border: 2px solid white;
+  padding: 10px;
+  color: white;
+  text-align: center;
+`;
+
+export const ContainerDiv = styled.div`
+display: flex;
+margin-top: 10px;
+border: 2px solid white;
+padding: 10px;
+color: white;
+text-align: center;
+`;
+
+export const CourseConfigDiv = styled.div`
+flex: 80%;
+border: 2px solid white;
+padding: 10px;
+color: white;
+text-align: center;
+`;
 
 
 const ListCourses = () => {
@@ -22,14 +50,13 @@ const ListCourses = () => {
     const [courseSelected, setCourseSelected] = useState(null);
     const [modules, setModules] = useState([{}]);
 
-    const [imgUrlThumbnail,setImgUrlThumbnail] = useState('');
-    const [imgUrlCover,setImgUrlCover] = useState('');
+    const [imgUrlThumbnail, setImgUrlThumbnail] = useState('');
+    const [imgUrlCover, setImgUrlCover] = useState('');
     const [selectedPainel, setSelectedPainel] = useState('courses');
     const [difficulty, setDifficulty] = useState('iniciante');
     const [courseObservations, setCourseObservations] = useState('');
-    const [statusCourse, setStatusCourse] = useState('Pendente');
+    const [statusCourse, setStatusCourse] = useState('pending');
 
-    const [setProgress] = useState(0);
     const [experienceCourse, setExperienceCourse] = useState(100);
     const [codesCourse, setCodesCourse] = useState(150);
 
@@ -42,6 +69,7 @@ const ListCourses = () => {
 
 
 
+    /////////////////////////////////////////////
     //Buscar as categorias ao iniciar a página
     const { data: categories } = useQuery({
         queryKey: ["ListCourses"],
@@ -87,9 +115,9 @@ const ListCourses = () => {
         }
     });
 
-    const handleUpdateStatusCourseData = useMutation({
+    const handleConfigCourseData = useMutation({
         mutationFn: async (data) => {
-            await controller.manageCourses.UpdateStatusCourseData({courseId: data.courseId, categoryId:data.categoryId, courseData:data.courseData});
+            await controller.manageCourses.UpdateConfigCourseData({ courseId: data.courseId, categoryId: data.categoryId, courseData: data.courseData });
         },
         onSuccess: (data, variables) => {
             // Invalidate a query 'ListCourses' após a atualização do curso
@@ -113,6 +141,19 @@ const ListCourses = () => {
         handleGetModules.mutate(course);
         const courseSelected = await controller.manageCourses.GetCourseById(course.id);
         setCourseSelected(courseSelected);
+
+        //setar os dados do curso nos campos de configuração
+        setIsPremium(courseSelected.coursePremium);
+        setIsSequential(courseSelected.SequentialModule);
+        setDifficulty(courseSelected.difficulty);
+        setExperienceCourse(courseSelected.experience);
+        setCodesCourse(courseSelected.codes);
+        setCourseObservations(courseSelected.courseObservations);
+        setImgUrlThumbnail(courseSelected.imgUrlThumbnail);
+        setImgUrlCover(courseSelected.imgUrlCover);
+        setStatusCourse(courseSelected.status);
+
+
     };
     const handleGetModules = useMutation({
         mutationFn: async (course) => {
@@ -135,7 +176,7 @@ const ListCourses = () => {
 
 
 
-    //Funções para atualizar um curso
+    //Funções para atualizar um curso////////////
     const handleCheckboxChange = (event) => {
         setIsPremium(event.target.checked);
     };
@@ -151,47 +192,57 @@ const ListCourses = () => {
     const handleSetStatusCourse = (event) => {
         setStatusCourse(event.target.value);
     };
+    /////////////////////////////////////////////
 
-    //Função para atualizar a thumbnail do curso
+
+
+    //Função para atualizar a thumbnail do curso//
     const handleUpdateThumbnail = async (e) => {
         e.preventDefault();
         const file = e.target.file.files[0];
         if (!file) return;
 
-        // Extrair o nome do arquivo da URL
-        const url = new URL(decodeURIComponent(courseSelected.thumbnail));
-        const pathname = url.pathname;
-        const parts = pathname.split('/');
-        const filename = parts[parts.length - 1];
-        console.log(filename);
+        let filenameThumbnail;
 
-        // Deletar a imagem antiga
-        const oldImageRef = ref(storage, `Courses/Thumbnails/${filename}`);
-        deleteObject(oldImageRef).catch((error) => {
-            console.error(error);
-        });
+        // Se existir uma URL, deletar a imagem antiga
+        if (courseSelected.imgUrlThumbnail) {
+            // Extrair o nome do arquivo da URL
+            const url = new URL(decodeURIComponent(courseSelected.imgUrlThumbnail));
+            const pathname = url.pathname;
+            const parts = pathname.split('/');
+            const filename = parts[parts.length - 1];
+            filenameThumbnail = decodeURIComponent(filename); // Decodificar o nome do arquivo
+
+            // Deletar a imagem antiga
+            const oldImageRef = ref(storage, `Courses/Thumbnails/${filenameThumbnail}`);
+            deleteObject(oldImageRef).catch((error) => {
+                console.error(error);
+            });
+        }
 
         // Fazer o upload da nova imagem
-        const storageRef = ref(storage, `Courses/Thumbnails/${file.name}`);
+        const storageRef = ref(storage, `Courses/Thumbnails/${filenameThumbnail}`);
         const uploadTask = uploadBytesResumable(storageRef, file);
 
         uploadTask.on('state_changed', (snapshot) => {
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setProgress(progress);
+            //setProgress(progress);
         }, (error) => {
             console.error(error);
         }, () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                 setImgUrlThumbnail(downloadURL);
-                console.log('File available at', downloadURL);
                 // Atualizar a URL da imagem no banco de dados
                 controller.manageCourses.UpdateThumbnailCourse(courseSelected.id, downloadURL);
+
+                //atualizar a imagem no cache local da categoria
+                controller.manageCategories.SaveImgUrlThumbnail(category.id, courseSelected.id, downloadURL);
 
                 // Invalidate a query 'ListCourses' após a atualização da imagem
                 client.invalidateQueries("ListCourses");
 
                 // Atualizar a imagem no estado local
-                setCourseSelected(courseSelected => ({ ...courseSelected, thumbnail: downloadURL }));
+                setCourseSelected(courseSelected => ({ ...courseSelected, imgUrlThumbnail: downloadURL }));
             });
 
             // Limpar o campo de upload
@@ -205,21 +256,26 @@ const ListCourses = () => {
         const file = e.target.file.files[0];
         if (!file) return;
 
+        let filenameCover;
+
+        // Se existir uma URL, deletar a imagem antiga
+    if (courseSelected.imgUrlCover) {
         // Extrair o nome do arquivo da URL
-        const url = new URL(decodeURIComponent(courseSelected.cover));
+        const url = new URL(decodeURIComponent(courseSelected.imgUrlCover));
         const pathname = url.pathname;
         const parts = pathname.split('/');
         const filename = parts[parts.length - 1];
-        console.log(filename);
+        filenameCover = decodeURIComponent(filename); // Decodificar o nome do arquivo
 
         // Deletar a imagem antiga
-        const oldImageRef = ref(storage, `Courses/Covers/${filename}`);
+        const oldImageRef = ref(storage, `Courses/Covers/${filenameCover}`);
         deleteObject(oldImageRef).catch((error) => {
             // Ignorar o erro  404 se o arquivo não existir
             if (error.code === 'storage/object-not-found') {
                 return;
             }
         });
+        }
 
         // Fazer o upload da nova imagem
         const storageRef = ref(storage, `Courses/Covers/${file.name}`);
@@ -227,13 +283,12 @@ const ListCourses = () => {
 
         uploadTask.on('state_changed', (snapshot) => {
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setProgress(progress);
+            //setProgress(progress);
         }, (error) => {
             console.error(error);
         }, () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                 setImgUrlCover(downloadURL);
-                console.log('File available at', downloadURL);
                 // Atualizar a URL da imagem no banco de dados
                 controller.manageCourses.UpdateCoverCourse(courseSelected.id, downloadURL);
 
@@ -241,7 +296,7 @@ const ListCourses = () => {
                 client.invalidateQueries("ListCourses");
 
                 // Atualizar a imagem no estado local
-                setCourseSelected(courseSelected => ({ ...courseSelected, cover: downloadURL }));
+                setCourseSelected(courseSelected => ({ ...courseSelected, imgUrlCover: downloadURL }));
             });
 
             // Limpar o campo de upload
@@ -252,10 +307,12 @@ const ListCourses = () => {
 
 
 
+
+
     //Função para atualizar as informações do curso e status
-    const handleStatusCourse = async () => {
-        
-       
+    const handleConfigCourse = async () => {
+
+
         const courseData = {
             status: statusCourse,
             coursePremium: isPremium,
@@ -267,164 +324,82 @@ const ListCourses = () => {
             imgUrlThumbnail: imgUrlThumbnail,
             imgUrlCover: imgUrlCover
         };
-        handleUpdateStatusCourseData.mutate({courseId: courseSelected.id, categoryId:category.id, courseData:courseData});
+        handleConfigCourseData.mutate({ courseId: courseSelected.id, categoryId: category.id, courseData: courseData });
+    };
+
+    //Configurações do curso
+    const configCourseProps = {
+        courseSelected,
+        setPainelUpdateCourse,
+        isPremium,
+        handleCheckboxChange,
+        isSequential,
+        handleCheckboxChangeSequential,
+        experienceCourse,
+        setExperienceCourse,
+        codesCourse,
+        setCodesCourse,
+        difficulty,
+        handleSelectChange,
+        courseObservations,
+        setCourseObservations,
+        handleUpdateThumbnail,
+        handleUpdateCover,
+        handleConfigCourse,
+        handleSetStatusCourse,
+        statusCourse
     };
 
     return (
-        <div>
-            <h1 style={{ border: '2px solid white', padding: '10px', color: 'white', textAlign: 'center' }}>{selectedPainel === 'courses' ? `Lista de Cursos ${category ? category.name : ''}` : 'Modulos'}</h1>
-            <div style={{ display: 'flex', marginTop: '10px', border: '2px solid white', padding: '10px', color: 'white', textAlign: 'center' }}>
-                <div style={{ flex: '20%', border: '2px solid white', padding: '10px', color: 'white', textAlign: 'center' }}>
+        <div >
+            <H1>{selectedPainel === 'courses' ? `Lista de Cursos ${category ? category.name : ''}` : 'Cursos e Módulos'}</H1>
 
-                    <h3>Categorias</h3>
+            <ContainerDiv>
+                <CategoriesList
+                    categories={categories}
+                    handleCategory={handleCategory}
+                    setSelectedPainel={setSelectedPainel}
+                />
 
-                    <div>
-                        {categories && categories.map(category => (
-                            <div key={category.id} style={{ border: '1px solid white', padding: '5px', margin: '5px', cursor: 'pointer' }} onClick={() => { handleCategory(category), setSelectedPainel('courses') }}>
-                                <h4>{category.name}</h4>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {selectedPainel === 'courses' ? (<div style={{ flex: '80%', border: '2px solid white', padding: '10px', color: 'white', textAlign: 'center' }}>
-
-                    {courses && courses.map(course => (
-                        <div key={course.id} style={{ border: '1px solid white', padding: '5px', margin: '5px', position: 'relative' }}>
-                            <button style={{ position: 'absolute', top: '5px', right: '5px' }} onClick={() => handleDeleteCourse.mutate(course.id)}>Deletar Curso</button>
-                            <h4>{course.title}</h4>
-                            <button style={{ border: '1px solid white', padding: '5px', margin: '5px', cursor: 'pointer' }} onClick={() => { setSelectedPainel('Modules'), setCourseSelected(course), GetModules(course) }}>Gerenciar</button>
-                        </div>
-                    ))}
-                </div>) : (
-
-                    <div style={{ flex: '80%', border: '2px solid white', padding: '10px', color: 'white', textAlign: 'center' }}>
-
-                        <h3>Modulos do curso {courseSelected.title}</h3>
+                {selectedPainel === 'courses' ? (
+                    <CoursesCategoryList
+                        courses={courses}
+                        handleDeleteCourse={handleDeleteCourse}
+                        setSelectedPainel={setSelectedPainel}
+                        setCourseSelected={setCourseSelected}
+                        GetModules={GetModules}
+                    />
+                ) : (
+                    <CourseConfigDiv>
+                        <h3>Configurações do curso {courseSelected.title}</h3>
                         <div>
                             <div style={{ border: '2px solid white', padding: '5px', margin: '5px' }}>
+
                                 {!painelUpdateCourse ? (
-                                    <>
-                                        <h4>Descrição: </h4>
-                                        <p>{courseSelected.description}</p>
-                                        <button style={{ padding: '5px', backgroundColor: '#5150e1', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={() => setPainelUpdateCourse(true)}>Atualizar informações</button>
-
-                                        <div >
-                                            <p style={{ border: '1px solid white', padding: '5px', margin: '5px' }}>Configurações do Curso</p>
-
-                                            <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', justifyContent: 'space-between' }}>
-
-                                                <div style={{ width: '30%', marginLeft: '10px' }}>
-                                                   
-                                                    <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
-                                                        Criador:
-                                                        <span type="text" >{courseSelected.owner}</span>
-                                                    </label>
-                                                    
-                                                    <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
-                                                        Status:
-                                                        <span type="text" >{courseSelected.status}</span>
-                                                        <select style={{ color: 'black' }} value={difficulty} onChange={handleSetStatusCourse}>
-                                                            <option value="Pendente">Pendente</option>
-                                                            <option value="Aprovado">Aprovado</option>
-                                                            <option value="Revisão">Revisão</option>
-                                                            <option value="Recusado">Recusado</option>
-                                                        </select>
-                                                    </label>
-                                                    
-                                                    <label style={{ display: 'flex', flexDirection: 'row', gap: '10px', justifyContent: 'flex-start' }}>
-                                                        Curso premium?
-                                                        <input type="checkbox" checked={isPremium} onChange={handleCheckboxChange} />
-                                                    </label>
-                                                    
-                                                    <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
-                                                        Módulos sequenciais?
-                                                        <input type="checkbox" checked={isSequential} onChange={handleCheckboxChangeSequential} />
-                                                    </label>
-                                                    
-                                                    <label style={{ marginTop:'5px', display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
-                                                        XP do curso:
-                                                        <input type="number" style={{ width: '100px', color:"black" }} value={experienceCourse} onChange={(e) => setExperienceCourse(e.target.value)} />
-                                                    </label>
-                                                    
-                                                    <label style={{marginTop:'5px', display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
-                                                        Codes do curso:
-                                                        <input type="number" style={{ width: '100px', color:"black" }} value={codesCourse} onChange={(e) => setCodesCourse(e.target.value)} />
-                                                    </label>
-                                                    
-                                                    <label style={{marginTop:'5px', display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
-                                                        Nível de dificuldade do curso:
-                                                        <select style={{ color: 'black' }} value={difficulty} onChange={handleSelectChange}>
-                                                            <option value="iniciante">Iniciante</option>
-                                                            <option value="intermediário">Intermediário</option>
-                                                            <option value="avançado">Avançado</option>
-                                                        </select>
-                                                    </label>
-
-
-                                                    <label style={{ width: '60%', border: '1px solid white', display: 'flex', flexDirection: 'column', gap: '5px', marginRight: '10px' }}>
-                                                        Thumbnail
-                                                        <img src={courseSelected.thumbnail} alt="imagem" />
-                                                    </label>
-
-                                                    <div>
-                                                        <label style={{ fontWeight: 'bold', color: '#007bff' }}>Atualizar Thumbnail:</label>
-                                                        <form onSubmit={handleUpdateThumbnail} >
-                                                            <input type="file" name="file" />
-                                                            <button style={{ padding: '5px', backgroundColor: 'blue', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} type="submit">Enviar</button>
-                                                        </form>
-                                                        <br />
-                                                    </div>
-
-                                                    <div>
-                                                        <textarea style={{ color: 'black', margin: '5px', height: '10rem', width: '100%' }} type="text" placeholder="Observações do Curso" value={courseObservations} onChange={(e) => setCourseObservations(e.target.value)} />
-                                                        <button style={{ padding: '5px', backgroundColor: '#16ff66', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }} onClick={() => handleStatusCourse()}>Salvar Curso</button>
-                                                    </div>
-                                                </div>
-
-                                                <label style={{ width: '60%', border: '1px solid white', display: 'flex', flexDirection: 'column', gap: '5px', marginRight: '10px' }}>
-                                                    Capa do Curso
-                                                    <img src={courseSelected.cover} alt="imagem" />
-
-                                                    <div>
-                                                        <label style={{ fontWeight: 'bold', color: '#007bff' }}>Atualizar capa do curso:</label>
-                                                        <form onSubmit={handleUpdateCover} >
-                                                            <input type="file" name="file" />
-                                                            <button style={{ padding: '5px', backgroundColor: 'blue', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} type="submit">Enviar</button>
-                                                        </form>
-                                                    </div>
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                    </>
+                                    <ConfigCourse {...configCourseProps} />
                                 ) : (
-                                    <UpdateCourseModal courseCategory={category} courseId={courseSelected.id} dataCourse={courseSelected} setPainelUpdateCourse={setPainelUpdateCourse} setCourseSelected={setCourseSelected} setCourses={setCourses} />
+                                    <UpdateCourseModal
+                                        courseCategory={category}
+                                        courseId={courseSelected.id}
+                                        dataCourse={courseSelected}
+                                        setPainelUpdateCourse={setPainelUpdateCourse}
+                                        setCourseSelected={setCourseSelected}
+                                        setCourses={setCourses}
+                                    />
                                 )}
 
-                                <div style={{ border: '1px solid white', padding: '5px', margin: '5px' }}>
-
-                                    {modules && modules.map((module, index) => (
-                                        <div key={index} style={{ position: 'relative', border: '1px solid white', padding: '5px', margin: '5px' }}>
-                                            <button style={{ position: 'absolute', top: '5px', right: '5px' }} onClick={() => handleDeleteModule.mutate(module.id)}>Deletar Módulo</button>
-                                            <h4>{module.title}</h4>
-
-                                            <button style={{ border: '1px solid white', padding: '5px', margin: '5px', cursor: 'pointer' }}>Gerenciar</button>
-                                        </div>
-                                    ))}
-
-                                    <p>Criar Módulos</p>
-
-                                    <AddModuleModal courseId={courseSelected.id} />
-                                </div>
+                                <ModulesCourseList modules={modules}
+                                    handleDeleteModule={handleDeleteModule}
+                                    courseSelected={courseSelected}
+                                />
 
                             </div>
                         </div>
-                    </div>
+                    </CourseConfigDiv>
 
                 )}
 
-            </div>
+            </ContainerDiv>
         </div>
     );
 };
