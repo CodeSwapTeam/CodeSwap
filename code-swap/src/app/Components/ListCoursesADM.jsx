@@ -22,7 +22,8 @@ const ListCourses = () => {
     const [courseSelected, setCourseSelected] = useState(null);
     const [modules, setModules] = useState([{}]);
 
-    const [setImgUrlThumbnail] = useState('');
+    const [imgUrlThumbnail,setImgUrlThumbnail] = useState('');
+    const [imgUrlCover,setImgUrlCover] = useState('');
     const [selectedPainel, setSelectedPainel] = useState('courses');
     const [difficulty, setDifficulty] = useState('iniciante');
     const [courseObservations, setCourseObservations] = useState('');
@@ -87,9 +88,8 @@ const ListCourses = () => {
     });
 
     const handleUpdateStatusCourseData = useMutation({
-        mutationFn: async (courseId, categoryId, courseData
-        ) => {
-            await controller.manageCourses.UpdateStatusCourseData(courseId, categoryId, courseData);
+        mutationFn: async (data) => {
+            await controller.manageCourses.UpdateStatusCourseData({courseId: data.courseId, categoryId:data.categoryId, courseData:data.courseData});
         },
         onSuccess: (data, variables) => {
             // Invalidate a query 'ListCourses' após a atualização do curso
@@ -148,6 +148,11 @@ const ListCourses = () => {
         setDifficulty(event.target.value);
     };
 
+    const handleSetStatusCourse = (event) => {
+        setStatusCourse(event.target.value);
+    };
+
+    //Função para atualizar a thumbnail do curso
     const handleUpdateThumbnail = async (e) => {
         e.preventDefault();
         const file = e.target.file.files[0];
@@ -194,6 +199,7 @@ const ListCourses = () => {
         });
     };
 
+    //Função para atualizar a capa do curso
     const handleUpdateCover = async (e) => {
         e.preventDefault();
         const file = e.target.file.files[0];
@@ -226,7 +232,7 @@ const ListCourses = () => {
             console.error(error);
         }, () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                setImgUrlThumbnail(downloadURL);
+                setImgUrlCover(downloadURL);
                 console.log('File available at', downloadURL);
                 // Atualizar a URL da imagem no banco de dados
                 controller.manageCourses.UpdateCoverCourse(courseSelected.id, downloadURL);
@@ -247,19 +253,21 @@ const ListCourses = () => {
 
 
     //Função para atualizar as informações do curso e status
-    const handleStatusCourse = async (e) => {
-        e.preventDefault();
+    const handleStatusCourse = async () => {
+        
+       
         const courseData = {
             status: statusCourse,
-            isPremium: isPremium,
-            isSequential: isSequential,
+            coursePremium: isPremium,
+            SequentialModule: isSequential,
             difficulty: difficulty,
             experience: experienceCourse,
             codes: codesCourse,
-            observations: courseObservations
+            courseObservations: courseObservations,
+            imgUrlThumbnail: imgUrlThumbnail,
+            imgUrlCover: imgUrlCover
         };
-
-        handleUpdateStatusCourseData.mutate(courseSelected.id, category.id, courseData);
+        handleUpdateStatusCourseData.mutate({courseId: courseSelected.id, categoryId:category.id, courseData:courseData});
     };
 
     return (
@@ -316,7 +324,7 @@ const ListCourses = () => {
                                                     <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start' }}>
                                                         Status:
                                                         <span type="text" >{courseSelected.status}</span>
-                                                        <select style={{ color: 'black' }} value={difficulty} onChange={setStatusCourse}>
+                                                        <select style={{ color: 'black' }} value={difficulty} onChange={handleSetStatusCourse}>
                                                             <option value="Pendente">Pendente</option>
                                                             <option value="Aprovado">Aprovado</option>
                                                             <option value="Revisão">Revisão</option>
@@ -370,7 +378,7 @@ const ListCourses = () => {
 
                                                     <div>
                                                         <textarea style={{ color: 'black', margin: '5px', height: '10rem', width: '100%' }} type="text" placeholder="Observações do Curso" value={courseObservations} onChange={(e) => setCourseObservations(e.target.value)} />
-                                                        <button style={{ padding: '5px', backgroundColor: '#16ff66', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }}>Salvar Curso</button>
+                                                        <button style={{ padding: '5px', backgroundColor: '#16ff66', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }} onClick={() => handleStatusCourse()}>Salvar Curso</button>
                                                     </div>
                                                 </div>
 

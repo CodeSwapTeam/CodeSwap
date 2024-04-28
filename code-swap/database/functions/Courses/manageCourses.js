@@ -149,8 +149,72 @@ export async function updateCourse(courseId, courseCategoryId, courseData) {
 };
 
 //função para atualizar as informações de um curso e status
-export async function UpdateStatusCourseData(courseId, courseCategoryId, courseData) {
+/*
+const courseData = {
+            status: statusCourse,
+            coursePremium: isPremium,
+            SequentialModule: isSequential,
+            difficulty: difficulty,
+            experience: experienceCourse,
+            codes: codesCourse,
+            courseObservations: courseObservations
+        };
+
+*/
+export async function UpdateStatusCourseData(data) {
+
+    const { courseId, courseCategoryId, courseData } = data;
+
     try {
+
+        //atualizar o curso no cache local
+        //const categoriesLocal = JSON.parse(sessionStorage.getItem('categories'));
+        //const categorie = categoriesLocal.find(category => category.id === courseCategoryId);
+
+        
+
+        let courseDataCache;
+
+        /*
+        if (categorie && categorie.courses) {
+            courseDataCache = categorie.courses.find(course => course.id === courseId);
+            console.log('curso', courseDataCache);
+            if (courseDataCache) {
+                courseDataCache.status = courseData.status;
+                courseDataCache.coursePremium = courseData.coursePremium;
+                courseDataCache.SequentialModule = courseData.SequentialModule;
+                courseDataCache.difficulty = courseData.difficulty;
+                courseDataCache.experience = courseData.experience;
+                courseDataCache.codes = courseData.codes;
+                courseDataCache.courseObservations = courseData.courseObservations;
+            }
+
+        } else {
+            console.log('Categoria não encontrada ou não possui cursos');
+        }
+
+        //salvar no cache local   
+        sessionStorage.setItem('categories', JSON.stringify(categoriesLocal));
+        */
+       console.log('courseId', courseId);
+        console.log('courseCategoryId', courseCategoryId);
+        console.log('courseData', courseData);
+        //atualizar o status do curso no banco de dados
+        await updateDoc(doc(db, 'Courses', courseId), {
+            status: courseData.status,
+            coursePremium: courseData.coursePremium,
+            SequentialModule: courseData.SequentialModule,
+            difficulty: courseData.difficulty,
+            experience: courseData.experience,
+            codes: courseData.codes,
+            courseObservations: courseData.courseObservations,
+            imgUrlThumbnail: courseData.imgUrlThumbnail,
+            imgUrlCover: courseData.imgUrlCover
+        });
+
+        //atualizar o curso na categoria no banco de dados com a categoria courseCategoryId
+
+
         
     }
     catch (error) {
