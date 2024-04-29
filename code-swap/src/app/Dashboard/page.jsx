@@ -1,6 +1,6 @@
 "use client"
 import { useRouter } from "next/navigation";
-import { useAuthContext } from "../contexts/Auth";
+import { ContextDataCache } from "../contexts/ContextDataCache";
 import { useEffect, useState } from "react";
 import Controller from "@/Controller/controller";
 
@@ -9,27 +9,28 @@ export default function Dashboard(){
 
     const controller = Controller();
 
-    const {currentUser, setCurrentUser} = useAuthContext();
+    const { currentUser, setCurrentUser } = ContextDataCache();
 
     const [userData, setUserData] = useState();
 
     const router = useRouter();
 
-    async function pegarDadosCookies() {
-        // Se o usuário atual não estiver definido, tente pegar os dados do cookie
+    async function SearchData() {
+        // Se o usuário atual não estiver definido, tente pegar os dados no cache local
         if (currentUser == null) {
-            const userCript = await controller.services.manageCookies.getCookies();
-    
-            // Se não houver dados de cookie, redirecione para a página de login
-            if (!userCript) {
+
+            const queryResponse = await controller.manageUsers.GetUserLocalData();
+
+            // Se não houver dados de cookie disponíveis, redirecione para a página de login
+            if (!queryResponse) {
                 router.push('/login');
                 return;
             }
     
-            // Descriptografe os dados do usuário e atualize o estado do usuário
-            const userDescript = controller.encryptionAlgorithm.decryptObjectData(userCript.value);
-            setUserData(userDescript);
-            setCurrentUser(userDescript);
+
+            setUserData(queryResponse);
+            setCurrentUser(queryResponse);
+            
         } else {
             // Se o usuário atual já estiver definido, apenas atualize o estado do usuário
             setUserData(currentUser);
@@ -39,14 +40,15 @@ export default function Dashboard(){
     
     useEffect(()=>{
     
-        pegarDadosCookies();
+        SearchData();
        
     },[userData])
 
     return(
         <div style={{color:'white'}}> 
-            <p>Listagem de Cursos do Aluno</p>
+            
             {userData && <p>Bem-vindo(a) <strong>{userData.userName}</strong></p> }
+            <p>PÁGINA DASHBOARD PRINCIPAL DO ALUNO</p>
         </div>
     )
 }

@@ -17,19 +17,10 @@ export default function middleware( NextRequest){
 
     // Obtendo o cookie 'user' e seu valor
     const userCookie = cookieStore.get('user')?.value;
-
-    let userDecrypted = null;
-
-    if (userCookie) {
-        try {
-            userDecrypted = controller.encryptionAlgorithm.decryptObjectData(userCookie);
-          
-        } catch (error) {
-          console.error('Erro ao descriptografar cookie do usuário:', error);
-          return NextResponse.redirect(new URL('/login', NextRequest.url));
-        }
-      }
     
+    let userDecrypted = userCookie;
+
+  
     // Verificando se a página atual é a página inicial
     const isHomePage = NextRequest.nextUrl.pathname === '/';
 
@@ -85,5 +76,5 @@ export default function middleware( NextRequest){
 
 // Configuração de rotas que utilizarão este middleware
 export const config = {
-        matcher: ['/', '/Dashboard:path*', '/ManageCourses','/Cursos/:id/modulo/:moduleId*']
+        matcher: ['/', '/Dashboard:path*', '/ManageCourses','/Cursos/:id/modulo/:moduleId*', '/MyCourses']
 }

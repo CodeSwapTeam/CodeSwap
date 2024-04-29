@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link'
 import { useRouter } from 'next/navigation';
-import { useAuthContext } from '../../contexts/Auth';
+import { ContextDataCache} from '../../contexts/ContextDataCache';
 import Controller from '@/Controller/controller';
 
 
@@ -76,13 +76,14 @@ const NavBarPrivate = (props) => {
 
   const router = useRouter();
 
-  const {currentUser, setCurrentUser} = useAuthContext();
+  const { currentUser, setCurrentUser } = ContextDataCache();
+
   
   const [painelAdmpermissions, setPainelAdmPermissions] = useState(false);
 
   useEffect(() => {
     // Verifica as permissões do usuário
-    if (props.userData && props.userData.permissions > 1) {
+    if (currentUser && currentUser.permissionAcess > 1) {
       setPainelAdmPermissions(true);
     } else {
       setPainelAdmPermissions(false);
@@ -92,9 +93,9 @@ const NavBarPrivate = (props) => {
   //função para deslogar
   async function logout() {
     //remove os cookies
-    await controller.services.manageCookies.removeCookies('user');
+    await controller.services.manageCookies.removeCookiesAcessToken();
     setCurrentUser(null);
-    router.push('/Dashboard');
+    router.push('/');
   }
 
 
@@ -104,7 +105,7 @@ const NavBarPrivate = (props) => {
       <div style={flexContainer}>
         <div style={navBarLeft}>
           <Link href='/' style={navButtonStyle}>Home</Link>
-          <Link href='/Cursos' style={navButtonStyle}>Cursos</Link>
+          <Link href='/MyCourses' style={navButtonStyle}>Meus Cursos</Link>
           <Link href='/' style={navButtonStyle}>Comunidade</Link>
         </div>
         <div style={navBarMiddle}>

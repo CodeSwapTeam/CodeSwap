@@ -2,47 +2,19 @@
 import React, { useEffect, useState } from 'react';
 import NavBarPublic from '../Components/NavBarPublic/page';
 import NavBarPrivate from '../Components/NarBarPrivate/page';
-import { getCookies } from '../services/cookies';
-import { decryptObjectData } from '../services/encryptedAlgorithm';
-import { useAuthContext } from "../contexts/Auth";
+import { ContextDataCache } from '../contexts/ContextDataCache';
 
 const LayoutComponents = ({ children }) => {
 
-    const {currentUser, setCurrentUser} = useAuthContext();
-
-    const [userLogged, setUserLogged] = useState();
-    const [userData, setUserData] = useState();
-    
-    async function getUser() {
-        
-        
-        const userCookie = await getCookies();
-        //console.log(currentUser);
-        
-        if (currentUser) {
-            
-            setUserLogged(true);
-            setUserData(currentUser);
-        }else{
-            if(userCookie){
-                const userDescript = decryptObjectData(userCookie.value);
-                setUserData(userDescript);
-                setCurrentUser(userDescript);
-                setUserLogged(true);
-            }
-            setUserLogged(false);
-        
-        }
-          
-    }
+    const { currentUser } = ContextDataCache();
 
     useEffect(() => {
-        getUser();
+       // console.log(currentUser);
     }, [currentUser]);
 
     return (
         <div>
-            {userLogged ? <NavBarPrivate userData={userData} /> : <NavBarPublic />}
+            {currentUser ? <NavBarPrivate userData={currentUser} /> : <NavBarPublic />}
             {children}
         </div>
     );

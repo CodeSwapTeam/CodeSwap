@@ -1,8 +1,9 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { InteractionProvider } from "./contexts/InteractionContext";
-import { AuthProvider } from "./contexts/Auth";
+import { AuthProvider } from "./contexts/ContextDataCache";
 import LayoutComponents from "./Components/LayoutComponents";
+import Provider from "./Providers/ProviderQuery";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,9 +13,10 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  
   return (
 
-
+    <Provider>
     <InteractionProvider>
 
       <AuthProvider>
@@ -42,7 +44,7 @@ export default function RootLayout({ children }) {
             }}
             >
             </video>
-
+            
             <LayoutComponents>
               {children}
             </LayoutComponents>
@@ -51,6 +53,7 @@ export default function RootLayout({ children }) {
       </AuthProvider>
 
     </InteractionProvider>
+    </Provider>
 
 
   );
