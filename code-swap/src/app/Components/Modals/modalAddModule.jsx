@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Controller from '@/Controller/controller';
+import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
 
 function AddModuleModal(props) {
 
     const controller = Controller();
+
+    const client = useQueryClient();
 
     const [show, setShow] = useState(false);
     const [moduleName, setModuleName] = useState('');
@@ -12,6 +15,22 @@ function AddModuleModal(props) {
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+
+    //função mutate para criar um novo modulo
+
+    const createModule = useMutation({
+        mutationFn: async (data) => {
+            const response = await controller.manageModules.CreateModule(data.courseId, data.newModule);
+            return response;
+        },
+        onSuccess: (data) => {
+            // Invalidate a query 'ListCourses' após a deleção do curso
+            client.invalidateQueries(["GetModules"]); 
+        }
+    
+    })
+
 
     const handleSubmit = () => {
         
@@ -29,7 +48,7 @@ function AddModuleModal(props) {
         
 
 
-        controller.manageModules.CreateModule(props.courseId, newModule);
+        createModule.mutate({courseId: props.courseId, newModule: newModule});
 
         setModuleName('');
         setModuleDescription('');

@@ -6,7 +6,7 @@ import { CreateUser, GetUserById, GetUserDataBase, GetUserLocalData, RemoveUser,
 import { getUserCache, removeUserCache, saveUserCache } from "@/app/services/saveUserCache";
 import { CreateCategory, DeleteCategory, GetCategories, GetCategoriesLocal, SaveCategoriesLocal, SaveImgUrlThumbnail, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
 import { CreateCourse, DeleteCourse, GetCourseById, UpdateConfigCourseData, UpdateCover, UpdateInfoCourse,  UpdateThumbnail } from "../../database/functions/Courses/manageCourses";
-import { GetModules, GetModulesLocal, createModule, deleteModule, updateModule } from "../../database/functions/Modules/manageModules";
+import { GetModuleById, GetModules, GetModulesLocal, createModule, deleteModule, updateModule } from "../../database/functions/Modules/manageModules";
 
 
 
@@ -40,7 +40,8 @@ export default function Controller(){
             DeleteModule: deleteModule,
             updateModule: updateModule,
 
-            GetModulesLocal: GetModulesLocal
+            GetModulesLocal: GetModulesLocal,
+            GetModuleById: GetModuleById
         },
         /**
          * Gerenciador de lições,

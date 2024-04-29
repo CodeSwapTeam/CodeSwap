@@ -1,7 +1,11 @@
+import { ContextDataCache } from "@/app/contexts/ContextDataCache";
 
 
 
-export const ConfigCourse = ({ courseSelected, setPainelUpdateCourse, isPremium, handleCheckboxChange, isSequential, handleCheckboxChangeSequential, experienceCourse, setExperienceCourse, codesCourse, setCodesCourse, difficulty, handleSelectChange, courseObservations, setCourseObservations, handleUpdateThumbnail, handleUpdateCover, handleConfigCourse, handleSetStatusCourse, statusCourse }) => {
+export const ConfigCourse = ({ courseSelected, setPainelUpdateCourse, isPremium, handleCheckboxChange, isSequential, handleCheckboxChangeSequential, experienceCourse, setExperienceCourse, codesCourse, setCodesCourse, difficulty, handleSelectChange, courseObservations, setCourseObservations, handleUpdateThumbnail, handleUpdateCover, handleConfigCourse, handleSetStatusCourse, statusCourse,setSelectedPainel }) => {
+
+  const { setCourseSelected } = ContextDataCache();
+
   return (
     <div  style={{ width: '100%'}}>
       <h4>Descrição: </h4>
@@ -59,7 +63,7 @@ export const ConfigCourse = ({ courseSelected, setPainelUpdateCourse, isPremium,
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', marginRight: '10px', width: '60%', border: '1px solid white' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', marginRight: '10px', width: '60%' }}>
             
             <label >Capa do Curso<img src={courseSelected.imgUrlCover} alt="imagem" /></label>
 
@@ -71,7 +75,19 @@ export const ConfigCourse = ({ courseSelected, setPainelUpdateCourse, isPremium,
               </form>
             </div>
 
-            <p style={{ fontWeight: 'bold', color: '#007bff', marginTop: '30px' }}>Registros do Curso</p>
+            <div style={{ fontWeight: 'bold', color: '#007bff', marginTop: '30px' , display: 'flex', flexDirection: 'column'}}>
+              
+              <div style={{ border: '1px solid white', height:'100px'}}>
+                <h1>Registros do Curso</h1>
+
+                <p>Alunos inscritos: 0 </p>
+                <p>Módulos: 0</p>
+              
+              </div>
+
+
+              <button style={{ backgroundColor: 'blue', padding: '5px', borderRadius: '5px' , marginTop: '30px'}} onClick={()=>{setSelectedPainel('Modules'), setCourseSelected(courseSelected)}} >Gerenciar Módulos</button>
+            </div>
             
             
           </div>

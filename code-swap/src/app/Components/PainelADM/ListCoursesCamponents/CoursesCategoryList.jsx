@@ -90,7 +90,7 @@ export const CoursesCategoryList = ({ courses, handleDeleteCourse, setSelectedPa
                     <StatusCourse status={course.status}>Status: {course.status}</StatusCourse>
                 <DeleteButton onClick={() => handleDeleteCourse.mutate(course.id)}>Deletar Curso</DeleteButton>
                 <h4>{course.title}</h4>
-                <ManageButton onClick={() => { setSelectedPainel('Modules'), setCourseSelected(course), GetModules(course) }}>Gerenciar</ManageButton>
+                <ManageButton onClick={() => { setSelectedPainel('CourseDescription'), setCourseSelected(course), GetModules(course) }}>Gerenciar</ManageButton>
             </CourseContainer>
         ))}
     </Container>

@@ -15,6 +15,7 @@ import { CategoriesList } from './PainelADM/ListCoursesCamponents/CategoriesList
 import { CoursesCategoryList } from './PainelADM/ListCoursesCamponents/CoursesCategoryList';
 import { ConfigCourse } from './PainelADM/ListCoursesCamponents/ConfigCourse';
 import { ModulesCourseList } from './PainelADM/ListCoursesCamponents/ModulesCourseList';
+import CreateModule from './PainelADM/CreateModule/CreateModule';
 
 
 export const H1 = styled.h1`
@@ -102,19 +103,7 @@ const ListCourses = () => {
         }
     });
 
-    //Função para deletar um módulo
-    const handleDeleteModule = useMutation({
-        mutationFn: async (data) => {
-            await controller.manageModules.DeleteModule(courseSelected, data);
-        },
-        onSuccess: (data, variables) => {
-            // Invalidate a query 'ListCourses' após a deleção do curso
-            client.invalidateQueries("ListCourses");
-
-            // Remove o curso deletado do estado local
-            setModules(modules => modules.filter(module => module.id !== variables));
-        }
-    });
+    
 
     const handleConfigCourseData = useMutation({
         mutationFn: async (data) => {
@@ -260,22 +249,22 @@ const ListCourses = () => {
         let filenameCover;
 
         // Se existir uma URL, deletar a imagem antiga
-    if (courseSelected.imgUrlCover) {
-        // Extrair o nome do arquivo da URL
-        const url = new URL(decodeURIComponent(courseSelected.imgUrlCover));
-        const pathname = url.pathname;
-        const parts = pathname.split('/');
-        const filename = parts[parts.length - 1];
-        filenameCover = decodeURIComponent(filename); // Decodificar o nome do arquivo
+        if (courseSelected.imgUrlCover) {
+            // Extrair o nome do arquivo da URL
+            const url = new URL(decodeURIComponent(courseSelected.imgUrlCover));
+            const pathname = url.pathname;
+            const parts = pathname.split('/');
+            const filename = parts[parts.length - 1];
+            filenameCover = decodeURIComponent(filename); // Decodificar o nome do arquivo
 
-        // Deletar a imagem antiga
-        const oldImageRef = ref(storage, `Courses/Covers/${filenameCover}`);
-        deleteObject(oldImageRef).catch((error) => {
-            // Ignorar o erro  404 se o arquivo não existir
-            if (error.code === 'storage/object-not-found') {
-                return;
-            }
-        });
+            // Deletar a imagem antiga
+            const oldImageRef = ref(storage, `Courses/Covers/${filenameCover}`);
+            deleteObject(oldImageRef).catch((error) => {
+                // Ignorar o erro  404 se o arquivo não existir
+                if (error.code === 'storage/object-not-found') {
+                    return;
+                }
+            });
         }
 
         // Fazer o upload da nova imagem
@@ -348,7 +337,8 @@ const ListCourses = () => {
         handleUpdateCover,
         handleConfigCourse,
         handleSetStatusCourse,
-        statusCourse
+        statusCourse,
+        setSelectedPainel
     };
 
     return (
@@ -356,11 +346,7 @@ const ListCourses = () => {
             <H1>{selectedPainel === 'courses' ? `Lista de Cursos ${category ? category.name : ''}` : 'Cursos e Módulos'}</H1>
 
             <ContainerDiv>
-                <CategoriesList
-                    categories={categories}
-                    handleCategory={handleCategory}
-                    setSelectedPainel={setSelectedPainel}
-                />
+                <CategoriesList categories={categories} handleCategory={handleCategory} setSelectedPainel={setSelectedPainel} />
 
                 {selectedPainel === 'courses' ? (
                     <CoursesCategoryList
@@ -370,11 +356,11 @@ const ListCourses = () => {
                         setCourseSelected={setCourseSelected}
                         GetModules={GetModules}
                     />
-                ) : (
+                ) : selectedPainel === 'CourseDescription' ? (
                     <CourseConfigDiv>
                         <h3>Configurações do curso {courseSelected.title}</h3>
                         <div>
-                            <div style={{  padding: '5px', margin: '5px' }}>
+                            <div style={{ padding: '5px', margin: '5px' }}>
 
                                 {!painelUpdateCourse ? (
                                     <ConfigCourse {...configCourseProps} />
@@ -389,16 +375,17 @@ const ListCourses = () => {
                                     />
                                 )}
 
-                                <ModulesCourseList modules={modules}
-                                    handleDeleteModule={handleDeleteModule}
-                                    courseSelected={courseSelected}
-                                />
+                                {/*<ModulesCourseList modules={modules}
+                    handleDeleteModule={handleDeleteModule}
+                    courseSelected={courseSelected}
+                />*/}
 
                             </div>
                         </div>
                     </CourseConfigDiv>
-
-                )}
+                ) : selectedPainel === 'Modules' ? (
+                    <CreateModule courseSelected={courseSelected} />
+                ) : null}
 
             </ContainerDiv>
         </div>
