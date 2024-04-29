@@ -17,7 +17,7 @@ const Container = styled.div`
         gap: 1px;
     }
 
-    background-color: #0034f35c;
+    background-color: #0f1425d6;
 `;
 
 const CategoryContainer = styled.div`

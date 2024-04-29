@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import AddModuleModal from '../../Modals/modalAddModule';
 
 const ModuleContainer = styled.div`
-  border: 1px solid white;
+
   padding: 5px;
   margin: 5px;
 `;

@@ -31,11 +31,12 @@ border: 2px solid white;
 padding: 10px;
 color: white;
 text-align: center;
+background-color: #0f1425d6;
 `;
 
 export const CourseConfigDiv = styled.div`
 flex: 80%;
-border: 2px solid white;
+
 padding: 10px;
 color: white;
 text-align: center;
@@ -373,7 +374,7 @@ const ListCourses = () => {
                     <CourseConfigDiv>
                         <h3>Configurações do curso {courseSelected.title}</h3>
                         <div>
-                            <div style={{ border: '2px solid white', padding: '5px', margin: '5px' }}>
+                            <div style={{  padding: '5px', margin: '5px' }}>
 
                                 {!painelUpdateCourse ? (
                                     <ConfigCourse {...configCourseProps} />

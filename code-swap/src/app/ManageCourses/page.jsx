@@ -32,28 +32,28 @@ const PainelAdm = () => {
     }, [])
 
     return (
-        <>
-            <div style={{ display: 'flex', justifyContent: 'space-between', color:'white', border:'2px solid white' }}>
+        <div >
+            <div style={{ display: 'flex', justifyContent: 'space-around', color:'white' }}>
                 <button style={{border:'2px solid white', padding: '10px' }} onClick={() => setSelectedPainel('createCourse')}>Criar Curso</button>
                 <button style={{border:'2px solid white', padding: '10px' }} onClick={() => setSelectedPainel('listCourses')}>Listar Cursos</button>
                 <button style={{border:'2px solid white', padding: '10px' }} onClick={() => setSelectedPainel('listUsers')}>Listar Usuários</button>
             </div>
             
             {selectedPainel === 'createCourse' ? (
-                <div style={{ border: '1px solid black', padding: '20px' }}>
+                <div style={{  padding: '20px' }}>
                         <CreateCourse /> 
                 </div>
             ) : selectedPainel === 'listCourses' ? (
-                <div style={{ border: '1px solid black', padding: '20px' }}>
+                <div style={{  padding: '20px' }}>
                  {userDataPermission > 2 ? <ListCourses /> : <h1>Você não tem permissão para listar cursos</h1>}
                 </div>
             ) : (
-                <div style={{ border: '1px solid black', padding: '20px' }}>
+                <div style={{  padding: '20px' }}>
                 {userDataPermission > 3 ?                    
                     <UserList />: <h1>Você não tem permissão para listar usuários</h1>}
                  </div>
             )}
-        </>
+        </div>
 
     );
 };
