@@ -15,7 +15,8 @@ import { CategoriesList } from './PainelADM/ListCoursesCamponents/CategoriesList
 import { CoursesCategoryList } from './PainelADM/ListCoursesCamponents/CoursesCategoryList';
 import { ConfigCourse } from './PainelADM/ListCoursesCamponents/ConfigCourse';
 import { ModulesCourseList } from './PainelADM/ListCoursesCamponents/ModulesCourseList';
-import CreateModule from './PainelADM/CreateModule/CreateModule';
+import CreateModule from './PainelADM/ManageModule/ManageModule';
+import ManageModule from './PainelADM/ManageModule/ManageModule';
 
 
 export const H1 = styled.h1`
@@ -384,7 +385,7 @@ const ListCourses = () => {
                         </div>
                     </CourseConfigDiv>
                 ) : selectedPainel === 'Modules' ? (
-                    <CreateModule courseSelected={courseSelected} />
+                    <ManageModule courseSelected={courseSelected} />
                 ) : null}
 
             </ContainerDiv>

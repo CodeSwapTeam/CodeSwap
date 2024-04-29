@@ -1,6 +1,7 @@
 import { doc, getDoc, setDoc, updateDoc, collection, addDoc, arrayUnion, deleteDoc, arrayRemove } from "firebase/firestore";
 import { db } from "../../firebase";
 
+//import { ContextDataCache } from "@/app/contexts/ContextDataCache";
 
 //função para criar um modulo dentro de um curso
 
@@ -101,8 +102,12 @@ export async function GetModuleById(moduleId) {
 
 //função para buscar os modulos do curso no cache local
 export async function GetModulesLocal() {
+
+    //const { setModules } = ContextDataCache();
+
     const modules = JSON.parse(sessionStorage.getItem('modules'));
     if (modules) {
+       // setModules(modules);
         return modules;
     }
 }

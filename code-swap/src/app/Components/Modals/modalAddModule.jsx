@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Controller from '@/Controller/controller';
 import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
+import { ContextDataCache } from '@/app/contexts/ContextDataCache';
 
 function AddModuleModal(props) {
 
     const controller = Controller();
+    //const { modules, setModules } = ContextDataCache();
 
     const client = useQueryClient();
 
@@ -25,36 +27,46 @@ function AddModuleModal(props) {
             return response;
         },
         onSuccess: (data) => {
+            //setar os modulos no estado
+            //setModules(data.modules);
             // Invalidate a query 'ListCourses' após a deleção do curso
-            client.invalidateQueries(["GetModules"]); 
+            client.invalidateQueries(["GetModules"]);
         }
-    
-    })
 
+    })
+ 
+    //função que ira retornar o nivel de permisão do modulo
+    const permissionModule = async () => {
+        //pegar a quantidade de modulos do curso no cache local
+        const modules = await controller.manageModules.GetModulesLocal();
+        
+        //pegar o tamanho do array de modulos
+        const permission = modules.length + 1;
+        console.log('permission', permission);
+
+      
+        
+     
+        return permission;
+    }
 
     const handleSubmit = () => {
-        
+        permissionModule();
+
         const newModule = {
             nameModule: moduleName,
             description: moduleDescription,
-            courseId : props.courseId,
+            courseId: props.courseSelected.id,
+            permission: 1,
             id: '',
-            lessons: [ ]
+            lessons: []
         };
 
-        //prev => prev.concat(newModule)
-
-        //props.setModules(prev => [...prev, newModule]);
-        
-
-
-        createModule.mutate({courseId: props.courseId, newModule: newModule});
+        createModule.mutate({ courseId: props.courseSelected.id, newModule: newModule });
 
         setModuleName('');
         setModuleDescription('');
         handleClose();
-
-        
     };
 
     return (
@@ -65,15 +77,15 @@ function AddModuleModal(props) {
                 <div className="modal">
                     <div className="modal-content">
                         <div className="modal-header">
-                            
+
                         </div>
-                        <div className="modal-body" style={{display:'flex', flexDirection: 'column'}}>
-                            <input style={{margin:'4px', color: 'black'}} type="text" placeholder="Nome do Módulo" value={moduleName} onChange={(e) => setModuleName(e.target.value)} />
-                            <input style={{margin:'4px', color: 'black'}}  type="text" placeholder="Descrição do Módulo" value={moduleDescription} onChange={(e) => setModuleDescription(e.target.value)} />
+                        <div className="modal-body" style={{ display: 'flex', flexDirection: 'column' }}>
+                            <input style={{ margin: '4px', color: 'black' }} type="text" placeholder="Nome do Módulo" value={moduleName} onChange={(e) => setModuleName(e.target.value)} />
+                            <input style={{ margin: '4px', color: 'black' }} type="text" placeholder="Descrição do Módulo" value={moduleDescription} onChange={(e) => setModuleDescription(e.target.value)} />
                         </div>
                         <div className="modal-footer">
-                            <button type="button" style={{ padding: '5px', backgroundColor: '#232323', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer'  }} onClick={handleClose}>Fechar</button>
-                            <button type="button" style={{ padding: '5px', backgroundColor: '#16ff66', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }}  onClick={handleSubmit}>Salvar Módulo</button>
+                            <button type="button" style={{ padding: '5px', backgroundColor: '#232323', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={handleClose}>Fechar</button>
+                            <button type="button" style={{ padding: '5px', backgroundColor: '#16ff66', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }} onClick={handleSubmit}>Salvar Módulo</button>
                         </div>
                     </div>
                 </div>

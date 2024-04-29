@@ -48,14 +48,11 @@ const ManageButton = styled.button`
     }
 `;
 
-export default function CreateModule(props) {
+export default function ManageModule() {
   const controller = Controller();
 
   const { courseSelected } = ContextDataCache();
   const client = useQueryClient();
-
-  //estado com os modulos do curso selecionado
-  //const [modules, setModules] = useState(courseSelected.modules);
 
   //Função para buscar os módulos de um curso
   const { data : modules } = useQuery({
@@ -64,10 +61,15 @@ export default function CreateModule(props) {
       //pega os modulos do curso selecionado no cache local
       const modules = await controller.manageModules.GetModulesLocal();
       //setModules(modules);
+
       return modules;
-    },
+    }
+    //enabled: !!courseSelected // Só executa a query se houver um curso selecionado
   });
 
+  if(modules){
+    //console.log('data modules: ', modules);
+  }
 
   //Função para deletar um módulo
   const handleDeleteModule = useMutation({
@@ -88,7 +90,7 @@ export default function CreateModule(props) {
     <Container >
       <h1>Gerenciar Módulos</h1>
       <div style={{ display: 'flex' }}>
-        {modules?.length > 0 ? (
+        {modules && modules.length > 0 ? (
           modules.map((module, index) => (
             <ModuleContainer key={index} >
               <h2>{module.title}</h2>
@@ -101,7 +103,7 @@ export default function CreateModule(props) {
           <h2>Nenhum módulo cadastrado</h2>
         )}
       </div>
-      <AddModuleModal courseId={courseSelected.id} />
+      <AddModuleModal courseSelected={courseSelected} />
     </Container>
   );
 }
