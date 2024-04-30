@@ -6,13 +6,17 @@ import { getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import { ref } from "firebase/storage";
 
 import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
+import { ContextDataCache } from '@/app/contexts/ContextDataCache';
 
 
 const CreateCourses = () => {
 
     const controller = Controller();
 
-    const [selectedCategory, setSelectedCategory] = useState('');
+    //CONTEXT DATA
+    const { currentUser, setCategories} = ContextDataCache();
+
+    const [selectedCategoryID, setSelectedCategoryID] = useState('');
 
     const [courseName, setCourseName] = useState('');
     const [courseDescription, setCourseDescription] = useState('');
@@ -23,13 +27,12 @@ const CreateCourses = () => {
     const [progress, setProgress] = useState(0);
     const [progressCover, setProgressCover] = useState(0);
 
-    const client = useQueryClient();
+    const queryClient = useQueryClient();
 
     // Função para buscar as categorias no cache local ou no banco de dados
-    const { data } = useQuery({
-        queryKey: ["categories"],
+    const { data: categoriesData} = useQuery({
+        queryKey: ['categories'],
         queryFn: async () => {
-
             //verificar se existe algum erro ao salvar o curso buscando no cache local o erro_save
             const erroData = JSON.parse(sessionStorage.getItem('erro_save'));
             if (erroData) {
@@ -42,37 +45,30 @@ const CreateCourses = () => {
                 sessionStorage.removeItem('erro_save');
             }
 
-            //buscar os dados do usuario no cache local
-            const userLocal = await controller.manageUsers.GetUserLocalData();
-
-            setOwner(userLocal.userName);
-
-            const localCategories = await controller.manageCategories.GetCategoriesLocal()
-            if (localCategories && localCategories.length > 0) {
-                return { categories: localCategories, user: userLocal };
-            }
-            const dbCategories = await controller.manageCategories.GetCategories();
-            controller.manageCategories.SaveCategoriesLocal(dbCategories);
-            return { categories: dbCategories, user: userLocal };
+            const categories = await controller.manageCategories.GetCategoriesLocal();
+            return categories;
         }
     });
 
-    //Dados da query
-    const categories = data?.categories;
-    const user = data?.user;
+   // if(categoriesData) console.log('categoriesData', categoriesData);
+    
 
 
     const handleChangeCategory = (event) => {
-        setSelectedCategory(event.target.value);
+        setSelectedCategoryID(event.target.value);
     };
 
     const deleteCategory = useMutation({
         mutationFn: async (id) => {
-            controller.manageCategories.DeleteCategory(id);
-
-            setSelectedCategory('');
-            client.invalidateQueries(["categories"]); //invalidar a query para buscar os novos dados
-        }
+           await controller.manageCategories.DeleteCategory(id);                
+        },
+        onSuccess: () => {
+            setSelectedCategoryID('');   
+            queryClient.invalidateQueries(['categories']);
+        },
+        onError: (error) => {
+            console.log(error);
+        } 
     });
 
     // Função para lidar com o envio do formulário
@@ -80,7 +76,7 @@ const CreateCourses = () => {
         e.preventDefault();
 
         // Verifica se uma categoria foi selecionada
-        if (!selectedCategory || selectedCategory.trim() === '') {
+        if (!selectedCategoryID || selectedCategoryID.trim() === '') {
             alert('Por favor, escolha uma categoria.');
             return;
         }
@@ -101,7 +97,7 @@ const CreateCourses = () => {
             cover: imgUrlCover ? imgUrlCover : '',
             coursePremium: false,
             id: '',
-            category: selectedCategory,
+            category: selectedCategoryID,
             SequentialModule: false,
             modules: []
         }
@@ -172,15 +168,15 @@ const CreateCourses = () => {
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', border: '1px solid #ccc', borderRadius: '10px', backgroundColor: '#f8f9fa' }}>
             <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#007bff' }}>Criar Novo Curso</h2>
             <h3>Categoria</h3>
-            <select value={selectedCategory} onChange={handleChangeCategory}>
+            <select value={selectedCategoryID} onChange={handleChangeCategory}>
                 <option value="">Selecione uma categoria</option>
-                {categories && categories.map((category, index) => (
+                {categoriesData?.map((category, index) => (
 
-                    <option onClick={() => selectedCategory(category.id)} key={index} value={category.id}>{category.name}</option>
+                    <option onClick={() => selectedCategoryID(category.id)} key={index} value={category.id}>{category.name}</option>
                 ))}
             </select>
 
-            <button onClick={() => deleteCategory.mutate(selectedCategory)} style={{ padding: '5px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }}>Excluir Categoria</button>
+            <button onClick={() => deleteCategory.mutate(selectedCategoryID)} style={{ padding: '5px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }}>Excluir Categoria</button>
             <ModalCreateCategory />
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
                 <div style={{ marginBottom: '20px' }}>
@@ -194,7 +190,7 @@ const CreateCourses = () => {
                         required
                         style={{ width: '100%', padding: '10px', border: '1px solid #007bff', borderRadius: '5px' }}
                     />
-                    <p>Criador: {user && user.userName}</p>
+                    <p>Criador: {currentUser && currentUser.userName}</p>
                 </div>
                 <div style={{ marginBottom: '20px' }}>
                     <label htmlFor="description" style={{ fontWeight: 'bold', marginBottom: '5px', color: '#007bff' }}>Descrição:</label>

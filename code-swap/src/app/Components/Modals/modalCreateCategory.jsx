@@ -3,33 +3,32 @@ import { useRouter } from "next/navigation";
 import Controller from "@/Controller/controller";
 
 import { useQuery,useMutation,useQueryClient, } from "@tanstack/react-query";
+import { ContextDataCache } from "@/app/contexts/ContextDataCache";
 
 function ModalCreateCategory() {
     const controller = Controller();
+
+    const {setCategories} = ContextDataCache
+
     const [show, setShow] = useState(false);
     const [categoryName, setCategoryName] = useState('');
     const [categoryDescription, setCategoryDescription] = useState('');
 
 
-    const client = useQueryClient();
+    const queryClient = useQueryClient();
 
     const createCategory = useMutation({
-        mutationFn: async (data) => {
-            controller.manageCategories.CreateCategory(data)
-            
-             
-            //buscar os dados no local storage mesclar com os novos dados
-            const localData = controller.manageCategories.GetCategoriesLocal();
-
-            const updatedData = [...localData, data];
-            //salvar os novos dados
-            controller.manageCategories.SaveCategoriesLocal(updatedData);
-            
-
-
-            client.invalidateQueries(["categories"]);
+        mutationFn: async (data) => {const req = await  controller.manageCategories.CreateCategory(data)},
+        onSuccess: () => {
+            queryClient.invalidateQueries(['categories']);
+        },
+        onError: (error) => {
+            console.log(error);
         }
     });
+
+    //setCategories(categoriesUpdated); //ATUALIZAR O CONTEXT
+    //const categoriesUpdated = await controller.manageCategories.CreateCategory(data)
     
 
     const handleClose = () => setShow(false);

@@ -4,8 +4,8 @@ import { InteractionProvider } from "./contexts/InteractionContext";
 import { AuthProvider } from "./contexts/ContextDataCache";
 import LayoutComponents from "./Components/LayoutComponents";
 import Provider from "./Providers/ProviderQuery";
-
 const inter = Inter({ subsets: ["latin"] });
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 export const metadata = {
   title: "Code Swap",
@@ -47,12 +47,14 @@ export default function RootLayout({ children }) {
             
             <LayoutComponents>
               {children}
+              <ReactQueryDevtools initialIsOpen={false} />
             </LayoutComponents>
             </body>
           </html>
       </AuthProvider>
-
+      
     </InteractionProvider>
+    
     </Provider>
 
 

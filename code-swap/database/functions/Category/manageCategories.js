@@ -11,18 +11,25 @@ export const CreateCategory = async (data) => {
     }
 
     try {
-
-        //Criar a categoria no banco de dados
+        // Criar a categoria no banco de dados
         const docRef = await addDoc(collection(db, 'Categories'), categoryData, { merge: true });
-        //Adicionar o id da categoria no documento
-        const categoryRef = doc(db, 'Categories', docRef.id);
-        await updateDoc(categoryRef, { id: docRef.id });
-
-        //buscar os novos dados
-        const categories = await GetCategories();
-        //salvar no cache local
+    
+        // Adicionar o id da categoria no documento
+        await updateDoc(doc(db, 'Categories', docRef.id), { id: docRef.id });
+    
+        // Obter as categorias do cache local ou inicializar com um array vazio
+        const categories = JSON.parse(sessionStorage.getItem('categories')) || [];
+    
+        // Adicionar a nova categoria
+        categories.push({ ...categoryData, id: docRef.id });
+    
+        // Atualizar o cache local
         sessionStorage.setItem('categories', JSON.stringify(categories));
+        
+        alert(`Categoria ${data.name} criada com sucesso!`);
 
+        // Retornar o array de categorias
+        return categories;
     } catch (error) {
         console.error('Erro ao Criar categoria:', error);
         throw error;
@@ -45,8 +52,6 @@ export const UpdateCategoryData = async (categoryId, data) => {
 // Função para deletar uma categoria no banco de dados
 export const DeleteCategory = async (categoryId) => {
     try {
-        
-        
         //Remover a categoria do cache local
         const categoriesLocal = sessionStorage.getItem('categories');
         if(categoriesLocal){
@@ -57,6 +62,8 @@ export const DeleteCategory = async (categoryId) => {
 
         //Deletar a categoria do banco de dados
         await deleteDoc(doc(db, 'Categories', categoryId));
+
+        alert('Categoria deletada com sucesso!');
 
     } catch (error) {
         console.error('Erro ao deletar a categoria:', error);
@@ -74,6 +81,9 @@ export const GetCategories = async () => {
         querySnapshot.forEach((doc) => {
             categories.push(doc.data());
         });
+
+        //salvar no cache local
+        SaveCategoriesLocal(categories);
 
         return categories;
 

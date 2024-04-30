@@ -74,8 +74,8 @@ export default function Controller(){
             UpdateCategoryData: UpdateCategoryData,
             DeleteCategory: DeleteCategory,
 
-            GetCategories: GetCategories,
-            GetCategoriesLocal: GetCategoriesLocal,
+            GetCategories: GetCategories, //Retorna as categorias do banco de dados
+            GetCategoriesLocal: GetCategoriesLocal, //Retorna as categorias do cache local
             SaveCategoriesLocal: SaveCategoriesLocal,
             SaveImgUrlThumbnail: SaveImgUrlThumbnail
         },

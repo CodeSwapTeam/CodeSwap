@@ -1,24 +1,37 @@
-"use client"
-
-import { useState } from 'react';
+"use client";
+import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+    mutations: {
+        /*
+      onSettled: (data, error, variables, context, mutation) => {
+        const queryKey = mutation.options.mutationKey;
+        queryClient.invalidateQueries(queryKey);
+      },
+      */
+    },
+  },
+});
 
 const Provider = ({ children }) => {
-    const [client] = useState(new QueryClient(
-        //desativar o refetch automatico
-        //salvar o estado do cache
-        { defaultOptions: { 
-            queries: { 
-                refetchOnWindowFocus: false
-            },
-            mutations:{
-                
-            }
-        } }
-    ));
+  const [isClient, setIsClient] = useState(false);
 
-    return <QueryClientProvider client={client}>{children}</QueryClientProvider>
-} 
+  useEffect(() => {
+    setIsClient(true);
+    return () => setIsClient(false); 
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+    </QueryClientProvider>
+  );
+}
 
 export default Provider;

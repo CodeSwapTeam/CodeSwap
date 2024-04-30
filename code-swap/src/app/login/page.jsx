@@ -187,7 +187,7 @@ width: 100%;
 export default function Login() {
 
     const controller = Controller();
-    const {currentUser, setCurrentUser} = ContextDataCache();
+    const {setCurrentUser} = ContextDataCache();
 
     const [fraseAleatoria, setFraseAleatoria] = useState(null);
 
@@ -225,7 +225,8 @@ export default function Login() {
             setPassword('');
             setError('');
 
-            setCurrentUser(userData); // atualiza context
+            setCurrentUser(userData); //ATUALIZA O USUÁRIO NO CONTEXTO
+            
             //salvar nos cookies o token de acesso
             controller.services.manageCookies.setCookiesAcessToken(user.uid);
             //salvar no localstorage os dados do usuário

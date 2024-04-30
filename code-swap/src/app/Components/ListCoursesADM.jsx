@@ -17,6 +17,7 @@ import { ConfigCourse } from './PainelADM/ListCoursesCamponents/ConfigCourse';
 import { ModulesCourseList } from './PainelADM/ListCoursesCamponents/ModulesCourseList';
 import CreateModule from './PainelADM/ManageModule/ManageModule';
 import ManageModule from './PainelADM/ManageModule/ManageModule';
+import { ContextDataCache } from '../contexts/ContextDataCache';
 
 
 export const H1 = styled.h1`
@@ -49,8 +50,10 @@ const ListCourses = () => {
     const controller = Controller();
     const client = useQueryClient();
 
+    const { courseSelected, setCourseSelected } = ContextDataCache();
+
     const [courses, setCourses] = useState([]);
-    const [courseSelected, setCourseSelected] = useState(null);
+    //const [courseSelected, setCourseSelected] = useState(null);
     const [modules, setModules] = useState([{}]);
 
     const [imgUrlThumbnail, setImgUrlThumbnail] = useState('');
@@ -120,7 +123,6 @@ const ListCourses = () => {
     //função para pegar os cursos dentro de uma categoria selecionada pelo usuário
     const handleCategory = (category) => {
         setCourses(category.courses);
-        //console.log("setar a categoria", { name: category.name, id: category.id });
         setCategory({ name: category.name, id: category.id });
     };
     /////////////////////////////////////////////
@@ -320,7 +322,7 @@ const ListCourses = () => {
 
     //Configurações do curso
     const configCourseProps = {
-        courseSelected,
+        
         setPainelUpdateCourse,
         isPremium,
         handleCheckboxChange,
@@ -354,7 +356,7 @@ const ListCourses = () => {
                         courses={courses}
                         handleDeleteCourse={handleDeleteCourse}
                         setSelectedPainel={setSelectedPainel}
-                        setCourseSelected={setCourseSelected}
+                        //setCourseSelected={setCourseSelected}
                         GetModules={GetModules}
                     />
                 ) : selectedPainel === 'CourseDescription' ? (
@@ -371,7 +373,7 @@ const ListCourses = () => {
                                         courseId={courseSelected.id}
                                         dataCourse={courseSelected}
                                         setPainelUpdateCourse={setPainelUpdateCourse}
-                                        setCourseSelected={setCourseSelected}
+                                        //setCourseSelected={setCourseSelected}
                                         setCourses={setCourses}
                                     />
                                 )}

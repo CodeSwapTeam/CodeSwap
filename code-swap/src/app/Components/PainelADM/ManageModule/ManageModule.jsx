@@ -51,20 +51,22 @@ const ManageButton = styled.button`
 export default function ManageModule() {
   const controller = Controller();
 
-  const { courseSelected } = ContextDataCache();
+  const { courseSelected, setModuleSelected } = ContextDataCache();
   const client = useQueryClient();
 
   //Função para buscar os módulos de um curso
   const { data : modules } = useQuery({
     queryKey: ["GetModules"],
     queryFn: async () => {
+      console.log('courseSelected: ', courseSelected);
       //pega os modulos do curso selecionado no cache local
-      const modules = await controller.manageModules.GetModulesLocal();
-      //setModules(modules);
+      const modules = courseSelected.modules;
+      if (modules) {
+        setModuleSelected(modules);
+      }
 
       return modules;
     }
-    //enabled: !!courseSelected // Só executa a query se houver um curso selecionado
   });
 
   if(modules){
@@ -93,7 +95,7 @@ export default function ManageModule() {
         {modules && modules.length > 0 ? (
           modules.map((module, index) => (
             <ModuleContainer key={index} >
-              <h2>{module.title}</h2>
+              <h2 style={{ font: 'bold', color: '#07ff07'}}>{module.title}</h2>
               <p>{module.description}</p>
               <ManageButton >Gerenciar Módulo</ManageButton>
               <DeleteButton onClick={()=> handleDeleteModule.mutate({courseID:courseSelected.id, moduleId: module.id})}>Excluir Módulo</DeleteButton>

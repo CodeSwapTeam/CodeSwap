@@ -1,3 +1,4 @@
+import { ContextDataCache } from '@/app/contexts/ContextDataCache';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -78,20 +79,20 @@ const StyledImg = styled.img`
 
 
 
-export const CoursesCategoryList = ({ courses, handleDeleteCourse, setSelectedPainel, setCourseSelected, GetModules }) => (
+export const CoursesCategoryList = ({ courses, handleDeleteCourse, setSelectedPainel, GetModules }) => {
+    const { courseSelected, setCourseSelected } = ContextDataCache();
 
-    <Container>
-        {courses && courses.map(course => (
-                
-            <CourseContainer key={course.id}>
-                
+    return (
+        <Container>
+            {courses && courses.map(course => (
+                <CourseContainer key={course.id}>
                     <StyledImg src={course.imgUrlThumbnail} alt="Imagem Thumbnail" />
-                
                     <StatusCourse status={course.status}>Status: {course.status}</StatusCourse>
-                <DeleteButton onClick={() => handleDeleteCourse.mutate(course.id)}>Deletar Curso</DeleteButton>
-                <h4>{course.title}</h4>
-                <ManageButton onClick={() => { setSelectedPainel('CourseDescription'), setCourseSelected(course), GetModules(course) }}>Gerenciar</ManageButton>
-            </CourseContainer>
-        ))}
-    </Container>
-);
+                    <DeleteButton onClick={() => handleDeleteCourse.mutate(course.id)}>Deletar Curso</DeleteButton>
+                    <h4>{course.title}</h4>
+                    <ManageButton onClick={() => { setSelectedPainel('CourseDescription'), setCourseSelected(course), GetModules(course) }}>Gerenciar</ManageButton>
+                </CourseContainer>
+            ))}
+        </Container>
+    );
+};

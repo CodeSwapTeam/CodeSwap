@@ -5,7 +5,6 @@ import Controller from '@/Controller/controller';
 import ListCourses from '../Components/ListCoursesADM';
 import CreateCourse from '../Components/PainelADM/CreateCourse/CreateCourse';
 import { ContextDataCache } from '../contexts/ContextDataCache';
-import { decryptObjectData } from '../services/encryptedAlgorithm';
 import UserList from '../Components/ListUsers';
 
 const PainelAdm = () => {
@@ -15,20 +14,22 @@ const PainelAdm = () => {
     const {currentUser, setCurrentUser} = ContextDataCache();
     const [userDataPermission, setuserDataPermission] = useState(0);
 
-    const [selectedPainel, setSelectedPainel] = useState('createCourse');
+    const [selectedPainel, setSelectedPainel] = useState('listCourses');
 
 
     async function getUser() {
-        const userCached = await controller.services.manageLocalCache.getUserCache();
-        setCurrentUser(userCached);
-        setuserDataPermission(userCached.permissionAcess);
-           
+        //Buscar usuário logado no context
+        console.log('currentUser (CONTEXT) - Painel ADM ', currentUser);
+        if(!currentUser){
+            const userCached = await controller.services.manageLocalCache.getUserCache();
+            setCurrentUser(userCached);
+            console.log('currentUser (CACHED) - Painel ADM ', userCached);
+            setuserDataPermission(userCached.permissionAcess);
+        };          
     }
 
     useEffect(() => {
-        getUser();
-       
-        
+        getUser();           
     }, [])
 
     return (

@@ -9,7 +9,8 @@ export async function createModule(courseId, newModule) {
     try {
 
         
-
+        console.log('courseId', courseId);
+        console.log('newModule', newModule);
 
         //////Criar o modulo no database/////////////////////////////////////
 

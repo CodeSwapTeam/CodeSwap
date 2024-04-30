@@ -7,7 +7,7 @@ import { ContextDataCache } from '@/app/contexts/ContextDataCache';
 function AddModuleModal(props) {
 
     const controller = Controller();
-    //const { modules, setModules } = ContextDataCache();
+    const { moduleSelected , setModuleSelected, courseSelected, setCourseSelected} = ContextDataCache();
 
     const client = useQueryClient();
 
@@ -24,40 +24,51 @@ function AddModuleModal(props) {
     const createModule = useMutation({
         mutationFn: async (data) => {
             const response = await controller.manageModules.CreateModule(data.courseId, data.newModule);
+
+            //adicionar no curso selecionado o modulo criado
+            setCourseSelected({...courseSelected, modules: [...courseSelected.modules, { id: response.id, title: response.nameModule, description: response.description }]});
+
             return response;
         },
         onSuccess: (data) => {
-            //setar os modulos no estado
-            //setModules(data.modules);
+            
+
             // Invalidate a query 'ListCourses' após a deleção do curso
             client.invalidateQueries(["GetModules"]);
         }
 
     })
- 
+    //console.log('courseSelected: ', props.courseSelected);
+    
     //função que ira retornar o nivel de permisão do modulo
     const permissionModule = async () => {
+        let permission = 0;
+        if(props.courseSelected.SequentialModule){
         //pegar a quantidade de modulos do curso no cache local
         const modules = await controller.manageModules.GetModulesLocal();
+
         
         //pegar o tamanho do array de modulos
-        const permission = modules.length + 1;
-        console.log('permission', permission);
-
+         permission = modules.length + 1;
+         console.log('permission: ', permission);
+        
+        }else{
+            permission = 1;
+        }
       
         
      
         return permission;
     }
 
-    const handleSubmit = () => {
-        permissionModule();
+    const handleSubmit = async () => {
+        
 
         const newModule = {
             nameModule: moduleName,
             description: moduleDescription,
             courseId: props.courseSelected.id,
-            permission: 1,
+            permission: await permissionModule(),
             id: '',
             lessons: []
         };

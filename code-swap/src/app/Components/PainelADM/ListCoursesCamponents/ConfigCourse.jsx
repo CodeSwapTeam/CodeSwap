@@ -2,9 +2,9 @@ import { ContextDataCache } from "@/app/contexts/ContextDataCache";
 
 
 
-export const ConfigCourse = ({ courseSelected, setPainelUpdateCourse, isPremium, handleCheckboxChange, isSequential, handleCheckboxChangeSequential, experienceCourse, setExperienceCourse, codesCourse, setCodesCourse, difficulty, handleSelectChange, courseObservations, setCourseObservations, handleUpdateThumbnail, handleUpdateCover, handleConfigCourse, handleSetStatusCourse, statusCourse,setSelectedPainel }) => {
+export const ConfigCourse = ({  setPainelUpdateCourse, isPremium, handleCheckboxChange, isSequential, handleCheckboxChangeSequential, experienceCourse, setExperienceCourse, codesCourse, setCodesCourse, difficulty, handleSelectChange, courseObservations, setCourseObservations, handleUpdateThumbnail, handleUpdateCover, handleConfigCourse, handleSetStatusCourse, statusCourse,setSelectedPainel }) => {
 
-  const { setCourseSelected } = ContextDataCache();
+  const {courseSelected, setCourseSelected } = ContextDataCache();
 
   return (
     <div  style={{ width: '100%'}}>
