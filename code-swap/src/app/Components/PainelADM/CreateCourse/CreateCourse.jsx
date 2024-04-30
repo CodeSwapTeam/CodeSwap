@@ -14,24 +14,25 @@ const CreateCourses = () => {
     const controller = Controller();
 
     //CONTEXT DATA
-    const { currentUser, setCategories} = ContextDataCache();
+    const { currentUser } = ContextDataCache();
+
+    const queryClient = useQueryClient();
 
     const [selectedCategoryID, setSelectedCategoryID] = useState('');
 
     const [courseName, setCourseName] = useState('');
     const [courseDescription, setCourseDescription] = useState('');
-    const [owner, setOwner] = useState('');
 
     const [imgUrlThumbnail, setImgUrlThumbnail] = useState('');
     const [imgUrlCover, setImgUrlCover] = useState('');
     const [progress, setProgress] = useState(0);
     const [progressCover, setProgressCover] = useState(0);
 
-    const queryClient = useQueryClient();
+    
 
     // Função para buscar as categorias no cache local ou no banco de dados
-    const { data: categoriesData} = useQuery({
-        queryKey: ['categories'],
+    const { data: categoriesData } = useQuery({
+        queryKey: ['All-Categories'],
         queryFn: async () => {
             //verificar se existe algum erro ao salvar o curso buscando no cache local o erro_save
             const erroData = JSON.parse(sessionStorage.getItem('erro_save'));
@@ -45,31 +46,49 @@ const CreateCourses = () => {
                 sessionStorage.removeItem('erro_save');
             }
 
-            const categories = await controller.manageCategories.GetCategoriesLocal();
+            const categories = await controller.manageCategories.GetCategories();
             return categories;
-        }
+        },
+        staleTime: 1000 * 20, // 20 seconds
     });
 
-   // if(categoriesData) console.log('categoriesData', categoriesData);
-    
+    // if(categoriesData) console.log('categoriesData', categoriesData);
 
 
-    const handleChangeCategory = (event) => {
-        setSelectedCategoryID(event.target.value);
+
+    const handleChangeCategory = (categorieID) => {
+        setSelectedCategoryID(categorieID.target.value);
     };
 
-    const deleteCategory = useMutation({
-        mutationFn: async (id) => {
-           await controller.manageCategories.DeleteCategory(id);                
-        },
-        onSuccess: () => {
-            setSelectedCategoryID('');   
-            queryClient.invalidateQueries(['categories']);
-        },
-        onError: (error) => {
-            console.log(error);
-        } 
-    });
+    // Função para deletar uma categoria
+    const deleteCategory = async (id) => {
+        await controller.manageCategories.DeleteCategory(id);
+        //pegar as categorias no cache queryClient
+        const categoriesCached = queryClient.getQueryData(['All-Categories']);
+
+        //filtrar as categorias para excluir a categoria deletada
+        const categoriesUpdated = categoriesCached.filter(category => category.id !== id);
+        //atualizar as categorias no cache
+        queryClient.setQueryData(['All-Categories'], categoriesUpdated);
+        setSelectedCategoryID('');
+    }
+
+
+    //funcção para criar um novo curso
+    const createCourse = async (formData) => {
+       const courseID = await controller.manageCourses.CreateCourse(formData);
+
+        //atualizar dentro da categoria o curso criado
+        const categoriesCached = queryClient.getQueryData(['All-Categories']);
+        const coursesCategory = categoriesCached.find(category => category.id === formData.category);
+        if(coursesCategory){
+            //adicionar o novo curso a categoria
+            coursesCategory.courses.push(formData);
+            //atualizar a categoria no cache
+            queryClient.setQueryData(['All-Categories'], categoriesCached);
+        }
+
+    }
 
     // Função para lidar com o envio do formulário
     const handleSubmit = async (e) => {
@@ -88,7 +107,7 @@ const CreateCourses = () => {
             title: courseNameUp,
             status: 'pending', // pending, approved, reviewed, rejected
             description: courseDescription,
-            owner: owner,
+            owner: currentUser.userName,
             experience: 0,
             difficulty: '',
             codes: 0,
@@ -102,18 +121,12 @@ const CreateCourses = () => {
             modules: []
         }
 
-        try {
-            //Criar o curso no banco de dados
-            controller.manageCourses.CreateCourse(formData);
+        //Criar o curso no banco de dados
+        await createCourse(formData);
 
-            //limpar os inputs
-            setCourseName('');
-            setCourseDescription('');
-
-
-        } catch (error) {
-            alert('Erro ao criar o curso. Por favor, tente novamente mais tarde.');
-        }
+        //limpar os inputs
+        setCourseName('');
+        setCourseDescription('');
     };
 
 
@@ -172,11 +185,11 @@ const CreateCourses = () => {
                 <option value="">Selecione uma categoria</option>
                 {categoriesData?.map((category, index) => (
 
-                    <option onClick={() => selectedCategoryID(category.id)} key={index} value={category.id}>{category.name}</option>
+                    <option onClick={() => handleChangeCategory(category.id)} key={index} value={category.id}>{category.name}</option>
                 ))}
             </select>
 
-            <button onClick={() => deleteCategory.mutate(selectedCategoryID)} style={{ padding: '5px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }}>Excluir Categoria</button>
+            <button onClick={() => deleteCategory(selectedCategoryID)} style={{ padding: '5px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }}>Excluir Categoria</button>
             <ModalCreateCategory />
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
                 <div style={{ marginBottom: '20px' }}>

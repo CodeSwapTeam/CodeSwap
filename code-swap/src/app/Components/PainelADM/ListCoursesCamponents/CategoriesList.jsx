@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
 
 const Container = styled.div`
     flex: 20%;
@@ -31,15 +32,18 @@ const CategoryContainer = styled.div`
     }
 `;
 
-export const CategoriesList = ({ categories, handleCategory, setSelectedPainel }) => (
-    <Container>
-        <h3>CATEGORIAS</h3>
-        <div >
-            {categories && categories.map(category => (
-                <CategoryContainer key={category.id} onClick={() => { handleCategory(category), setSelectedPainel('courses') }}>
-                    <h4>{category.name}</h4>
-                </CategoryContainer>
-            ))}
-        </div>
-    </Container>
-);
+export const CategoriesList = ({ setSelectedPainel, categories, handleCategory }) => {
+
+    return (
+        <Container>
+            <h3>CATEGORIAS</h3>
+            <div >
+                {categories?.map((category, index) => (
+                    <CategoryContainer key={index} onClick={() => { handleCategory(category) ,setSelectedPainel("courses") }}>
+                        <h4>{category.name}</h4>
+                    </CategoryContainer>
+                ))}
+            </div>
+        </Container>
+    );
+};

@@ -18,18 +18,20 @@ export const CreateCategory = async (data) => {
         await updateDoc(doc(db, 'Categories', docRef.id), { id: docRef.id });
     
         // Obter as categorias do cache local ou inicializar com um array vazio
-        const categories = JSON.parse(sessionStorage.getItem('categories')) || [];
+       // const categories = JSON.parse(sessionStorage.getItem('categories')) || [];
     
         // Adicionar a nova categoria
-        categories.push({ ...categoryData, id: docRef.id });
+        //categories.push({ ...categoryData, id: docRef.id });
     
         // Atualizar o cache local
-        sessionStorage.setItem('categories', JSON.stringify(categories));
+       // sessionStorage.setItem('categories', JSON.stringify(categories));
         
         alert(`Categoria ${data.name} criada com sucesso!`);
 
+        return docRef.id;
+
         // Retornar o array de categorias
-        return categories;
+        //return categories;
     } catch (error) {
         console.error('Erro ao Criar categoria:', error);
         throw error;
@@ -53,12 +55,12 @@ export const UpdateCategoryData = async (categoryId, data) => {
 export const DeleteCategory = async (categoryId) => {
     try {
         //Remover a categoria do cache local
-        const categoriesLocal = sessionStorage.getItem('categories');
+        /* const categoriesLocal = sessionStorage.getItem('categories');
         if(categoriesLocal){
             const categories = JSON.parse(categoriesLocal);
             const newCategories = categories.filter(category => category.id !== categoryId);
             sessionStorage.setItem('categories', JSON.stringify(newCategories));
-        }
+        } */
 
         //Deletar a categoria do banco de dados
         await deleteDoc(doc(db, 'Categories', categoryId));
@@ -74,6 +76,7 @@ export const DeleteCategory = async (categoryId) => {
 
 // Função para retornar todas as categorias do banco de dados
 export const GetCategories = async () => {
+    console.log('Buscando as categorias no banco de dados...');
     const categories = [];
     try {
         const querySnapshot = await getDocs(collection(db, 'Categories'));

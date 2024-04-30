@@ -7,41 +7,39 @@ import { ContextDataCache } from "@/app/contexts/ContextDataCache";
 
 function ModalCreateCategory() {
     const controller = Controller();
-
-    const {setCategories} = ContextDataCache
+    const queryClient = useQueryClient();
 
     const [show, setShow] = useState(false);
     const [categoryName, setCategoryName] = useState('');
     const [categoryDescription, setCategoryDescription] = useState('');
 
-
-    const queryClient = useQueryClient();
-
-    const createCategory = useMutation({
-        mutationFn: async (data) => {const req = await  controller.manageCategories.CreateCategory(data)},
-        onSuccess: () => {
-            queryClient.invalidateQueries(['categories']);
-        },
-        onError: (error) => {
-            console.log(error);
-        }
-    });
-
-    //setCategories(categoriesUpdated); //ATUALIZAR O CONTEXT
-    //const categoriesUpdated = await controller.manageCategories.CreateCategory(data)
-    
-
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const handleSubmit = () => {
-        createCategory.mutate({ name: categoryName, description: categoryDescription });
+
+    const createNewCategory = async (data) => {
+        const categoryId = await controller.manageCategories.CreateCategory(data);
+
+        const categoriesCached = queryClient.getQueryData(['All-Categories']);
+        if(categoriesCached){
+            //Adicionar a nova categoria ao cache com o id retornado
+            queryClient.setQueryData(['All-Categories'], [...categoriesCached, {id: categoryId, courses: [], ...data}]);
+        }else{
+            //adicionar a nova categoria ao cache
+            queryClient.setQueryData(['All-Categories'], [{id: categoryId,courses: [], ...data}]);
+        }
+
+        
+    }
+
+
+    const handleSubmit = async () => {
+       await createNewCategory({ name: categoryName, description: categoryDescription });
         setCategoryName('');
         setCategoryDescription('');
         handleClose();
-        //window.location.reload();
     };
-
+        
     return (
         <>
             <button style={{ padding: '5px', backgroundColor: '#5150e1', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={handleShow}>Adicionar Categoria</button>

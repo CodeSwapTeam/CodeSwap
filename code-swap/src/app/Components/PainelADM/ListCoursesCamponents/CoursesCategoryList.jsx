@@ -1,5 +1,6 @@
 import { ContextDataCache } from '@/app/contexts/ContextDataCache';
 import styled from 'styled-components';
+import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
 
 const Container = styled.div`
     flex: 80%;
@@ -79,18 +80,37 @@ const StyledImg = styled.img`
 
 
 
-export const CoursesCategoryList = ({ courses, handleDeleteCourse, setSelectedPainel, GetModules }) => {
-    const { courseSelected, setCourseSelected } = ContextDataCache();
+export const CoursesCategoryList = ({  category, handleDeleteCourse, setSelectedPainel, GetModules }) => {
+    const {setCourseSelected } = ContextDataCache();
+
+    const queryClient = useQueryClient();
+
+    const handleSetCourseSelected = (course) => {
+       //console.log(course)
+       //adicionar o id da categoria ao curso selecionado
+        let courseSelected = course
+        courseSelected.categoryId = category.id
+
+
+
+        //let category = category.id
+        //setar o curso selecionado no cache do queryClient juntamente com o id da categoria
+
+        queryClient.setQueryData(['course-selected'], courseSelected);
+       
+    }
+
+
 
     return (
         <Container>
-            {courses && courses.map(course => (
+            {category?.courses && category.courses.map(course => (
                 <CourseContainer key={course.id}>
                     <StyledImg src={course.imgUrlThumbnail} alt="Imagem Thumbnail" />
                     <StatusCourse status={course.status}>Status: {course.status}</StatusCourse>
                     <DeleteButton onClick={() => handleDeleteCourse.mutate(course.id)}>Deletar Curso</DeleteButton>
                     <h4>{course.title}</h4>
-                    <ManageButton onClick={() => { setSelectedPainel('CourseDescription'), setCourseSelected(course), GetModules(course) }}>Gerenciar</ManageButton>
+                    <ManageButton onClick={() => { setSelectedPainel('CourseDescription'), handleSetCourseSelected(course)}}>Gerenciar</ManageButton>
                 </CourseContainer>
             ))}
         </Container>

@@ -1,7 +1,9 @@
-import { deleteDoc, doc, setDoc, updateDoc, addDoc, collection, arrayUnion, getDoc } from "firebase/firestore";
+import { deleteDoc, doc, setDoc, updateDoc, addDoc, collection, arrayUnion, getDoc, where, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
 import Controller from "@/Controller/controller";
 import { GetCategories } from "../Category/manageCategories";
+import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
+
 
 
 
@@ -39,7 +41,7 @@ export async function CreateCourse(formData) {
             courses: arrayUnion({ id: docRef.id, title: courseData.title, description: courseData.description, imgUrlThumbnail: courseData.imgUrlThumbnail, status: courseData.status })
         });
 
-        //pegar os dados das categorias no sessionStorage
+        /* //pegar os dados das categorias no sessionStorage
         const categories = JSON.parse(sessionStorage.getItem('categories'));
         //atualizar os dados da categoria no sessionStorage
         categories.forEach(category => {
@@ -48,8 +50,9 @@ export async function CreateCourse(formData) {
             }
         });
         //salvar os dados atualizados no sessionStorage
-        sessionStorage.setItem('categories', JSON.stringify(categories));
+        sessionStorage.setItem('categories', JSON.stringify(categories)); */
         alert('Curso criado com sucesso');
+        return courseID;
     }
     catch (error) {
 
@@ -139,85 +142,38 @@ export async function GetCourses() {
 
 //função para atualizar apenas título e descrição do curso
 export async function UpdateInfoCourse(courseId, courseCategoryId, courseData) {
-
     try {
-
-        ////////ATUALIZAÇÃO DE CACHE LOCAL /////////////////////////////////////////
-
-        //atualizar o curso no cache local de categorias
-        const categoriesLocal = JSON.parse(sessionStorage.getItem('categories'));
-        const categorie = categoriesLocal.find(category => category.id === courseCategoryId);
-
-        let courseDataCache;
-
-        if (categorie && categorie.courses) {
-            courseDataCache = categorie.courses.find(course => course.id === courseId);
-
-            if (courseDataCache) {
-                courseDataCache.title = courseData.title;
-                courseDataCache.description = courseData.description;
-            }
-
-        } else {
-            console.log('Categoria não encontrada ou não possui cursos');
-        }
-
-        sessionStorage.setItem('categories', JSON.stringify(categoriesLocal));
-
-        //atualizar o curso no cache local de cursos
-        const coursesLocal = JSON.parse(sessionStorage.getItem('courses'));
-        const courseLocal = coursesLocal.find(course => course.id === courseId);
-        if (courseLocal) {
-            courseLocal.title = courseData.title;
-            courseLocal.description = courseData.description;
-        }
-        sessionStorage.setItem('courses', JSON.stringify(coursesLocal));
-
-        /////////////////////////////////////////////////////////////////////////////
-
-
-        ////////ATUALIZAÇÃO DE BANCO DE DADOS /////////////////////////////////////////
-
-        //Atualização do titulo e descrição do curso no banco de dados
+        //Atualização do titulo e descrição do curso no banco de dados     
         await updateDoc(doc(db, 'Courses', courseId), {
             title: courseData.title,
             description: courseData.description
         });
 
         //Atualização do titulo e descrição do curso na categoria no banco de dados
-        await updateDoc(doc(db, 'Categories', courseCategoryId), {
-            //buscar o no array de cursos da categoria o curso com o id courseId e atualizar o title e a descrição
-            courses: categorie.courses.map(course => course.id === courseId ? { id: courseId, title: courseData.title, description: courseData.description } : course)
-        });
-
+        const categoryDoc = doc(db, 'Categories', courseCategoryId);
+        const categorySnapshot = await getDoc(categoryDoc);
+        if (categorySnapshot.exists()) {
+            const categoryData = categorySnapshot.data();
+            const courses = categoryData.courses;
+            const updatedCourses = courses.map(course => {
+                if (course.id === courseId) {
+                    return { ...course, title: courseData.title, description: courseData.description };
+                } else {
+                    return course;
+                }
+            });
+            await updateDoc(categoryDoc, { courses: updatedCourses });
+        }
+        alert('Curso atualizado com sucesso');
     }
     catch (error) {
         console.error('Erro ao atualizar o curso:', error);
-
-
     }
-
 };
 
 export async function UpdateConfigCourseData(data) {
 
     const { courseId, courseData, categoryId } = data;
-
-    // Funções auxiliares para atualizar o cache local
-    const updateLocalCategories = (categoryId, courseId, status) => {
-        const categoriesLocal = JSON.parse(sessionStorage.getItem('categories'));
-        const category = categoriesLocal.find(category => category.id === categoryId);
-        const courseLocal = category.courses.find(course => course.id === courseId);
-        courseLocal.status = status;
-        sessionStorage.setItem('categories', JSON.stringify(categoriesLocal));
-    }
-
-    const updateLocalCourses = (courseId, courseData) => {
-        const coursesLocal = JSON.parse(sessionStorage.getItem('courses'));
-        const courseLocalUpdate = coursesLocal.find(course => course.id === courseId);
-        Object.assign(courseLocalUpdate, courseData);
-        sessionStorage.setItem('courses', JSON.stringify(coursesLocal));
-    }
 
     // Funções auxiliares para atualizar o banco de dados
     const updateDatabaseCourse = async (courseId, courseData) => {
@@ -242,9 +198,7 @@ export async function UpdateConfigCourseData(data) {
 
 
     try {
-        //Atualização das configurações do curso no cache local
-        updateLocalCategories(categoryId, courseId, courseData.status);
-        updateLocalCourses(courseId, courseData);
+       
 
         //Atualização das configurações do curso no banco de dados
         await updateDatabaseCourse(courseId, courseData);
@@ -263,14 +217,7 @@ export async function UpdateConfigCourseData(data) {
 export async function GetCourseById(courseId) {
     try {
 
-        //primeiro buscar o curso no cache local
-        const categoriesLocal = JSON.parse(sessionStorage.getItem('courses'));
-        if (categoriesLocal) {
-            const course = categoriesLocal.find(course => course.id === courseId);
-            if (course) {
-                return course;
-            }
-        }
+
         //se não encontrar buscar no banco de dados
         const docRef = doc(db, 'Courses', courseId);
         const docSnap = await getDoc(docRef);
@@ -331,3 +278,20 @@ export async function UpdateCover(courseId, imgUrlCover) {
         throw error;
     }
 };
+
+
+//função para buscar cursos pela categoria
+export async function GetCoursesByCategory(categoryId) {
+    const courses = [];
+    try {
+        const querySnapshot = await getDocs(collection(db, 'Courses'), where('category', '==', categoryId));
+        querySnapshot.forEach((doc) => {
+            courses.push(doc.data());
+        });
+        return courses;
+    }
+    catch (error) {
+        console.error('Erro ao buscar os cursos:', error);
+        throw error;
+    }
+}

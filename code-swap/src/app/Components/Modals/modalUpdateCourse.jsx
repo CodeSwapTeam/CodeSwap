@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Controller from '@/Controller/controller';
-
+import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
 
 
 function UpdateCourseModal(props) {
 
+    const queryClient = useQueryClient();
+
+    let categoryId = props.courseCategory.id;
+    let courseId = props.courseId;
 
     const controller = Controller();
 
@@ -21,26 +25,37 @@ function UpdateCourseModal(props) {
             title: courseTitle,
             description: courseDescription
         };
+
+
+        //atualizar Titulo e descrição dentro curso selecionado no cache do queryClient
+        //pegar o curso selecionado no cache
+        const courseSelected = queryClient.getQueryData(['course-selected']);
+        //atualizar o titulo e descrição do curso selecionado
+        courseSelected.title = courseTitle;
+        courseSelected.description = courseDescription;
+        //salvar o curso selecionado no cache
+        queryClient.setQueryData(['course-selected'], courseSelected);
+
+
+        //atualizar o curso dentro da categoria no cache do queryClient
+        //pegar as categorias no cache
+        const categoriesCached = queryClient.getQueryData(['All-Categories']);
+        //pegar a categoria do curso selecionado
+        const category = categoriesCached.find(category => category.id === categoryId);
+        //pegar o curso dentro da categoria
+        const course = category.courses.find(course => course.id === courseId);
+        //atualizar o titulo e descrição do curso
+        course.title = courseTitle;
+        course.description = courseDescription;
+        //salvar a categoria no cache
+        queryClient.setQueryData(['All-Categories'], categoriesCached);
+
+
         //atualizar Titulo e descrição do curso no banco de dados
-       await controller.manageCourses.UpdateInfoCourse(props.courseId, props.courseCategory.id, courseData);
-       //buscar o curso atualizado no cache local
-         const courseLocal = JSON.parse(sessionStorage.getItem('courses'));
-        //pegar o objeto do curso com o courseId === props.courseId
-        const course = courseLocal.find(course => course.id === props.courseId);
+       await controller.manageCourses.UpdateInfoCourse(courseId, categoryId, courseData);
 
-        //atualizar o cache local com o curso atualizado
-        course.title = courseData.title;
-        course.description = courseData.description;
-
-        //salvar o cache local
-        sessionStorage.setItem('courses', JSON.stringify(courseLocal));
-        
-        //atualizar o estado do curso selecionado
-       props.setCourseSelected(course);
-       props.setCourses(courseLocal);
        props.setPainelUpdateCourse(false);
-         
-       
+            
         handleClose();
 
     };
