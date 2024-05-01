@@ -14,10 +14,11 @@ import { ref } from "firebase/storage";
 import { CategoriesList } from './PainelADM/ListCoursesCamponents/CategoriesList';
 import { CoursesCategoryList } from './PainelADM/ListCoursesCamponents/CoursesCategoryList';
 import { ConfigCourse } from './PainelADM/ListCoursesCamponents/ConfigCourse';
-import { ModulesCourseList } from './PainelADM/ListCoursesCamponents/ModulesCourseList';
+
 import CreateModule from './PainelADM/ManageModule/ManageModule';
 import ManageModule from './PainelADM/ManageModule/ManageModule';
 import { ContextDataCache } from '../contexts/ContextDataCache';
+import ModulesCourseList from './PainelADM/ListCoursesCamponents/ModulesCourseList';
 
 
 export const H1 = styled.h1`
@@ -77,7 +78,7 @@ const ListCourses = () => {
     };
 
     //Configurações do curso
-    const panelSelection = {       
+    const panelSelection = {
         setPainelUpdateCourse,
         setSelectedPainel
     };
@@ -87,19 +88,28 @@ const ListCourses = () => {
             <H1>{selectedPainel === 'courses' ? `Lista de Cursos ${category ? category.name : ''}` : 'Cursos e Módulos'}</H1>
 
             <ContainerDiv>
-                <CategoriesList categories={categoriesData} handleCategory={handleCategory} setSelectedPainel={setSelectedPainel}  />
+                <CategoriesList categories={categoriesData} handleCategory={handleCategory} setSelectedPainel={setSelectedPainel} />
 
                 {selectedPainel === 'courses' ? (
                     <CoursesCategoryList category={category} setSelectedPainel={setSelectedPainel} />
 
                 ) : selectedPainel === 'CourseDescription' ? (
                     <CourseConfigDiv>
-                        <h3>Configurações do curso {courseSelected?.title}</h3>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <button style={{ backgroundColor: 'blue', padding: '5px', borderRadius: '5px', alignSelf: 'flex-start' }} onClick={() => { setSelectedPainel('courses') }} >Voltar </button>
+                        <h4 style={{ textAlign: 'center', width: '100%' }}>{courseSelected?.title}</h4>
+                            <div style={{ width: 'same-as-button' }}></div>
+                        </div>
+                        
+
                         <div>
                             <div style={{ padding: '5px', margin: '5px' }}>
 
                                 {!painelUpdateCourse ? (
+                                    
+                                    
                                     <ConfigCourse {...panelSelection} />
+                                   
                                 ) : (
                                     <UpdateCourseModal
                                         courseCategory={category}
@@ -120,7 +130,9 @@ const ListCourses = () => {
                         </div>
                     </CourseConfigDiv>
                 ) : selectedPainel === 'Modules' ? (
-                    <ManageModule courseSelected={courseSelected} />
+                    
+                   
+                    <ModulesCourseList setSelectedPainel={setSelectedPainel} />
                 ) : null}
 
             </ContainerDiv>

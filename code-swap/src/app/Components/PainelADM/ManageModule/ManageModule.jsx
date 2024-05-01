@@ -48,64 +48,30 @@ const ManageButton = styled.button`
     }
 `;
 
-export default function ManageModule() {
+export default function ManageModule({setPanelManageModule}) {
+
   const controller = Controller();
+  const queryClient = useQueryClient();
 
-  const { courseSelected, setModuleSelected } = ContextDataCache();
-  const client = useQueryClient();
-
-  //Função para buscar os módulos de um curso
-  const { data : modules } = useQuery({
-    queryKey: ["GetModules"],
+  const { data : moduleSelected, isLoading } = useQuery({
+    queryKey: ['Module-Selected'],
     queryFn: async () => {
-      console.log('courseSelected: ', courseSelected);
-      //pega os modulos do curso selecionado no cache local
-      const modules = courseSelected.modules;
-      if (modules) {
-        setModuleSelected(modules);
-      }
-
-      return modules;
+      const moduleSelected = await queryClient.getQueryData(['Module-Selected']);
+      return moduleSelected || {}; // retorna um objeto vazio se moduleSelected for undefined
     }
   });
 
-  if(modules){
-    //console.log('data modules: ', modules);
+  if(isLoading) {
+    return <div>Carregando...</div>; // ou qualquer outro componente de carregamento
   }
 
-  //Função para deletar um módulo
-  const handleDeleteModule = useMutation({
-    mutationFn: async (data) => {
-      await controller.manageModules.DeleteModule(data.courseID, data.moduleId );
-    },
-    onSuccess: (data, variables) => {
-      
-      // Invalidate a query 'ListCourses' após a deleção do curso
-      client.invalidateQueries(["GetModules"]);
-
-      // Remove o módulo deletado do estado local
-      //setModules(modules => modules.filter(module => module.id !== variables.moduleId));
-    }
-  });
+  if(moduleSelected) console.log(moduleSelected);
 
   return (
     <Container >
-      <h1>Gerenciar Módulos</h1>
-      <div style={{ display: 'flex' }}>
-        {modules && modules.length > 0 ? (
-          modules.map((module, index) => (
-            <ModuleContainer key={index} >
-              <h2 style={{ font: 'bold', color: '#07ff07'}}>{module.title}</h2>
-              <p>{module.description}</p>
-              <ManageButton >Gerenciar Módulo</ManageButton>
-              <DeleteButton onClick={()=> handleDeleteModule.mutate({courseID:courseSelected.id, moduleId: module.id})}>Excluir Módulo</DeleteButton>
-            </ModuleContainer>
-          ))
-        ) : (
-          <h2>Nenhum módulo cadastrado</h2>
-        )}
-      </div>
-      <AddModuleModal courseSelected={courseSelected} />
+      
+      <ManageButton onClick={()=>setPanelManageModule('modulesList')}>Voltar</ManageButton>
+
     </Container>
   );
 }

@@ -9,8 +9,8 @@ export async function createModule(courseId, newModule) {
     try {
 
         
-        console.log('courseId', courseId);
-        console.log('newModule', newModule);
+        //console.log('courseId', courseId);
+        //console.log('newModule', newModule);
 
         //////Criar o modulo no database/////////////////////////////////////
 
@@ -22,40 +22,10 @@ export async function createModule(courseId, newModule) {
         //adicionar no database em Courses.Modules que é um array de objetos com o id do modulo, o titulo e a descrição
         await updateDoc(doc(db, 'Courses', courseId), {
         //adicionar o id do modulo no array de modulos do curso
-          modules: arrayUnion({ id: docRef.id, title: newModule.nameModule, description: newModule.description })
+          modules: arrayUnion({ id: docRef.id, title: newModule.title, description: newModule.description })
         });
 
-
-        //////Atualizar o modulo no cache local/////////////////////////////////////
-
-        // Pegar os dados dos módulos no sessionStorage ou inicializar com um array vazio se não existir
-        let modules = sessionStorage.getItem('modules');
-        modules = modules ? JSON.parse(modules) : [];
-
-        // Atualizar os dados do módulo no sessionStorage
-        modules.push({ id: docRef.id, title: newModule.nameModule, description: newModule.description , lessons: []});
-
-        // Salvar os dados atualizados no sessionStorage
-        sessionStorage.setItem('modules', JSON.stringify(modules));
-
-        //Atualizar os cursos no cache local com os novos modulos
-        let courses = sessionStorage.getItem('courses');
-        courses = courses ? JSON.parse(courses) : [];
-
-        // Atualizar os dados do módulo no sessionStorage
-        courses.forEach(course => {
-            if (course.id === courseId) {
-                course.modules.push({ id: docRef.id, title: newModule.nameModule, description: newModule.description });
-            }
-        });
-
-        // Salvar os dados atualizados no sessionStorage
-        sessionStorage.setItem('courses', JSON.stringify(courses));
-
-
-        /////////////////////////////////////////////////////////////////////////
-
-
+        return docRef.id;
 
 
         alert('Módulo criado com sucesso');
@@ -127,38 +97,16 @@ export async function updateModule(courseId, moduleId, newnewModule) {
 
 
 //função para deletar um modulo de um curso com base no indice do array modules no curso
-export const deleteModule = async (courseSelectedId, moduleId) => {
+export const deleteModule = async (courseSelectedId, moduleId, moduleSelected) => {
     
     try {
-        //console.log('courseSelectedId', courseSelectedId);
-        //console.log('moduleId', moduleId);
-        //deletar o modulo do curso no cache local
-        const modules = JSON.parse(sessionStorage.getItem('modules'));
-        //pegar o modulo com o id passado
-        const module = modules.find(module => module.id === moduleId);
-        //remover o modulo do array de modulos
-        modules.splice(modules.indexOf(module), 1);
-        //salvar os modulos atualizados no sessionStorage
-        sessionStorage.setItem('modules', JSON.stringify(modules));
-
-
-
-        //deletar o modulo do array de modulos do curso no
-        const courses = JSON.parse(sessionStorage.getItem('courses'));
-
-        //pegar o curso com o id passado
-        const course = courses.find(course => course.id === courseSelectedId);
-        //remover o modulo do array de modulos
-        course.modules.splice(course.modules.indexOf(module), 1);
-        //salvar os modulos atualizados no sessionStorage
-        sessionStorage.setItem('courses', JSON.stringify(courses));
 
         //deletar o modulo do curso no database
         await deleteDoc(doc(db, 'Modules', moduleId));
 
         //deletar o modulo do array de modulos do curso
         await updateDoc(doc(db, 'Courses', courseSelectedId), {
-            modules: arrayRemove({ id: moduleId, title: module.title, description: module.description })
+            modules: arrayRemove(moduleSelected)
         });
 
     } catch (error) {

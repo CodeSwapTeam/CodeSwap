@@ -204,12 +204,12 @@ export const ConfigCourse = ({ setPainelUpdateCourse, setSelectedPainel }) => {
               <h1>Registros do Curso</h1>
 
               <p>Alunos inscritos: 0 </p>
-              <p>Módulos: 0</p>
+              <p>Módulos: {courseSelected.modules.length} </p>
 
             </div>
 
 
-            <button style={{ backgroundColor: 'blue', padding: '5px', borderRadius: '5px', marginTop: '30px' }} onClick={() => { setSelectedPainel('Modules'), setCourseSelected(courseSelected) }} >Gerenciar Módulos</button>
+            <button style={{ backgroundColor: 'blue', padding: '5px', borderRadius: '5px', marginTop: '30px' }} onClick={() => { setSelectedPainel('Modules') }} >Gerenciar Módulos</button>
           </div>
 
 

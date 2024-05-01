@@ -4,12 +4,13 @@ import Controller from '@/Controller/controller';
 import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
 import { ContextDataCache } from '@/app/contexts/ContextDataCache';
 
-function AddModuleModal(props) {
+function AddModuleModal() {
 
     const controller = Controller();
-    const { moduleSelected , setModuleSelected, courseSelected, setCourseSelected} = ContextDataCache();
 
-    const client = useQueryClient();
+    const queryClient = useQueryClient();
+
+    const courseSelected = queryClient.getQueryData(["Course-Selected"]);
 
     const [show, setShow] = useState(false);
     const [moduleName, setModuleName] = useState('');
@@ -21,59 +22,64 @@ function AddModuleModal(props) {
 
     //função mutate para criar um novo modulo
 
-    const createModule = useMutation({
+    const createModuleMutate = useMutation({
         mutationFn: async (data) => {
-            const response = await controller.manageModules.CreateModule(data.courseId, data.newModule);
 
-            //adicionar no curso selecionado o modulo criado
-            setCourseSelected({...courseSelected, modules: [...courseSelected.modules, { id: response.id, title: response.nameModule, description: response.description }]});
+            const newModule = {
+                title: moduleName,
+                description: moduleDescription,
+                id: data.moduleId,            
+            };
 
-            return response;
+            //pegar os modulos do cache local do clientQuery
+            const modulesCourse = courseSelected.modules;
+            //adicionar o novo modulo no array de modulos
+            modulesCourse.push(newModule);
+            //atualizar os modulos dentro do curso selecionado
+            queryClient.setQueryData(["Course-Selected"], courseSelected);  
+            //invalidar a query para buscar os modulos do curso
+            queryClient.invalidateQueries(["Modules-Course"]);
+            queryClient.refetchQueries(["Modules-Course"]);
         },
         onSuccess: (data) => {
             
 
-            // Invalidate a query 'ListCourses' após a deleção do curso
-            client.invalidateQueries(["GetModules"]);
         }
 
     })
-    //console.log('courseSelected: ', props.courseSelected);
+
     
     //função que ira retornar o nivel de permisão do modulo
     const permissionModule = async () => {
         let permission = 0;
-        if(props.courseSelected.SequentialModule){
+        if(courseSelected.SequentialModule){
         //pegar a quantidade de modulos do curso no cache local
-        const modules = await controller.manageModules.GetModulesLocal();
-
+        const modules = courseSelected.modules;
         
         //pegar o tamanho do array de modulos
          permission = modules.length + 1;
-         console.log('permission: ', permission);
         
         }else{
             permission = 1;
         }
-      
-        
-     
         return permission;
     }
 
     const handleSubmit = async () => {
         
-
+    
         const newModule = {
-            nameModule: moduleName,
+            title: moduleName,
             description: moduleDescription,
-            courseId: props.courseSelected.id,
-            permission: await permissionModule(),
+            courseId: courseSelected.id,
             id: '',
+            permission: await permissionModule(),
             lessons: []
         };
+    
+        const moduleID = await controller.manageModules.CreateModule(courseSelected.id, newModule);
 
-        createModule.mutate({ courseId: props.courseSelected.id, newModule: newModule });
+        createModuleMutate.mutate({courseID: courseSelected.id, moduleId: moduleID, module: newModule});
 
         setModuleName('');
         setModuleDescription('');
