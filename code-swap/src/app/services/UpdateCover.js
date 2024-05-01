@@ -8,7 +8,6 @@ export const handleUpdateCover = async (e, courseID, urlCourseCover) => {
 
     const file = e.target.file.files[0];
     if (!file) {
-      console.log('não encontrado')
        return
       };
 
@@ -22,11 +21,11 @@ export const handleUpdateCover = async (e, courseID, urlCourseCover) => {
       const parts = pathname.split('/');
       const filename = parts[parts.length - 1];
       filenameCover = decodeURIComponent(filename); // Decodificar o nome do arquivo
-      console.log('filenameCover:', filenameCover)
+
       // Deletar a imagem antiga
       const oldImageRef = ref(storage, `Courses/Covers/${filenameCover}`);
       deleteObject(oldImageRef).catch((error) => {
-        console.log('error::::', error);
+        console.log('error', error);
       });
     }
 
@@ -39,12 +38,12 @@ export const handleUpdateCover = async (e, courseID, urlCourseCover) => {
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         //setProgress(progress);
       }, (error) => {
-        console.log('error!!!!!', error);
+        console.log('error', error);
         reject(error);
       }, () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           // Atualizar a URL da imagem no banco de dados
-          controller.services.manageImages.handleUpdateCover(courseID, downloadURL);
+          controller.manageCourses.UpdateCover(courseID, downloadURL);
 
 
           resolve(downloadURL);

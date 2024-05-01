@@ -1,9 +1,6 @@
 import Controller from "@/Controller/controller";
-import { ContextDataCache } from "@/app/contexts/ContextDataCache";
 import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
-import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { useState } from "react";
-import { storage } from "../../../../../database/firebase";
 
 
 
@@ -69,7 +66,7 @@ export const ConfigCourse = ({ setPainelUpdateCourse, setSelectedPainel }) => {
   const handleSetStatusCourse = (event) => {
     setStatusCourse(event.target.value);
   };
-  /////////////////////////////////////////////
+ 
 
 
 
@@ -100,7 +97,7 @@ export const ConfigCourse = ({ setPainelUpdateCourse, setSelectedPainel }) => {
       e.target.file.value = '';
  
   };
-  /////////////////////////////////////////////
+ 
 
 
 
