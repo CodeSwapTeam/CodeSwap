@@ -1,6 +1,7 @@
 import { ContextDataCache } from '@/app/contexts/ContextDataCache';
 import styled from 'styled-components';
 import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
+import Controller from '@/Controller/controller';
 
 const Container = styled.div`
     flex: 80%;
@@ -80,27 +81,31 @@ const StyledImg = styled.img`
 
 
 
-export const CoursesCategoryList = ({  category, handleDeleteCourse, setSelectedPainel, GetModules }) => {
-    const {setCourseSelected } = ContextDataCache();
-
+export const CoursesCategoryList = ({  category, setSelectedPainel, setCourseSelected }) => {
     const queryClient = useQueryClient();
-
-    const handleSetCourseSelected = (course) => {
-       //console.log(course)
-       //adicionar o id da categoria ao curso selecionado
-        let courseSelected = course
-        courseSelected.categoryId = category.id
+    const controller = Controller();
 
 
+    //função para deletar um curso
+    const handleDeleteCourse = useMutation({
+        mutationFn: async (courseId) => {
+            await controller.manageCourses.DeleteCourse(courseId);
+        },
+        onSuccess: (data, variables) => {
 
-        //let category = category.id
-        //setar o curso selecionado no cache do queryClient juntamente com o id da categoria
+            // Remove o curso deletado do estado local
+            setCourses(courses => courses.filter(course => course.id !== variables));
+            alert('Curso deletado com sucesso');
+        }
+    });
 
-        queryClient.setQueryData(['course-selected'], courseSelected);
-       
-    }
-
-
+    //função para buscar o curso selecionado pelo id 
+    const handleGetCourseData = async (courseId) => {
+        const course = await controller.manageCourses.GetCourseById(courseId);
+        //armazenar no cache do queryClient o curso retornado da API
+        queryClient.setQueryData(['Course-Selected'], course);
+        setSelectedPainel('CourseDescription');
+    };
 
     return (
         <Container>
@@ -110,7 +115,7 @@ export const CoursesCategoryList = ({  category, handleDeleteCourse, setSelected
                     <StatusCourse status={course.status}>Status: {course.status}</StatusCourse>
                     <DeleteButton onClick={() => handleDeleteCourse.mutate(course.id)}>Deletar Curso</DeleteButton>
                     <h4>{course.title}</h4>
-                    <ManageButton onClick={() => { setSelectedPainel('CourseDescription'), handleSetCourseSelected(course)}}>Gerenciar</ManageButton>
+                    <ManageButton onClick={() => {handleGetCourseData(course.id)}}>Gerenciar</ManageButton>
                 </CourseContainer>
             ))}
         </Container>

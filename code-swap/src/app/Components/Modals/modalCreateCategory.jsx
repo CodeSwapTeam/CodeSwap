@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Controller from "@/Controller/controller";
 
 import { useQuery,useMutation,useQueryClient, } from "@tanstack/react-query";
-import { ContextDataCache } from "@/app/contexts/ContextDataCache";
 
 function ModalCreateCategory() {
     const controller = Controller();
@@ -18,18 +16,8 @@ function ModalCreateCategory() {
 
 
     const createNewCategory = async (data) => {
-        const categoryId = await controller.manageCategories.CreateCategory(data);
-
-        const categoriesCached = queryClient.getQueryData(['All-Categories']);
-        if(categoriesCached){
-            //Adicionar a nova categoria ao cache com o id retornado
-            queryClient.setQueryData(['All-Categories'], [...categoriesCached, {id: categoryId, courses: [], ...data}]);
-        }else{
-            //adicionar a nova categoria ao cache
-            queryClient.setQueryData(['All-Categories'], [{id: categoryId,courses: [], ...data}]);
-        }
-
-        
+        await controller.manageCategories.CreateCategory(data);
+        queryClient.refetchQueries(['All-Categories']);      
     }
 
 

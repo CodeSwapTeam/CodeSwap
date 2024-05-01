@@ -18,12 +18,9 @@ const PainelAdm = () => {
 
 
     async function getUser() {
-        //Buscar usuário logado no context
-        //console.log('currentUser (CONTEXT) - Painel ADM ', currentUser);
         if(!currentUser){
             const userCached = await controller.services.manageLocalCache.getUserCache();
             setCurrentUser(userCached);
-           //console.log('currentUser (CACHED) - Painel ADM ', userCached);
             setuserDataPermission(userCached.permissionAcess);
         };          
     }

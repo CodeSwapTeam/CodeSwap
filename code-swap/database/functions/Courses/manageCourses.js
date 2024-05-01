@@ -41,33 +41,19 @@ export async function CreateCourse(formData) {
             courses: arrayUnion({ id: docRef.id, title: courseData.title, description: courseData.description, imgUrlThumbnail: courseData.imgUrlThumbnail, status: courseData.status })
         });
 
-        /* //pegar os dados das categorias no sessionStorage
-        const categories = JSON.parse(sessionStorage.getItem('categories'));
-        //atualizar os dados da categoria no sessionStorage
-        categories.forEach(category => {
-            if (category.id === formData.category) {
-                category.courses.push({ id: docRef.id, title: courseData.title, description: courseData.description, imgUrlThumbnail: courseData.imgUrlThumbnail, status: courseData.status });
-            }
-        });
-        //salvar os dados atualizados no sessionStorage
-        sessionStorage.setItem('categories', JSON.stringify(categories)); */
         alert('Curso criado com sucesso');
         return courseID;
     }
     catch (error) {
-
         alert('Erro ao criar o curso, tente novamente!');
         window.location.reload();
 
         //salvar no cache local o formData com dados da categoria para recuperação e o courseID em caso de erro
-        //mesclar o formdata com o courseID
         const courseData = { ...formData, id: courseID };
-        //salvar no cache local
         //salvar no cache local o formData com dados da categoria para recuperação e o courseID em caso de erro
         sessionStorage.setItem('erro_save', JSON.stringify(courseData));
 
         throw error;
-
     }
 
 
@@ -172,7 +158,6 @@ export async function UpdateInfoCourse(courseId, courseCategoryId, courseData) {
 };
 
 export async function UpdateConfigCourseData(data) {
-
     const { courseId, courseData, categoryId } = data;
 
     // Funções auxiliares para atualizar o banco de dados
@@ -265,11 +250,6 @@ export async function UpdateCover(courseId, imgUrlCover) {
         await updateDoc(doc(db, 'Courses', courseId), {
             imgUrlCover: imgUrlCover
         });
-        //atualizar a capa no cache local
-        const coursesLocal = JSON.parse(sessionStorage.getItem('courses'));
-        const course = coursesLocal.find(course => course.id === courseId);
-        course.imgUrlCover = imgUrlCover;
-        sessionStorage.setItem('courses', JSON.stringify(coursesLocal));
 
         alert('Capa atualizada com sucesso');
     }

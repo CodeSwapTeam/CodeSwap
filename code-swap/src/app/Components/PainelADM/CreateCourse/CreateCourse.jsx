@@ -28,7 +28,19 @@ const CreateCourses = () => {
     const [progress, setProgress] = useState(0);
     const [progressCover, setProgressCover] = useState(0);
 
-    
+    //verificar se existe algum erro ao salvar o curso buscando no cache local o erro_save
+    useEffect(() => {
+        const erroData = JSON.parse(sessionStorage.getItem('erro_save'));
+        if (erroData) {
+            //se existir erro, setar nos campos do formulário os dados salvos
+            setCourseName(erroData.title);
+            setCourseDescription(erroData.description);
+            //excluir o curso no database com o id do erroData
+            controller.manageCourses.DeleteCourse(erroData.id);
+            //limpar o cache local
+            sessionStorage.removeItem('erro_save');
+        }
+    }, []);
 
     // Função para buscar as categorias no cache local ou no banco de dados
     const { data: categoriesData } = useQuery({
@@ -49,7 +61,7 @@ const CreateCourses = () => {
             const categories = await controller.manageCategories.GetCategories();
             return categories;
         },
-        staleTime: 1000 * 20, // 20 seconds
+        staleTime: 1000 * 60 * 5 // 5 minutos
     });
 
     // if(categoriesData) console.log('categoriesData', categoriesData);
@@ -63,31 +75,9 @@ const CreateCourses = () => {
     // Função para deletar uma categoria
     const deleteCategory = async (id) => {
         await controller.manageCategories.DeleteCategory(id);
-        //pegar as categorias no cache queryClient
-        const categoriesCached = queryClient.getQueryData(['All-Categories']);
+        queryClient.refetchQueries(['All-Categories']);
 
-        //filtrar as categorias para excluir a categoria deletada
-        const categoriesUpdated = categoriesCached.filter(category => category.id !== id);
-        //atualizar as categorias no cache
-        queryClient.setQueryData(['All-Categories'], categoriesUpdated);
         setSelectedCategoryID('');
-    }
-
-
-    //funcção para criar um novo curso
-    const createCourse = async (formData) => {
-       const courseID = await controller.manageCourses.CreateCourse(formData);
-
-        //atualizar dentro da categoria o curso criado
-        const categoriesCached = queryClient.getQueryData(['All-Categories']);
-        const coursesCategory = categoriesCached.find(category => category.id === formData.category);
-        if(coursesCategory){
-            //adicionar o novo curso a categoria
-            coursesCategory.courses.push(formData);
-            //atualizar a categoria no cache
-            queryClient.setQueryData(['All-Categories'], categoriesCached);
-        }
-
     }
 
     // Função para lidar com o envio do formulário
@@ -122,7 +112,8 @@ const CreateCourses = () => {
         }
 
         //Criar o curso no banco de dados
-        await createCourse(formData);
+        await controller.manageCourses.CreateCourse(formData);
+        queryClient.refetchQueries(['All-Categories']);
 
         //limpar os inputs
         setCourseName('');

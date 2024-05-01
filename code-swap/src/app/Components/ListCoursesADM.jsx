@@ -50,75 +50,24 @@ const ListCourses = () => {
     const controller = Controller();
     const queryClient = useQueryClient();
 
-    const {data : courseSelected} = useQuery({
-        queryKey: ["course-selected"],
-        queryFn: async () => {
-            //Buscar o curso selecionado no cache do queryClient
-            const courseSelected = queryClient.getQueryData(['course-selected']);
-            if (courseSelected) {
-                return courseSelected;
-            }
-            return null;
-        }
+    const courseSelected = queryClient.getQueryData(['Course-Selected']);
 
-    });
-
-    const {  setCourseSelected } = ContextDataCache();
 
     const [courses, setCourses] = useState([]);
-    //const [courseSelected, setCourseSelected] = useState(null);
-    const [modules, setModules] = useState([{}]);
-
-    const [imgUrlThumbnail, setImgUrlThumbnail] = useState('');
-    const [imgUrlCover, setImgUrlCover] = useState('');
     const [selectedPainel, setSelectedPainel] = useState('courses');
-    const [difficulty, setDifficulty] = useState('iniciante');
-    const [courseObservations, setCourseObservations] = useState('');
-    const [statusCourse, setStatusCourse] = useState('pending');
-
-    const [experienceCourse, setExperienceCourse] = useState(100);
-    const [codesCourse, setCodesCourse] = useState(150);
-
-    const [isPremium, setIsPremium] = useState(false);
-    const [isSequential, setIsSequential] = useState(false);
     const [painelUpdateCourse, setPainelUpdateCourse] = useState(false);
-
     const [category, setCategory] = useState(null);
 
 
-
-
-    /////////////////////////////////////////////
-    //Buscar as categorias ao iniciar a página
-    const { data: categories } = useQuery({
-        queryKey: ["All-Categories"],
+    // Função para buscar as categorias no cache local ou no banco de dados
+    const { data: categoriesData } = useQuery({
+        queryKey: ['All-Categories'],
         queryFn: async () => {
-            //Buscar as categorias no banco de dados
             const categories = await controller.manageCategories.GetCategories();
             return categories;
         },
         staleTime: 1000 * 60 * 5 // 5 minutos
-
     });
-
-    
-
-    //função para deletar um curso
-    const handleDeleteCourse = useMutation({
-        mutationFn: async (courseId) => {
-            await controller.manageCourses.DeleteCourse(courseId);
-        },
-        onSuccess: (data, variables) => {
-            // Invalidate a query 'ListCourses' após a deleção do curso
-            client.invalidateQueries("ListCourses");
-
-            // Remove o curso deletado do estado local
-            setCourses(courses => courses.filter(course => course.id !== variables));
-            alert('Curso deletado com sucesso');
-        }
-    });
-
-
 
     //função para pegar os cursos dentro de uma categoria selecionada pelo usuário
     const handleCategory = (category) => {
@@ -126,55 +75,9 @@ const ListCourses = () => {
         setCourses(category.courses);
         setCategory(category);
     };
-    /////////////////////////////////////////////
-
-
-
-    //funções para buscar os modulos de um curso
-    const GetModules = async (course) => {
-        handleGetModules.mutate(course);
-        const courseSelected = await controller.manageCourses.GetCourseById(course.id);
-        setCourseSelected(courseSelected);
-
-        //setar os dados do curso nos campos de configuração
-        setIsPremium(courseSelected.coursePremium);
-        setIsSequential(courseSelected.SequentialModule);
-        setDifficulty(courseSelected.difficulty);
-        setExperienceCourse(courseSelected.experience);
-        setCodesCourse(courseSelected.codes);
-        setCourseObservations(courseSelected.courseObservations);
-        setImgUrlThumbnail(courseSelected.imgUrlThumbnail);
-        setImgUrlCover(courseSelected.imgUrlCover);
-        setStatusCourse(courseSelected.status);
-
-
-    };
-    const handleGetModules = useMutation({
-        mutationFn: async (course) => {
-            //Buscar os módulos do curso no cache local
-            const modulesLocal = await controller.manageModules.GetModulesLocal(course.id);
-            if (modulesLocal && modulesLocal.length > 0) {
-                return modulesLocal;
-            }
-
-            const modules = await controller.manageModules.GetModules(course.id);
-
-            return modules;
-        },
-        onSuccess: (data) => {
-            client.invalidateQueries("ListCourses");
-            setModules(data);
-        }
-    });
-    /////////////////////////////////////////////
-
-
-
-    
 
     //Configurações do curso
-    const configCourseProps = {
-        
+    const panelSelection = {       
         setPainelUpdateCourse,
         setSelectedPainel
     };
@@ -184,23 +87,19 @@ const ListCourses = () => {
             <H1>{selectedPainel === 'courses' ? `Lista de Cursos ${category ? category.name : ''}` : 'Cursos e Módulos'}</H1>
 
             <ContainerDiv>
-                <CategoriesList categories={categories} handleCategory={handleCategory} setSelectedPainel={setSelectedPainel} />
+                <CategoriesList categories={categoriesData} handleCategory={handleCategory} setSelectedPainel={setSelectedPainel}  />
 
                 {selectedPainel === 'courses' ? (
-                    <CoursesCategoryList
-                        category={category}
-                        courses={courses}
-                        handleDeleteCourse={handleDeleteCourse}
-                        setSelectedPainel={setSelectedPainel}
-                    />
+                    <CoursesCategoryList category={category} setSelectedPainel={setSelectedPainel} />
+
                 ) : selectedPainel === 'CourseDescription' ? (
                     <CourseConfigDiv>
-                        <h3>Configurações do curso {courseSelected.title}</h3>
+                        <h3>Configurações do curso {courseSelected?.title}</h3>
                         <div>
                             <div style={{ padding: '5px', margin: '5px' }}>
 
                                 {!painelUpdateCourse ? (
-                                    <ConfigCourse {...configCourseProps} />
+                                    <ConfigCourse {...panelSelection} />
                                 ) : (
                                     <UpdateCourseModal
                                         courseCategory={category}

@@ -5,9 +5,10 @@ import { CreateUser, GetUserById, GetUserDataBase, GetUserLocalData, RemoveUser,
 
 import { getUserCache, removeUserCache, saveUserCache } from "@/app/services/saveUserCache";
 import { CreateCategory, DeleteCategory, GetCategories, GetCategoriesLocal, SaveCategoriesLocal, SaveImgUrlThumbnail, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
-import { CreateCourse, DeleteCourse, GetCourseById, GetCoursesByCategory, UpdateConfigCourseData, UpdateCover, UpdateInfoCourse,  UpdateThumbnail } from "../../database/functions/Courses/manageCourses";
+import { CreateCourse, DeleteCourse, GetCourseById, GetCoursesByCategory, UpdateConfigCourseData, UpdateInfoCourse,  UpdateThumbnail } from "../../database/functions/Courses/manageCourses";
 import { GetModuleById, GetModules, GetModulesLocal, createModule, deleteModule, updateModule } from "../../database/functions/Modules/manageModules";
 import { handleUpdateThumbnail } from "@/app/services/UpdateThumbnail";
+import { handleUpdateCover } from "@/app/services/UpdateCover";
 
 
 
@@ -28,7 +29,7 @@ export default function Controller(){
             GetCourseById: GetCourseById,
             GetCoursesByCategory: GetCoursesByCategory,
             UpdateThumbnailCourse: UpdateThumbnail,
-            UpdateCoverCourse: UpdateCover,
+            
             UpdateConfigCourseData: UpdateConfigCourseData
             
         },
@@ -101,7 +102,8 @@ export default function Controller(){
                 removeUserCache: removeUserCache
             },
             manageImages: {
-                handleUpdateThumbnail: handleUpdateThumbnail
+                handleUpdateThumbnail: handleUpdateThumbnail,
+                handleUpdateCover: handleUpdateCover,
             },
             phrases: {
 

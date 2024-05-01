@@ -29,12 +29,12 @@ function UpdateCourseModal(props) {
 
         //atualizar Titulo e descrição dentro curso selecionado no cache do queryClient
         //pegar o curso selecionado no cache
-        const courseSelected = queryClient.getQueryData(['course-selected']);
+        const courseSelected = queryClient.getQueryData(['Course-Selected']);
         //atualizar o titulo e descrição do curso selecionado
         courseSelected.title = courseTitle;
         courseSelected.description = courseDescription;
         //salvar o curso selecionado no cache
-        queryClient.setQueryData(['course-selected'], courseSelected);
+        queryClient.setQueryData(['Course-Selected'], courseSelected);
 
 
         //atualizar o curso dentro da categoria no cache do queryClient

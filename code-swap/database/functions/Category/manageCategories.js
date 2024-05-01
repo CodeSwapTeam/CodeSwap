@@ -131,22 +131,10 @@ export const SaveImgUrlThumbnail = async (categoryId, courseId, imgUrlThumbnail)
             }
         } 
 
-        //atualizar o cache local
-        const categoriesLocal  = sessionStorage.getItem('categories');
-        if(categoriesLocal){
-            const categories = JSON.parse(categoriesLocal);
-            const category = categories.find(category => category.id === categoryId);
-            if(category){
-                const course = category.courses.find(course => course.id === courseId);
-                if(course){
-                    course.imgUrlThumbnail = imgUrlThumbnail;
-                    sessionStorage.setItem('categories', JSON.stringify(categories));
-                }
-            }
-        }
+    } catch (error) {
+        console.error('Erro ao salvar a imagem da categoria:', error);
+        throw error;
+    }
+};
 
-        } catch (error) {
-            console.error('Erro ao salvar a imagem da categoria:', error);
-            throw error;
-        }
-    };
+
