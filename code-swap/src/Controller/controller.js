@@ -6,9 +6,10 @@ import { CreateUser, GetUserById, GetUserDataBase, GetUserLocalData, RemoveUser,
 import { getUserCache, removeUserCache, saveUserCache } from "@/app/services/saveUserCache";
 import { CreateCategory, DeleteCategory, GetCategories, GetCategoriesLocal, SaveCategoriesLocal, SaveImgUrlThumbnail, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
 import { CreateCourse, DeleteCourse, GetCourseById, GetCoursesByCategory, UpdateConfigCourseData, UpdateCover, UpdateInfoCourse,  UpdateThumbnail } from "../../database/functions/Courses/manageCourses";
-import { GetModuleById, GetModules, GetModulesLocal, createModule, deleteModule, updateInfoModule } from "../../database/functions/Modules/manageModules";
+import { GetLessonsModule, GetModuleById, GetModules, GetModulesLocal, createModule, deleteModule, updateInfoModule } from "../../database/functions/Modules/manageModules";
 import { handleUpdateThumbnail } from "@/app/services/UpdateThumbnail";
 import { handleUpdateCover } from "@/app/services/UpdateCover";
+import { createLesson } from "../../database/functions/Lessons/manageLessons";
 
 
 
@@ -44,14 +45,16 @@ export default function Controller(){
             updateInfoModule: updateInfoModule,
 
             GetModulesLocal: GetModulesLocal,
-            GetModuleById: GetModuleById
+            GetModuleById: GetModuleById,
+            GetLessonsModule: GetLessonsModule
+
         },
         /**
          * Gerenciador de lições,
          * Retorna um objeto com as funções de gerenciamento de lições
          */
         manageLessons: {
-
+            CreateLesson: createLesson
         },
         /**
          * Gerenciador de usuários,

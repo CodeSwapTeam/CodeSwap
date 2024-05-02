@@ -2,9 +2,12 @@ import { ContextDataCache } from '@/app/contexts/ContextDataCache';
 import styled from 'styled-components';
 import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
 import Controller from '@/Controller/controller';
+import { query } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
 
 const Container = styled.div`
-    flex: 80%;
+    width: 100vw;
+    display: flex;
     border: 2px solid white;
     padding: 10px;
     color: white;
@@ -13,11 +16,12 @@ const Container = styled.div`
 `;
 
 const CourseContainer = styled.div`
-    position: relative;
+    width: 100%;
     border: 1px solid white;
     padding: 5px;
     margin: 5px;
-    position: relative;
+    
+    height: 150px;
     background-color: #020a29;
 `;
 
@@ -79,45 +83,132 @@ const StyledImg = styled.img`
     border-radius: 5px;
 `;
 
+const CategoryContainer = styled.div`
+    border: 1px solid white;
+    padding: 5px;
+    margin: 5px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #00ff375c;
+    }
+`;
 
 
-export const CoursesCategoryList = ({  category, setSelectedPainel, setCourseSelected }) => {
+
+
+
+export const CoursesCategoryList = ({  setSelectedPainel, setCourseSelected }) => {
     const queryClient = useQueryClient();
     const controller = Controller();
+
+    const [category, setCategory] = useState(null);
+    const [courses, setCourses] = useState([]);
+
 
 
     //função para deletar um curso
     const handleDeleteCourse = useMutation({
         mutationFn: async (courseId) => {
+            //atualizar o estado courses com os cursos que não foram deletados
+            setCourses(courses.filter(course => course.id !== courseId));
+
+            //remover de ['All-Categories'] o curso deletado
+            const categories = queryClient.getQueryData(['All-Categories']);
+            categories.forEach(category => {
+                category.courses = category.courses.filter(course => course.id !== courseId);
+            });
+
+            //atualizar o cache com as categorias atualizadas
+            queryClient.setQueryData(['All-Categories'], categories);
+
             await controller.manageCourses.DeleteCourse(courseId);
         },
         onSuccess: (data, variables) => {
-
-            // Remove o curso deletado do estado local
-            setCourses(courses => courses.filter(course => course.id !== variables));
+            queryClient.refetchQueries(['All-Categories']);
             alert('Curso deletado com sucesso');
         }
     });
 
-    //função para buscar o curso selecionado pelo id 
-    const handleGetCourseData = async (courseId) => {
-        const course = await controller.manageCourses.GetCourseById(courseId);
-        //armazenar no cache do queryClient o curso retornado da API
-        queryClient.setQueryData(['Course-Selected'], course);
-        setSelectedPainel('CourseDescription');
-    };
+    // Função para buscar as categorias no cache local ou no banco de dados
+    const { data: categoriesData } = useQuery({
+        queryKey: ['All-Categories'],
+        queryFn: async () => {
+            const categories = await controller.manageCategories.GetCategories();
+            return categories;
+        },
+        staleTime: 1000 * 60 * 5 // 5 minutos
+    });
+
+    // Função para buscar o curso selecionado pelo id 
+const handleGetCourseData = async (courseId) => {
+    // Obter o array de cursos cacheados
+    let coursesCached = queryClient.getQueryData(['Courses-Cached']) || [];
+
+    // Tentar encontrar o curso no cache
+    let course = coursesCached.find(course => course.id === courseId);
+
+    // Se o curso não estiver no cache, buscar o curso na API
+    if (!course) {
+        course = await controller.manageCourses.GetCourseById(courseId);
+
+        // Adicionar o novo curso ao array de cursos cacheados
+        coursesCached = [...coursesCached, course];
+
+        // Atualizar o cache com o novo array de cursos
+        queryClient.setQueryData(['Courses-Cached'], coursesCached);
+    }
+
+    // Setar o curso selecionado no estado local
+    queryClient.setQueryData(['Course-Selected'], course);
+
+    // Atualizar o painel selecionado
+    setSelectedPainel('CourseDescription');
+};
+
+
+
+//função para pegar os cursos dentro de uma categoria selecionada pelo usuário
+const handleCategory = (category) => {
+    //console.log('categoria selecionada', category)
+    setCourses(category.courses);
+    //console.log('cursos da categoria', category.courses)
+    setCategory(category);
+};
+
+
 
     return (
         <Container>
-            {category?.courses && category.courses.map(course => (
-                <CourseContainer key={course.id}>
-                    <StyledImg src={course.imgUrlThumbnail} alt="Imagem Thumbnail" />
-                    <StatusCourse status={course.status}>Status: {course.status}</StatusCourse>
-                    <DeleteButton onClick={() => handleDeleteCourse.mutate(course.id)}>Deletar Curso</DeleteButton>
-                    <h4>{course.title}</h4>
-                    <ManageButton onClick={() => {handleGetCourseData(course.id)}}>Gerenciar</ManageButton>
-                </CourseContainer>
+
+            <div style={{ width: '30%' }}>
+                <h3>CATEGORIAS</h3>
+                <div >
+                    {categoriesData?.map((category, index) => (
+                        <CategoryContainer key={index} onClick={() => { handleCategory(category), setSelectedPainel("courses") }}>
+                            <h4>{category.name}</h4>
+                        </CategoryContainer>
+                    ))}
+                </div>
+            </div>
+
+            <div style={{  display: 'flex', flexDirection: 'column' , width:'100%'}}>
+            {courses?.map(course => (
+                    <div style={{border: '1px solid black', position:"relative", display: 'flex', flexDirection: 'row', alignItems: 'center', height: '150px'}} key={course.id}>
+                    <img src={course.imgUrlThumbnail} alt="Imagem Thumbnail" style={{height: '150px', objectFit: 'cover'}} />
+                    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1}}>
+                        <h4 style={{textAlign: 'center'}}>{course.title}</h4>
+                        <ManageButton onClick={() => { handleGetCourseData(course.id) }}>Gerenciar</ManageButton>
+                    </div>
+                    <div style={{position: 'absolute', top: 0, right: 0}}>
+                        <DeleteButton onClick={() => handleDeleteCourse.mutate(course.id)}>Deletar Curso</DeleteButton>
+                    </div>
+                    <div style={{position: 'absolute', bottom: 0, right: 0}}>
+                        <StatusCourse status={course.status}>Status: {course.status}</StatusCourse>
+                    </div>
+                </div>
             ))}
+            </div>
         </Container>
     );
 };

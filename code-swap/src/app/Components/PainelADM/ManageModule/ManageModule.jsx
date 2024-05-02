@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
 import Controller from '@/Controller/controller';
 import { useState } from 'react';
 import UpdateModuleModal from '../../Modals/modalUpdateModule';
+import AddLessonModal from '../../Modals/modalAddLesson';
 
 
 const Container = styled.div`
@@ -16,7 +17,7 @@ const Container = styled.div`
     background-color: #0f1425d6;
 `;
 
-const ModuleContainer = styled.div`
+const LessonContainer = styled.div`
     display: flex;
     flex-direction: column;
     border: 1px solid white;
@@ -54,26 +55,41 @@ export default function ManageModule({ setSelectedPainel }) {
   const controller = Controller();
   const queryClient = useQueryClient();
 
-  const [lessons, setLessons] = useState([]);
 
   const { data: moduleSelected, isLoading } = useQuery({
     queryKey: ['Module-Selected'],
     queryFn: async () => {
       const moduleSelected = await queryClient.getQueryData(['Module-Selected']);
 
-      //pegar as aulas do módulo
-      const lessons = moduleSelected.lessons;
-      setLessons(lessons);
-
       return moduleSelected || {}; // retorna um objeto vazio se moduleSelected for undefined
     }
   });
+
+  const {data : lessonsModule} = useQuery({
+    queryKey: ['Lessons-Module'],
+    queryFn: async () => {
+      const Lessons = await controller.manageModules.GetLessonsModule(moduleSelected.id);
+
+      console.log('Lessons: ', Lessons);
+      return Lessons || {}; // retorna um objeto vazio se moduleSelected for undefined
+    }
+  });
+
+  if(lessonsModule) console.log(lessonsModule)
+
+
+
+  const selectLesson = async (lesson) => {
+    console.log('Lesson Selected: ', lesson);
+    await queryClient.setQueryData(['Lesson-Selected'], lesson);
+    setSelectedPainel('Lesson');
+  };
 
   if (isLoading) {
     return <div>Carregando...</div>; // ou qualquer outro componente de carregamento
   }
 
-  if(moduleSelected) console.log(moduleSelected);
+  //if(moduleSelected) console.log(moduleSelected);
 
   const [panelUpdateModule, setPanelUpdateModule] = useState(false);
 
@@ -129,24 +145,24 @@ export default function ManageModule({ setSelectedPainel }) {
 
             </div>
 
-            <div style={{margin: '5px', marginTop: '20px', border: '2px solid black' , width: '55%',borderRadius: '5px', boxShadow: '0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 5px #00ff00, 0 0 5px #00ff00'}}>
-                <h2>Aulas</h2>
+            <div style={{ margin: '5px', marginTop: '20px', border: '2px solid black', width: '55%', borderRadius: '5px', boxShadow: '0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 5px #00ff00, 0 0 5px #00ff00' }}>
+              <h2>Aulas</h2>
 
-            {lessons && lessons.length > 0 ? (
-              lessons.map((lesson, index) => (
-                <ModuleContainer key={index} >
-                  <h2 style={{ font: 'bold', color: '#07ff07' }}>{lesson.title}</h2>
-                  <p>{lesson.description}</p>
-                  <ManageButton onClick={() => { console.log('Gerenciar Aula') }} >Gerenciar Aula</ManageButton>
-                  <DeleteButton onClick={() => console.log('Excluir Aula')} >Excluir Aula</DeleteButton>
-                </ModuleContainer>
-              ))
-            ) : (
-              <h2>Nenhuma aula cadastrada</h2>
-            )}
-                
+
+              {lessonsModule && lessonsModule.length > 0 ? (
+                lessonsModule.map((lesson, index) => (
+                  <LessonContainer key={index} >
+                    <h2 style={{ font: 'bold', color: '#07ff07' }}>{lesson.nameLesson}</h2>
+                    <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+                      <ManageButton onClick={() => { () => selectLesson(lesson) }} >Gerenciar Aula</ManageButton>
+                      <DeleteButton onClick={() => console.log('Excluir Aula')} >Excluir Aula</DeleteButton>
+                    </div>
+                  </LessonContainer>
+
+                ))
+              ) : (<h2>Nenhuma aula cadastrada</h2>)}
+                <AddLessonModal courseId={moduleSelected.courseId} moduleId={moduleSelected.id} />
             </div>
-            
           </div>
 
 

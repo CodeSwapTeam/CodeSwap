@@ -57,60 +57,60 @@ export default function ModulesCourseList({ setSelectedPainel }) {
   const courseSelected = queryClient.getQueryData(["Course-Selected"]);
 
   //Função para buscar os módulos de um curso
-  const { data: modules } = useQuery({
-    queryKey: ["Modules-Course"],
-    queryFn: async () => {
-      //pega os modulos do curso selecionado no cache local
-      const modules = courseSelected.modules;
+const { data: modules } = useQuery({
+  queryKey: ["Modules-Course"],
+  queryFn: async () => {
+    try {  
+      const modules = await controller.manageModules.GetModules(courseSelected.id); 
 
-      return modules;
+      return modules  // Retornar um array vazio se modules for undefined
+    } catch (error) {
+      console.error('Error fetching modules:', error);
+      // Retornar um array vazio em caso de erro
+      return [];
     }
-  });
-
-  if (modules) {
-    //console.log('data modules: ', modules);
-  }
+  },
+  staleTime: 1000 * 60 * 5 // 5 minutos
+});
 
   //Função para deletar um módulo
   const handleDeleteModule = useMutation({
-    mutationFn: async (moduleId) => {
+    mutationFn: async (module) => {
+      await controller.manageModules.DeleteModule(courseSelected.id, module);
 
+      queryClient.invalidateQueries(["Modules-Course"]);
 
-      //pegar no ["Modules-Course"] o array de modulos com o id do modulo deletado
-      const moduleSelected = queryClient.getQueryData(["Modules-Course"]).find(module => module.id == moduleId);
-      await controller.manageModules.DeleteModule(courseSelected.id, moduleId, moduleSelected);
-
-      //pegar no ["Modules-Course"] o array de modulos com o id do modulo deletado
-      const modulosFiltrados = queryClient.getQueryData(["Modules-Course"]).filter(module => module.id !== moduleId);
-      //atualizar o cache local com os modulos atualizados
-      queryClient.setQueryData(["Modules-Course"], modulosFiltrados);
-
-      //remover de dentro de ["Course-Selected"] o modulo deletado
       const courseSelectedUpdated = courseSelected;
-      courseSelectedUpdated.modules = courseSelected.modules.filter(module => module.id !== moduleId);
+      courseSelectedUpdated.modules = courseSelected.modules.filter(module => module.id !== module.id);
       queryClient.setQueryData(["Course-Selected"], courseSelectedUpdated);
-
-
-    },
-    onSuccess: (data, variables) => {
-
-
-
     }
   });
 
-  const [panelManageModule, setPanelManageModule] = useState('modulesList');
 
-  const handleManageModule = async (module) => {
+  const handleManageModule = async (moduleId) => {
+    // Obter o array de módulos cacheados
+    let modulesCached = queryClient.getQueryData(['Modules-Cached']) || [];
 
-    const moduleSelected = await controller.manageModules.GetModuleById(module.id);
+    // Tentar encontrar o módulo no cache
+    let module = modulesCached.find(module => module.id === moduleId);
 
-    if(moduleSelected){
-      queryClient.setQueryData(['Module-Selected'], moduleSelected);
-      setSelectedPainel('ModuleDescription');
+    // Se o módulo não estiver no cache, buscar o módulo na API
+    if (!module) {
+        module = await controller.manageModules.GetModuleById(moduleId);
+
+        // Adicionar o novo módulo ao array de módulos cacheados
+        modulesCached = [...modulesCached, module];
+
+        // Atualizar o cache com o novo array de módulos
+        queryClient.setQueryData(['Modules-Cached'], modulesCached);
     }
-    
-  }
+
+    // Setar o módulo selecionado no estado local
+    queryClient.setQueryData(['Module-Selected'], module);
+
+    // Atualizar o painel selecionado
+    setSelectedPainel('ModuleDescription');
+};
 
   return (
     <Container >
@@ -127,8 +127,8 @@ export default function ModulesCourseList({ setSelectedPainel }) {
                 <ModuleContainer key={index} >
                   <h2 style={{ font: 'bold', color: '#07ff07' }}>{module.title}</h2>
                   <p>{module.description}</p>
-                  <ManageButton onClick={()=>{ handleManageModule(module)}}>Gerenciar Módulo</ManageButton>
-                  <DeleteButton onClick={() => handleDeleteModule.mutate(module.id)}>Excluir Módulo</DeleteButton>
+                  <ManageButton onClick={()=>{ handleManageModule(module.id)}}>Gerenciar Módulo</ManageButton>
+                  <DeleteButton onClick={() => handleDeleteModule.mutate(module)}>Excluir Módulo</DeleteButton>
                 </ModuleContainer>
               ))
             ) : (

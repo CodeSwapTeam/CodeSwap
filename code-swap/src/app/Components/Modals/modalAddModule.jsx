@@ -37,9 +37,11 @@ function AddModuleModal() {
             modulesCourse.push(newModule);
             //atualizar os modulos dentro do curso selecionado
             queryClient.setQueryData(["Course-Selected"], courseSelected);  
-            //invalidar a query para buscar os modulos do curso
+            
+            //adicionar o nodulo novo em ["Modules-Course"] junto com os modulos antigos
             queryClient.invalidateQueries(["Modules-Course"]);
-            queryClient.refetchQueries(["Modules-Course"]);
+            
+            
         },
         onSuccess: (data) => {
             

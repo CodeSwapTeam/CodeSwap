@@ -52,12 +52,9 @@ const ListCourses = () => {
     const controller = Controller();
     const queryClient = useQueryClient();
 
-    const courseSelected = queryClient.getQueryData(['Course-Selected']);
-    const moduleSelected = queryClient.getQueryData(['Module-Selected']);
 
     const [courses, setCourses] = useState([]);
     const [selectedPainel, setSelectedPainel] = useState('courses');
-    const [painelUpdateCourse, setPainelUpdateCourse] = useState(false);
     const [category, setCategory] = useState(null);
 
 
@@ -88,10 +85,9 @@ const ListCourses = () => {
             <H1>{selectedPainel === 'courses' ? `Lista de Cursos ${category ? category.name : ''}` : 'Cursos e Módulos'}</H1>
 
             <ContainerDiv>
-                <CategoriesList categories={categoriesData} handleCategory={handleCategory} setSelectedPainel={setSelectedPainel} />
 
                 {selectedPainel === 'courses' ? (
-                    <CoursesCategoryList category={category} setSelectedPainel={setSelectedPainel} />
+                    <CoursesCategoryList categoriesData={categoriesData} category={category} setSelectedPainel={setSelectedPainel} />
                 ) : selectedPainel === 'CourseDescription' ? (
                     <CourseConfigDiv>
                         <ConfigCourse setSelectedPainel={setSelectedPainel} />

@@ -200,6 +200,7 @@ export async function UpdateConfigCourseData(data) {
 
 //função para buscar um curso pelo id
 export async function GetCourseById(courseId) {
+    console.log('buscando curso pelo id no banco de dados:');
     try {
 
 

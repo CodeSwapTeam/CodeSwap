@@ -59,6 +59,7 @@ export async function GetModules(courseId) {
 
 //função para buscar um modulo PELO ID
 export async function GetModuleById(moduleId) {
+    console.log('buscando modulo pelo ID')
     try {
         const docRef = doc(db, 'Modules', moduleId);
         const docSnap = await getDoc(docRef);
@@ -116,12 +117,12 @@ export async function updateInfoModule(courseId, moduleId, newInfoModule) {
 
 
 //função para deletar um modulo de um curso com base no indice do array modules no curso
-export const deleteModule = async (courseSelectedId, moduleId, moduleSelected) => {
+export const deleteModule = async (courseSelectedId, moduleSelected) => {
     
     try {
 
         //deletar o modulo do curso no database
-        await deleteDoc(doc(db, 'Modules', moduleId));
+        await deleteDoc(doc(db, 'Modules', moduleSelected.id));
 
         //deletar o modulo do array de modulos do curso
         await updateDoc(doc(db, 'Courses', courseSelectedId), {
@@ -131,5 +132,24 @@ export const deleteModule = async (courseSelectedId, moduleId, moduleSelected) =
     } catch (error) {
         console.error('Erro ao deletar o módulo:', error);
         throw error; // Lança o erro para tratamento em um nível superior
+    }
+};
+
+//função para buscar as aulas do modulo
+export async function GetLessonsModule(moduleId) {
+    const lessons = [];
+    try {
+        const docRef = doc(db, 'Modules', moduleId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const moduleData = docSnap.data();
+            moduleData.lessons.forEach(lesson => {
+                lessons.push(lesson);
+            });
+            return lessons;
+        }
+    } catch (error) {
+        console.error('Erro ao buscar as aulas:', error);
+        throw error;
     }
 };

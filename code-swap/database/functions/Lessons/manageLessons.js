@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, collection, addDoc, arrayUnion } from "firebase/firestore";
 import { db } from "../../firebase";
 
 
@@ -7,19 +7,20 @@ import { db } from "../../firebase";
 
 export async function createLesson(courseId, moduleId, lessonData) {
     try {
-        const docRef = doc(db, 'Modulos', courseId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-            const courseData = docSnap.data();
-            const moduleData = courseData.modules;
-            const moduleSelecionado = moduleData[moduleId];
-            moduleSelecionado.lessons.push(lessonData);
-            await updateDoc(docRef, courseData);
-            alert(`Aula ${lessonData.nameLesson} criada com sucesso!`);
-            window.location.reload();
-        } else {
-            console.error('Módulo não encontrado');
-        }
+
+        const docRef = await addDoc(collection(db, 'Lessons'), lessonData ,{merge: true})
+        const lessonRef = doc(db, 'Lessons', docRef.id);
+
+        await updateDoc(lessonRef, {id: docRef.id});
+
+        //adicionar no database em Courses.Modules que é um array de objetos com o id do modulo, o titulo e a descrição
+        await updateDoc(doc(db, 'Modules', moduleId), {
+        //adicionar o id do modulo no array de modulos do curso
+          lessons: arrayUnion({ id: docRef.id, nameLesson: lessonData.nameLesson, description: lessonData.description })
+        });
+
+        return docRef.id;
+
     } catch (error) {
         console.error('Erro ao criar a lesson:', error);
         throw error; // Lança o erro para tratamento em um nível superior
