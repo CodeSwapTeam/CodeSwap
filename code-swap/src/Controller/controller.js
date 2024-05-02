@@ -6,7 +6,7 @@ import { CreateUser, GetUserById, GetUserDataBase, GetUserLocalData, RemoveUser,
 import { getUserCache, removeUserCache, saveUserCache } from "@/app/services/saveUserCache";
 import { CreateCategory, DeleteCategory, GetCategories, GetCategoriesLocal, SaveCategoriesLocal, SaveImgUrlThumbnail, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
 import { CreateCourse, DeleteCourse, GetCourseById, GetCoursesByCategory, UpdateConfigCourseData, UpdateCover, UpdateInfoCourse,  UpdateThumbnail } from "../../database/functions/Courses/manageCourses";
-import { GetModuleById, GetModules, GetModulesLocal, createModule, deleteModule, updateModule } from "../../database/functions/Modules/manageModules";
+import { GetModuleById, GetModules, GetModulesLocal, createModule, deleteModule, updateInfoModule } from "../../database/functions/Modules/manageModules";
 import { handleUpdateThumbnail } from "@/app/services/UpdateThumbnail";
 import { handleUpdateCover } from "@/app/services/UpdateCover";
 
@@ -41,7 +41,7 @@ export default function Controller(){
             CreateModule: createModule,
             GetModules: GetModules,
             DeleteModule: deleteModule,
-            updateModule: updateModule,
+            updateInfoModule: updateInfoModule,
 
             GetModulesLocal: GetModulesLocal,
             GetModuleById: GetModuleById

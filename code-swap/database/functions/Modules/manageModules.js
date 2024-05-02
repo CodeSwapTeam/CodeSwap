@@ -84,8 +84,27 @@ export async function GetModulesLocal() {
 }
 
 //função para atualizar um modulo dentro de um curso
-export async function updateModule(courseId, moduleId, newnewModule) {
+export async function updateInfoModule(courseId, moduleId, newInfoModule) {
+    console.log('atualizando modulo')
+    console.log('newInfoModule', newInfoModule)
+
     try {
+        // atualizar o title e a descrição do modulo no database
+        await updateDoc(doc(db, 'Modules', moduleId), newInfoModule);
+
+        // Recupere o documento atual
+        const courseDoc = doc(db, 'Courses', courseId);
+        const courseSnapshot = await getDoc(courseDoc);
+        const courseData = courseSnapshot.data();
+
+        const moduleIndex = courseData.modules.findIndex(module => module.id === moduleId);
+
+        // Faça uma cópia do módulo, atualize os campos necessários e substitua o módulo antigo
+        const updatedModule = { ...courseData.modules[moduleIndex], title: newInfoModule.title, description: newInfoModule.description };
+        courseData.modules[moduleIndex] = updatedModule;
+
+        // Atualize o documento com o novo array de módulos
+        await updateDoc(courseDoc, { modules: courseData.modules });
 
 
 

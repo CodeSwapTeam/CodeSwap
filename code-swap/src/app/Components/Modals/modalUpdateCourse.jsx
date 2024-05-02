@@ -8,14 +8,14 @@ function UpdateCourseModal(props) {
 
     const queryClient = useQueryClient();
 
-    let categoryId = props.courseCategory.id;
-    let courseId = props.courseId;
+    let categoryId = props.courseSelected.category;
+    let courseId = props.courseSelected.id;
 
     const controller = Controller();
 
     const [show, setShow] = useState(false);
-    const [courseTitle, setCourseTitle] = useState(props.dataCourse.title);
-    const [courseDescription, setCourseDescription] = useState(props.dataCourse.description);
+    const [courseTitle, setCourseTitle] = useState(props.courseSelected.title);
+    const [courseDescription, setCourseDescription] = useState(props.courseSelected.description);
 
     const handleClose = () => props.setPainelUpdateCourse(false);
     const handleShow = () => setShow(true);
@@ -35,6 +35,7 @@ function UpdateCourseModal(props) {
         courseSelected.description = courseDescription;
         //salvar o curso selecionado no cache
         queryClient.setQueryData(['Course-Selected'], courseSelected);
+        queryClient.invalidateQueries(['Course-Selected']);
 
 
         //atualizar o curso dentro da categoria no cache do queryClient

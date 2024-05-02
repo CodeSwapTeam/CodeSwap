@@ -4,6 +4,7 @@ import AddModuleModal from "../../Modals/modalAddModule";
 import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
 import Controller from '@/Controller/controller';
 import { useState } from 'react';
+import UpdateModuleModal from '../../Modals/modalUpdateModule';
 
 
 const Container = styled.div`
@@ -48,7 +49,7 @@ const ManageButton = styled.button`
     }
 `;
 
-export default function ManageModule({setPanelManageModule}) {
+export default function ManageModule({setSelectedPainel}) {
 
   const controller = Controller();
   const queryClient = useQueryClient();
@@ -65,12 +66,27 @@ export default function ManageModule({setPanelManageModule}) {
     return <div>Carregando...</div>; // ou qualquer outro componente de carregamento
   }
 
-  if(moduleSelected) console.log(moduleSelected);
+  //if(moduleSelected) console.log(moduleSelected);
+
+  const [panelUpdateModule, setPanelUpdateModule] = useState(false);
 
   return (
     <Container >
+      {!panelUpdateModule ? (
+      <>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <button style={{ backgroundColor: 'blue', padding: '5px', borderRadius: '5px', alignSelf: 'flex-start' }} onClick={() => setSelectedPainel('Modules')} >Voltar </button>
+          <h4 style={{ textAlign: 'center', width: '100%' }}>{moduleSelected?.title}</h4>
+          <div style={{ width: 'same-as-button' }}></div>
+        </div>
+
+        <p>{moduleSelected.description}</p>
+        <button style={{ backgroundColor: 'blue', padding: '5px', borderRadius: '5px', alignSelf: 'flex-start' }} onClick={() => setPanelUpdateModule(true)} >Atualizar Informações </button>
+
+      </>
+    ) : ( <UpdateModuleModal moduleSelected={moduleSelected} setPanelUpdateModule={setPanelUpdateModule} /> )}
       
-      <ManageButton onClick={()=>setPanelManageModule('modulesList')}>Voltar</ManageButton>
+     
 
     </Container>
   );

@@ -19,6 +19,7 @@ import CreateModule from './PainelADM/ManageModule/ManageModule';
 import ManageModule from './PainelADM/ManageModule/ManageModule';
 import { ContextDataCache } from '../contexts/ContextDataCache';
 import ModulesCourseList from './PainelADM/ListCoursesCamponents/ModulesCourseList';
+import UpdateModuleModal from './Modals/modalUpdateModule';
 
 
 export const H1 = styled.h1`
@@ -52,7 +53,7 @@ const ListCourses = () => {
     const queryClient = useQueryClient();
 
     const courseSelected = queryClient.getQueryData(['Course-Selected']);
-
+    const moduleSelected = queryClient.getQueryData(['Module-Selected']);
 
     const [courses, setCourses] = useState([]);
     const [selectedPainel, setSelectedPainel] = useState('courses');
@@ -79,7 +80,6 @@ const ListCourses = () => {
 
     //Configurações do curso
     const panelSelection = {
-        setPainelUpdateCourse,
         setSelectedPainel
     };
 
@@ -92,48 +92,15 @@ const ListCourses = () => {
 
                 {selectedPainel === 'courses' ? (
                     <CoursesCategoryList category={category} setSelectedPainel={setSelectedPainel} />
-
                 ) : selectedPainel === 'CourseDescription' ? (
                     <CourseConfigDiv>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <button style={{ backgroundColor: 'blue', padding: '5px', borderRadius: '5px', alignSelf: 'flex-start' }} onClick={() => { setSelectedPainel('courses') }} >Voltar </button>
-                        <h4 style={{ textAlign: 'center', width: '100%' }}>{courseSelected?.title}</h4>
-                            <div style={{ width: 'same-as-button' }}></div>
-                        </div>
-                        
-
-                        <div>
-                            <div style={{ padding: '5px', margin: '5px' }}>
-
-                                {!painelUpdateCourse ? (
-                                    
-                                    
-                                    <ConfigCourse {...panelSelection} />
-                                   
-                                ) : (
-                                    <UpdateCourseModal
-                                        courseCategory={category}
-                                        courseId={courseSelected.id}
-                                        dataCourse={courseSelected}
-                                        setPainelUpdateCourse={setPainelUpdateCourse}
-                                        //setCourseSelected={setCourseSelected}
-                                        setCourses={setCourses}
-                                    />
-                                )}
-
-                                {/*<ModulesCourseList modules={modules}
-                    handleDeleteModule={handleDeleteModule}
-                    courseSelected={courseSelected}
-                />*/}
-
-                            </div>
-                        </div>
+                        <ConfigCourse setSelectedPainel={setSelectedPainel} />
                     </CourseConfigDiv>
                 ) : selectedPainel === 'Modules' ? (
-                    
-                   
                     <ModulesCourseList setSelectedPainel={setSelectedPainel} />
-                ) : null}
+                ) : selectedPainel === 'ModuleDescription' ? (
+                    <ManageModule setSelectedPainel={setSelectedPainel} />
+                ) : (<div> </div>)}
 
             </ContainerDiv>
         </div>

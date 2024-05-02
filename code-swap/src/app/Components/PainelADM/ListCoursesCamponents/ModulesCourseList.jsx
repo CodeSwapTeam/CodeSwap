@@ -105,14 +105,16 @@ export default function ModulesCourseList({ setSelectedPainel }) {
 
     const moduleSelected = await controller.manageModules.GetModuleById(module.id);
 
-    queryClient.setQueryData(['Module-Selected'], moduleSelected);
-
-    setPanelManageModule('manageModule');
+    if(moduleSelected){
+      queryClient.setQueryData(['Module-Selected'], moduleSelected);
+      setSelectedPainel('ModuleDescription');
+    }
+    
   }
 
   return (
     <Container >
-      {panelManageModule === 'modulesList' ? (
+      
         <>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <button style={{ backgroundColor: 'blue', padding: '5px', borderRadius: '5px', alignSelf: 'flex-start' }} onClick={() => { setSelectedPainel('CourseDescription') }} >Voltar </button>
@@ -125,7 +127,7 @@ export default function ModulesCourseList({ setSelectedPainel }) {
                 <ModuleContainer key={index} >
                   <h2 style={{ font: 'bold', color: '#07ff07' }}>{module.title}</h2>
                   <p>{module.description}</p>
-                  <ManageButton onClick={()=>{setPanelManageModule('manageModule'); handleManageModule(module)}}>Gerenciar Módulo</ManageButton>
+                  <ManageButton onClick={()=>{ handleManageModule(module)}}>Gerenciar Módulo</ManageButton>
                   <DeleteButton onClick={() => handleDeleteModule.mutate(module.id)}>Excluir Módulo</DeleteButton>
                 </ModuleContainer>
               ))
@@ -133,7 +135,7 @@ export default function ModulesCourseList({ setSelectedPainel }) {
               <h2>Nenhum módulo cadastrado</h2>
             )}
           </div>
-        </>) : (<ManageModule setPanelManageModule={setPanelManageModule} />)}
+        </>
 
       <AddModuleModal />
     </Container>
