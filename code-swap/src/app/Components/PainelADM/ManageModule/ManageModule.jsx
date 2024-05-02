@@ -70,7 +70,6 @@ export default function ManageModule({ setSelectedPainel }) {
     queryFn: async () => {
       const Lessons = await controller.manageModules.GetLessonsModule(moduleSelected.id);
 
-      console.log('Lessons: ', Lessons);
       return Lessons || {}; // retorna um objeto vazio se moduleSelected for undefined
     }
   });
@@ -80,7 +79,7 @@ export default function ManageModule({ setSelectedPainel }) {
 
 
   const selectLesson = async (lesson) => {
-    console.log('Lesson Selected: ', lesson);
+    //console.log('Lesson Selected: ', lesson);
     await queryClient.setQueryData(['Lesson-Selected'], lesson);
     setSelectedPainel('Lesson');
   };
