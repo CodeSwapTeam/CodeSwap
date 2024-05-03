@@ -8,11 +8,11 @@ import { useEffect, useState } from 'react';
 const Container = styled.div`
     width: 100vw;
     display: flex;
-    border: 2px solid white;
     padding: 10px;
     color: white;
     text-align: center;
-    background-color: #0034f35c;
+    background-color: #0f142500;
+    
 `;
 
 const CourseContainer = styled.div`
@@ -86,11 +86,24 @@ const StyledImg = styled.img`
 const CategoryContainer = styled.div`
     border: 1px solid white;
     padding: 5px;
+    border-radius: 5px;
     margin: 5px;
     cursor: pointer;
+    background-color: #020a29;
+    color: #04ff02;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    font-size: 1rem;
 
     &:hover {
         background-color: #00ff375c;
+        color: #020a29;
+        font-weight: bold;
+        transform: scale(1.05);
+    }
+
+    @media (max-width: 600px) {
+        font-size: 0.8rem;
     }
 `;
 
@@ -104,9 +117,6 @@ export const CoursesCategoryList = ({  setSelectedPainel }) => {
 
     //se ouver categoria selecionada ['Category-Selected'], setar os cursos da categoria no estado local, se não, setar um array vazio
     const [courses, setCourses] = useState(queryClient.getQueryData(['Category-Selected'])?.courses || []);
-
-
-
 
     //função para deletar um curso
     const handleDeleteCourse = useMutation({
@@ -141,9 +151,6 @@ export const CoursesCategoryList = ({  setSelectedPainel }) => {
         staleTime: 1000 * 60 * 5 // 5 minutos
     });
 
-    
-
-
     // Função para buscar o curso selecionado pelo id 
     const handleGetCourseData = async (courseId) => {
         // Obter o array de cursos cacheados
@@ -172,14 +179,14 @@ export const CoursesCategoryList = ({  setSelectedPainel }) => {
 
 
 
-//função para pegar os cursos dentro de uma categoria selecionada pelo usuário
-const handleCategory = (category) => {
-    
-    //console.log('categoria selecionada', category)
-    setCourses(category.courses);
-    //console.log('cursos da categoria', category.courses)
-    queryClient.setQueryData(['Category-Selected'], category);
-};
+    //função para pegar os cursos dentro de uma categoria selecionada pelo usuário
+    const handleCategory = (category) => {
+        
+        //console.log('categoria selecionada', category)
+        setCourses(category.courses);
+        //console.log('cursos da categoria', category.courses)
+        queryClient.setQueryData(['Category-Selected'], category);
+    };
 
 
 

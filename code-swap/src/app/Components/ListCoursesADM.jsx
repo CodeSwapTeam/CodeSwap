@@ -14,13 +14,16 @@ export const H1 = styled.h1`
   padding: 10px;
   color: white;
   text-align: center;
+  box-shadow: 0px 0px 10px rgba(0, 255, 0, 0.5);
+  border-radius: 5px;
+  background-color: #0f1425d6;
 `;
 
 export const ContainerDiv = styled.div`
 display: flex;
 margin-top: 10px;
 border: 2px solid white;
-padding: 10px;
+
 color: white;
 text-align: center;
 background-color: #0f1425d6;
@@ -48,7 +51,11 @@ const ListCourses = () => {
 
     return (
         <div >
-            <H1>{selectedPainel === 'courses' ? `Lista de Cursos ${category ? category.name : ''}` : 'Cursos e Módulos'}</H1>
+            <H1>
+                {selectedPainel === 'courses' ? `Lista de Cursos ${category ? category.name : ''}` :
+                    selectedPainel === 'ModuleDescription' ? 'Módulos e Aulas' :
+                        'Cursos e Módulos'}
+            </H1>
 
             <ContainerDiv>
 

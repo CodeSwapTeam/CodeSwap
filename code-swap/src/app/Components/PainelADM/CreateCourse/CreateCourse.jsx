@@ -170,7 +170,7 @@ const CreateCourses = () => {
 
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', border: '1px solid #ccc', borderRadius: '10px', backgroundColor: '#002449db' }}>
-            <h1 style={{ textAlign: 'center', marginBottom: '5px', color: '#04ff02', fontWeight: 'bold', fontSize: '1.5rem', '@media (max-width: 600px)': { fontSize: '1rem' } }}>Criar Novo Curso</h1>
+            <h1 style={{ textAlign: 'center', marginBottom: '5px', color: '#04ff02', fontWeight: 'bold', fontSize: '1.5rem'}}>Criar Novo Curso</h1>
             <h3 style={{ fontSize: '1.25rem', color: '#04ff02', marginBottom: '10px' }}>Categoria</h3>
             <select value={selectedCategoryID} onChange={handleChangeCategory} style={{ width: '100%', padding: '10px', fontSize: '1rem', borderRadius: '5px', border: '1px solid #ddd', marginBottom: '10px', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)' }}>
                 <option value="">Selecione uma categoria</option>
