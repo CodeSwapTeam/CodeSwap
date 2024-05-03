@@ -6,6 +6,28 @@ import ListCourses from '../Components/ListCoursesADM';
 import CreateCourse from '../Components/PainelADM/CreateCourse/CreateCourse';
 import { ContextDataCache } from '../contexts/ContextDataCache';
 import UserList from '../Components/ListUsers';
+import styled from 'styled-components';
+
+
+const StyledButtonNavBar = styled.button`
+  border: 1px solid white;
+  padding: 5px;
+  border-radius: 5px;
+  margin: 5px;
+  cursor: pointer;
+  background-color: #020a29;
+  color: #04ff02;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  margin-top: 10px;
+
+  &:hover {
+    color: #04ff02;
+    transform: scale(1.05);
+    box-shadow: 0px 0px 10px #04ff02;
+  }
+`;
 
 const PainelAdm = () => {
 
@@ -32,9 +54,9 @@ const PainelAdm = () => {
     return (
         <div >
             <div style={{ display: 'flex', justifyContent: 'space-around', color:'white' }}>
-                <button style={{border:'2px solid white', padding: '10px' }} onClick={() => setSelectedPainel('createCourse')}>Criar Curso</button>
-                <button style={{border:'2px solid white', padding: '10px' }} onClick={() => setSelectedPainel('listCourses')}>Listar Cursos</button>
-                <button style={{border:'2px solid white', padding: '10px' }} onClick={() => setSelectedPainel('listUsers')}>Listar Usuários</button>
+                <StyledButtonNavBar onClick={() => setSelectedPainel('createCourse')}>Criar Curso</StyledButtonNavBar>
+                <StyledButtonNavBar  onClick={() => setSelectedPainel('listCourses')}>Listar Cursos</StyledButtonNavBar>
+                <StyledButtonNavBar  onClick={() => setSelectedPainel('listUsers')}>Listar Usuários</StyledButtonNavBar>
             </div>
             
             {selectedPainel === 'createCourse' ? (

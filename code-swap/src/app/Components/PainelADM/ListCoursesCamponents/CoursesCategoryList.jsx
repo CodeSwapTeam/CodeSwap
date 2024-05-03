@@ -26,7 +26,7 @@ const CourseContainer = styled.div`
 `;
 
 const DeleteButton = styled.button`
-    position: absolute;
+    //position: absolute;
     top: 5px;
     right: 5px;
 
@@ -36,7 +36,7 @@ const DeleteButton = styled.button`
 `;
 
 const StatusCourse = styled.p`
-    position: absolute;
+   // position: absolute;
     bottom: 5px;
     right: 5px;
     font-size: 12px;
@@ -121,10 +121,10 @@ const StyledDiv = styled.div`
 
 const StyledH4 = styled.h4`
     text-align: center;
-    font-size: 1.2rem;
+    font-size: 1.4vw; // Ajusta o tamanho da fonte com base na largura da viewport
 
     @media (max-width: 600px) {
-        font-size: 1rem;
+        font-size: 3vw; // Ajusta o tamanho da fonte para ser um pouco maior em telas menores
     }
 `;
 
@@ -174,6 +174,12 @@ const CourseInfoDiv = styled.div`
     @media (max-width: 600px) {
         flex-direction: column;
     }
+`;
+
+const BottomDiv = styled.div`
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
 `;
 
 
@@ -278,8 +284,10 @@ export const CoursesCategoryList = ({  setSelectedPainel }) => {
                         <CourseInfoDiv>
                             <StyledH4>{course.title}</StyledH4>
                             <ManageButton onClick={() => { handleGetCourseData(course.id) }}>Gerenciar</ManageButton>
-                            <DeleteButton onClick={() => handleDeleteCourse.mutate(course.id)}>Deletar Curso</DeleteButton>
-                            <StatusCourse status={course.status}>Status: {course.status}</StatusCourse>
+                            <BottomDiv>
+                                <StatusCourse status={course.status}>Status: {course.status}</StatusCourse>
+                                <DeleteButton onClick={() => handleDeleteCourse.mutate(course.id)}>Deletar Curso</DeleteButton>
+                            </BottomDiv>
                         </CourseInfoDiv>
                     </StyledCourseDiv>
                 ))}
