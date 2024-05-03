@@ -48,6 +48,17 @@ function UpdateCourseModal(props) {
         //salvar a categoria no cache
         queryClient.setQueryData(['All-Categories'], categoriesCached);
 
+        //Atualizar ["Category-Selected"] no cache
+        const categorySelected = queryClient.getQueryData(['Category-Selected']);
+        //verificar se a categoria selecionada é a mesma do curso selecionado
+        if (categorySelected.id === categoryId) {
+            //atualizar o titulo e descrição do curso selecionado
+            categorySelected.courses.find(course => course.id === courseId).title = courseTitle;
+            categorySelected.courses.find(course => course.id === courseId).description = courseDescription;
+            //salvar a categoria selecionada no cache
+            queryClient.setQueryData(['Category-Selected'], categorySelected);
+        }
+
         //atualizar o cache ['Courses-Cached']
         let coursesCached = queryClient.getQueryData(['Courses-Cached']) || [];
         //atualizar o curso no cache
@@ -69,9 +80,6 @@ function UpdateCourseModal(props) {
 
     return (
         <>
-            
-
-            
                 <div className="modal">
                     <div className="modal-content">
                         <div className="modal-header">

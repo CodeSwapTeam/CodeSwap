@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Controller from '@/Controller/controller';
 import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
 
-function AddLessonModal(props) {
+function AddLessonModal() {
 
     const controller = Controller();
 
@@ -21,22 +21,20 @@ function AddLessonModal(props) {
             description: lessonDescription,
             id: ''
         };
-        const lessonID =  await controller.manageLessons.CreateLesson(props.courseId, props.moduleId, lessonData);
 
+        //adicionar em ['Module-Selected'] dentro de Lessons a nova lição
+        const moduleSelected = {...queryClient.getQueryData(['Module-Selected'])};
+        
+        const lessonID =  await controller.manageLessons.CreateLesson(moduleSelected.id, lessonData);
         //atualizar a ["Lessons-Module"]
-        const lessons = queryClient.getQueryData(["Lessons-Module"]);
-
+        const lessons = [...queryClient.getQueryData(["Lessons-Module"])];
         lessonData.id = lessonID;
-
         lessons.push(lessonData);
         queryClient.setQueryData(["Lessons-Module"], lessons);
-        queryClient.invalidateQueries(["Lessons-Module"]);
-        queryClient.refetchQueries(["Lessons-Module"]);
 
-        //queryClient.invalidateQueries(['Module-Selected']);
-        
-        
-        queryClient.refetchQueries(['Module-Selected']);
+        moduleSelected.lessons = [...moduleSelected.lessons, lessonData];
+
+        queryClient.setQueryData(['Module-Selected'], moduleSelected);
 
         setLessonName('');
         setLessonDescription('');

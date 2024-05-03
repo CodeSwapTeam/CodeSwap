@@ -59,7 +59,6 @@ export async function GetModules(courseId) {
 
 //função para buscar um modulo PELO ID
 export async function GetModuleById(moduleId) {
-    console.log('buscando modulo pelo ID')
     try {
         const docRef = doc(db, 'Modules', moduleId);
         const docSnap = await getDoc(docRef);
@@ -86,8 +85,6 @@ export async function GetModulesLocal() {
 
 //função para atualizar um modulo dentro de um curso
 export async function updateInfoModule(courseId, moduleId, newInfoModule) {
-    console.log('atualizando modulo')
-    console.log('newInfoModule', newInfoModule)
 
     try {
         // atualizar o title e a descrição do modulo no database
@@ -116,24 +113,12 @@ export async function updateInfoModule(courseId, moduleId, newInfoModule) {
 }
 
 //Função para atualizar as configuracoes do modulo
-export async function updateModuleSettings(courseId, moduleId, settings) {
+export async function updateModuleSettings(moduleId, settings) {
     try {
         // atualizar as configurações do modulo no database
         await updateDoc(doc(db, 'Modules', moduleId), settings);
 
-        /* // Recupere o documento atual
-        const courseDoc = doc(db, 'Courses', courseId);
-        const courseSnapshot = await getDoc(courseDoc);
-        const courseData = courseSnapshot.data();
-
-        const moduleIndex = courseData.modules.findIndex(module => module.id === moduleId);
-
-        // Faça uma cópia do módulo, atualize os campos necessários e substitua o módulo antigo
-        const updatedModule = { ...courseData.modules[moduleIndex], settings };
-        courseData.modules[moduleIndex] = updatedModule;
-
-        // Atualize o documento com o novo array de módulos
-        await updateDoc(courseDoc, { modules: courseData.modules }); */
+        alert('Configurações do módulo atualizadas com sucesso');
 
     } catch (error) {
         console.error('Erro ao atualizar as configurações do módulo:', error);

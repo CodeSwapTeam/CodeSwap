@@ -1,11 +1,11 @@
-import { doc, getDoc, setDoc, updateDoc, collection, addDoc, arrayUnion } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, collection, addDoc, arrayUnion, deleteDoc, arrayRemove } from "firebase/firestore";
 import { db } from "../../firebase";
 
 
 
 //função para criar uma lesson dentro de um modulo de um curso
 
-export async function createLesson(courseId, moduleId, lessonData) {
+export async function createLesson(moduleId, lessonData) {
     try {
 
         const docRef = await addDoc(collection(db, 'Lessons'), lessonData ,{merge: true})
@@ -60,27 +60,22 @@ export async function updateLesson(courseId, moduleId, lessonId, lessonData) {
 
 //função para deletar lessons dentro de um modulo de um curso
 
-export const deleteLesson = async (courseId, moduleId, lessonId) => {
-    console.log(courseId, moduleId, lessonId);
+export const deleteLesson = async (moduleId, lessonId) => {
     try {
-        const docRef = doc(db, 'Modulos', courseId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-            const courseData = docSnap.data();
-            const moduleData = courseData.modules;
-            //pegar o modulo pelo id
-            const moduleSelecionado = moduleData[moduleId];
-            const aulas = moduleSelecionado.lessons
+        // Deletar a lesson no banco de dados com a LessonId
+        await deleteDoc(doc(db, 'Lessons', lessonId));
 
-            alert(`Aula deletada com sucesso`);
-            //remover a aula do array lessons com base no id da aula lessonId
-            aulas.splice(lessonId, 1);
-            //atualizar o documento no firestore
-            await updateDoc(docRef, courseData);
-            
-            window.location.reload();
+        // Deletar a lesson no módulo que contenha o id o id da lesson
+        const moduleRef = doc(db, 'Modules', moduleId);
+        // pegar a lesson com o id da lesson
+        const moduleSnap = await getDoc(moduleRef);
+        const moduleData = moduleSnap.data();
+        const lessons = moduleData.lessons;
+        const lessonIndex = lessons.findIndex(lesson => lesson.id === lessonId);
+        lessons.splice(lessonIndex, 1);
+        await updateDoc(moduleRef, { lessons });
 
-            } 
+
         
         
     } catch (error) {

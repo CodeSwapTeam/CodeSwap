@@ -16,15 +16,6 @@ export const CreateCategory = async (data) => {
     
         // Adicionar o id da categoria no documento
         await updateDoc(doc(db, 'Categories', docRef.id), { id: docRef.id });
-    
-        // Obter as categorias do cache local ou inicializar com um array vazio
-       // const categories = JSON.parse(sessionStorage.getItem('categories')) || [];
-    
-        // Adicionar a nova categoria
-        //categories.push({ ...categoryData, id: docRef.id });
-    
-        // Atualizar o cache local
-       // sessionStorage.setItem('categories', JSON.stringify(categories));
         
         alert(`Categoria ${data.name} criada com sucesso!`);
 
@@ -76,7 +67,6 @@ export const DeleteCategory = async (categoryId) => {
 
 // Função para retornar todas as categorias do banco de dados
 export const GetCategories = async () => {
-    console.log('Buscando as categorias no banco de dados...');
     const categories = [];
     try {
         const querySnapshot = await getDocs(collection(db, 'Categories'));

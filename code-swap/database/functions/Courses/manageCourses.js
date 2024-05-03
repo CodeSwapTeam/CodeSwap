@@ -1,8 +1,7 @@
 import { deleteDoc, doc, setDoc, updateDoc, addDoc, collection, arrayUnion, getDoc, where, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
 import Controller from "@/Controller/controller";
-import { GetCategories } from "../Category/manageCategories";
-import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
+
 
 
 
@@ -200,7 +199,6 @@ export async function UpdateConfigCourseData(data) {
 
 //função para buscar um curso pelo id
 export async function GetCourseById(courseId) {
-    console.log('buscando curso pelo id no banco de dados:');
     try {
 
 

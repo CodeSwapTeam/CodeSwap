@@ -9,7 +9,7 @@ import { CreateCourse, DeleteCourse, GetCourseById, GetCoursesByCategory, Update
 import { GetLessonsModule, GetModuleById, GetModules, GetModulesLocal, createModule, deleteModule, updateInfoModule, updateModuleSettings } from "../../database/functions/Modules/manageModules";
 import { handleUpdateThumbnail } from "@/app/services/UpdateThumbnail";
 import { handleUpdateCover } from "@/app/services/UpdateCover";
-import { createLesson } from "../../database/functions/Lessons/manageLessons";
+import { createLesson, deleteLesson } from "../../database/functions/Lessons/manageLessons";
 
 
 
@@ -55,7 +55,8 @@ export default function Controller(){
          * Retorna um objeto com as funções de gerenciamento de lições
          */
         manageLessons: {
-            CreateLesson: createLesson
+            CreateLesson: createLesson,
+            DeleteLesson: deleteLesson
         },
         /**
          * Gerenciador de usuários,

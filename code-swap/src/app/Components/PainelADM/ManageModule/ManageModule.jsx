@@ -60,7 +60,6 @@ export default function ManageModule({ setSelectedPainel }) {
     queryKey: ['Module-Selected'],
     queryFn: async () => {
       const moduleSelected = await queryClient.getQueryData(['Module-Selected']);
-      console.log(moduleSelected);
       return moduleSelected || {}; // retorna um objeto vazio se moduleSelected for undefined
     }
   });
@@ -69,17 +68,13 @@ export default function ManageModule({ setSelectedPainel }) {
     queryKey: ['Lessons-Module'],
     queryFn: async () => {
       const Lessons = await controller.manageModules.GetLessonsModule(moduleSelected.id);
-
       return Lessons || {}; // retorna um objeto vazio se moduleSelected for undefined
-    }
+    },
+    staleTime: 1000 * 60 * 5 // 5 minutos
   });
-
-  //if(lessonsModule) console.log(lessonsModule)
-
 
 
   const selectLesson = async (lesson) => {
-    //console.log('Lesson Selected: ', lesson);
     await queryClient.setQueryData(['Lesson-Selected'], lesson);
     setSelectedPainel('Lesson');
   };
@@ -144,6 +139,20 @@ export default function ManageModule({ setSelectedPainel }) {
     //
   };
 
+  //Função apra deletar a aula
+  const handleDeleteLesson = async (lessonToDelete) => {
+    await controller.manageLessons.DeleteLesson(moduleSelected.id, lessonToDelete.id);
+  
+    // Atualizar ["Lessons-Module"]
+    const lessonsModule = [...queryClient.getQueryData(['Lessons-Module'])];
+    const lessonIndex = lessonsModule.findIndex(lesson => lesson.id === lessonToDelete.id);
+    
+    if (lessonIndex !== -1) {
+      lessonsModule.splice(lessonIndex, 1);
+      queryClient.setQueryData(['Lessons-Module'], lessonsModule);
+    }
+  };
+
 
 
   return (
@@ -197,7 +206,7 @@ export default function ManageModule({ setSelectedPainel }) {
                     <h2 style={{ font: 'bold', color: '#07ff07' }}>{lesson.nameLesson}</h2>
                     <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                       <ManageButton onClick={() => { () => selectLesson(lesson) }} >Gerenciar Aula</ManageButton>
-                      <DeleteButton onClick={() => console.log('Excluir Aula')} >Excluir Aula</DeleteButton>
+                      <DeleteButton onClick={() => handleDeleteLesson(lesson)} >Excluir Aula</DeleteButton>
                     </div>
                   </LessonContainer>
 

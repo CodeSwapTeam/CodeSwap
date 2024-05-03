@@ -40,6 +40,7 @@ function AddModuleModal() {
             
             //adicionar o nodulo novo em ["Modules-Course"] junto com os modulos antigos
             queryClient.invalidateQueries(["Modules-Course"]);
+
             
             
         },
