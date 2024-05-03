@@ -33,6 +33,14 @@ function UpdateModuleModal({moduleSelected, setPanelUpdateModule}) {
         const courseSelected = await queryClient.getQueryData(['Course-Selected']);
         const moduleIndex = courseSelected.modules.findIndex(module => module.id === moduleSelected.id);
         courseSelected.modules[moduleIndex] = {...moduleSelected, title: moduleName, description: moduleDescription};
+
+        //Atualizar o  modulos em ["Modules-Cached"] com o novo modulo atualizado
+        const modulesCached = await queryClient.getQueryData(["Modules-Cached"]);
+        //procurar o modulo no cache
+        const moduleIndexCached = modulesCached.findIndex(module => module.id === moduleSelected.id);
+        //atualizar o modulo no cache
+        modulesCached[moduleIndexCached] = {...moduleSelected, title: moduleName, description: moduleDescription};
+        queryClient.setQueryData(["Modules-Cached"], modulesCached);
        //
 
         setModuleName('');

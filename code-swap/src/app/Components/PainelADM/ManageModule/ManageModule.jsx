@@ -60,7 +60,7 @@ export default function ManageModule({ setSelectedPainel }) {
     queryKey: ['Module-Selected'],
     queryFn: async () => {
       const moduleSelected = await queryClient.getQueryData(['Module-Selected']);
-
+      console.log(moduleSelected);
       return moduleSelected || {}; // retorna um objeto vazio se moduleSelected for undefined
     }
   });
@@ -74,7 +74,7 @@ export default function ManageModule({ setSelectedPainel }) {
     }
   });
 
-  if(lessonsModule) console.log(lessonsModule)
+  //if(lessonsModule) console.log(lessonsModule)
 
 
 
@@ -93,13 +93,56 @@ export default function ManageModule({ setSelectedPainel }) {
   const [panelUpdateModule, setPanelUpdateModule] = useState(false);
 
   const [permissionModule, setPermissionModule] = useState(moduleSelected.permission);
-  const [codesModule, setCodesModule] = useState(0);
-  const [difficultyModule, setDifficultyModule] = useState('iniciante');
+  //Codes do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar 0
+  const [codesModule, setCodesModule] = useState(moduleSelected.codes || 0);
+  //XP do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar 0
+  const [xpModule, setXpModule] = useState(moduleSelected.xp || 0);
+  //Dificuldade do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar 'iniciante'
+  const [difficultyModule, setDifficultyModule] = useState(moduleSelected.difficulty || 'iniciante');
+  //Observações do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar ''
+  const [moduleObservations, setModuleObservations] = useState(moduleSelected.observations || '');
+
+
   const handleSelectChange = (event) => {
     setDifficultyModule(event.target.value);
   };
 
-  const [moduleObservations, setModuleObservations] = useState('');
+  
+  //Função para atualizar as informações do módulo
+  const handleUpdateModule = async () => {
+    const updatedModule = {
+      permission: permissionModule,
+      xp: xpModule,
+      codes: codesModule,
+      difficulty: difficultyModule,
+      observations: moduleObservations
+    };
+
+    await controller.manageModules.UpdateModuleSettings(moduleSelected.courseId, moduleSelected.id, updatedModule);
+
+    //ATUALIZAR ["Modules-Course"]
+    const modulesCourseSelected = await queryClient.getQueryData(["Modules-Course"]);
+    const moduleIndexCourse = modulesCourseSelected.findIndex(module => module.id === moduleSelected.id);
+    modulesCourseSelected[moduleIndexCourse] = { ...moduleSelected, permission: permissionModule, xp: xpModule, codes: codesModule, difficulty: difficultyModule, observations: moduleObservations };
+    queryClient.setQueryData(["Modules-Course"], modulesCourseSelected);
+
+    //atualizar a query ["Module-Selected"] com o novo modulo atualizado
+    const moduleUpdated = await queryClient.getQueryData(['Module-Selected']);
+    queryClient.setQueryData(['Module-Selected'], { ...moduleUpdated, permission: permissionModule, xp: xpModule, codes: codesModule, difficulty: difficultyModule, observations: moduleObservations });
+
+    const courseSelected = await queryClient.getQueryData(['Course-Selected']);
+    const moduleIndex = courseSelected.modules.findIndex(module => module.id === moduleSelected.id);
+    courseSelected.modules[moduleIndex] = { ...moduleSelected, permission: permissionModule, xp: xpModule, codes: codesModule, difficulty: difficultyModule, observations: moduleObservations };
+
+    //Atualizar o  modulos em ["Modules-Cached"] com o novo modulo atualizado
+    const modulesCached = await queryClient.getQueryData(["Modules-Cached"]);
+    //procurar o modulo no cache
+    const moduleIndexCached = modulesCached.findIndex(module => module.id === moduleSelected.id);
+    //atualizar o modulo no cache
+    modulesCached[moduleIndexCached] = { ...moduleSelected, permission: permissionModule, xp: xpModule, codes: codesModule, difficulty: difficultyModule, observations: moduleObservations };
+    queryClient.setQueryData(["Modules-Cached"], modulesCached);
+    //
+  };
 
 
 
@@ -128,7 +171,7 @@ export default function ManageModule({ setSelectedPainel }) {
               boxShadow: '0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 5px #00ff00, 0 0 5px #00ff00'
             }}>
               <label style={{  display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start', marginTop: '5px', width: 'auto', }}>Permissão do Módulo:<input type="number" style={{ width: '100px', color: "black" }} value={permissionModule} onChange={(e) => setPermissionModule(e.target.value)} /></label>
-              <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start', marginTop: '5px', width: 'auto', }}>XP do Módulo:<input type="number" style={{ width: '100px', color: "black" }} value={permissionModule} onChange={(e) => setPermissionModule(e.target.value)} /></label>
+              <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start', marginTop: '5px', width: 'auto', }}>XP do Módulo:<input type="number" style={{ width: '100px', color: "black" }} value={xpModule} onChange={(e) => setXpModule(e.target.value)} /></label>
               <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start', marginTop: '5px', width: 'auto', }}>Codes do módulo:<input type="number" style={{ width: '100px', color: "black" }} value={codesModule} onChange={(e) => setCodesModule(e.target.value)} /></label>
               
               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -165,7 +208,7 @@ export default function ManageModule({ setSelectedPainel }) {
           </div>
 
 
-          <button style={{ marginTop: '20px', backgroundColor: 'blue', padding: '5px', borderRadius: '5px', alignSelf: 'flex-start' }} onClick={() => console.log('Atualizar informações do módulo')} >Salvar Módulo </button>
+          <button style={{ marginTop: '20px', backgroundColor: 'blue', padding: '5px', borderRadius: '5px', alignSelf: 'flex-start' }} onClick={() => handleUpdateModule()} >Salvar Módulo </button>
 
         </>
       ) : (<UpdateModuleModal moduleSelected={moduleSelected} setPanelUpdateModule={setPanelUpdateModule} />)}

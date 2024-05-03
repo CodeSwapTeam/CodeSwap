@@ -47,10 +47,6 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
   })
 
 
-
-
-
-
   //Funções para atualizar um curso////////////
   const handleCheckboxChange = (event) => {
     setIsPremium(event.target.checked);
@@ -125,6 +121,12 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
 
       //atualizar a query ['Course-Selected'] para refletir as alterações
       queryClient.invalidateQueries(['Course-Selected']);
+
+      //Atualizar o ["Courses-Cached"]
+      const coursesCached = queryClient.getQueryData(['Courses-Cached']);
+      const courseIndex = coursesCached.findIndex(course => course.id === courseId);
+      coursesCached[courseIndex] = { ...coursesCached[courseIndex], ...courseData };
+      queryClient.setQueryData(['Courses-Cached'], coursesCached);
 
       alert('Curso atualizado com sucesso');
     }

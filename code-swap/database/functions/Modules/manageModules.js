@@ -115,6 +115,32 @@ export async function updateInfoModule(courseId, moduleId, newInfoModule) {
     }
 }
 
+//Função para atualizar as configuracoes do modulo
+export async function updateModuleSettings(courseId, moduleId, settings) {
+    try {
+        // atualizar as configurações do modulo no database
+        await updateDoc(doc(db, 'Modules', moduleId), settings);
+
+        /* // Recupere o documento atual
+        const courseDoc = doc(db, 'Courses', courseId);
+        const courseSnapshot = await getDoc(courseDoc);
+        const courseData = courseSnapshot.data();
+
+        const moduleIndex = courseData.modules.findIndex(module => module.id === moduleId);
+
+        // Faça uma cópia do módulo, atualize os campos necessários e substitua o módulo antigo
+        const updatedModule = { ...courseData.modules[moduleIndex], settings };
+        courseData.modules[moduleIndex] = updatedModule;
+
+        // Atualize o documento com o novo array de módulos
+        await updateDoc(courseDoc, { modules: courseData.modules }); */
+
+    } catch (error) {
+        console.error('Erro ao atualizar as configurações do módulo:', error);
+        throw error; // Lança o erro para tratamento em um nível superior
+    }
+}
+
 
 //função para deletar um modulo de um curso com base no indice do array modules no curso
 export const deleteModule = async (courseSelectedId, moduleSelected) => {

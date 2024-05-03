@@ -26,9 +26,6 @@ function UpdateCourseModal(props) {
             description: courseDescription
         };
 
-
-        //atualizar Titulo e descrição dentro curso selecionado no cache do queryClient
-        //pegar o curso selecionado no cache
         const courseSelected = queryClient.getQueryData(['Course-Selected']);
         //atualizar o titulo e descrição do curso selecionado
         courseSelected.title = courseTitle;
@@ -38,8 +35,8 @@ function UpdateCourseModal(props) {
         queryClient.invalidateQueries(['Course-Selected']);
 
 
-        //atualizar o curso dentro da categoria no cache do queryClient
-        //pegar as categorias no cache
+
+        //Atualizar o titulo e descrição do curso no cache ['All-Categories']
         const categoriesCached = queryClient.getQueryData(['All-Categories']);
         //pegar a categoria do curso selecionado
         const category = categoriesCached.find(category => category.id === categoryId);
@@ -50,6 +47,15 @@ function UpdateCourseModal(props) {
         course.description = courseDescription;
         //salvar a categoria no cache
         queryClient.setQueryData(['All-Categories'], categoriesCached);
+
+        //atualizar o cache ['Courses-Cached']
+        let coursesCached = queryClient.getQueryData(['Courses-Cached']) || [];
+        //atualizar o curso no cache
+        let courseCached = coursesCached.find(course => course.id === courseId);
+        courseCached.title = courseTitle;
+        courseCached.description = courseDescription;
+        //salvar o curso no cache
+        queryClient.setQueryData(['Courses-Cached'], coursesCached);
 
 
         //atualizar Titulo e descrição do curso no banco de dados

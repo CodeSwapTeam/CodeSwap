@@ -98,12 +98,13 @@ const CategoryContainer = styled.div`
 
 
 
-export const CoursesCategoryList = ({  setSelectedPainel, setCourseSelected }) => {
+export const CoursesCategoryList = ({  setSelectedPainel }) => {
     const queryClient = useQueryClient();
     const controller = Controller();
 
-    const [category, setCategory] = useState(null);
-    const [courses, setCourses] = useState([]);
+    //se ouver categoria selecionada ['Category-Selected'], setar os cursos da categoria no estado local, se não, setar um array vazio
+    const [courses, setCourses] = useState(queryClient.getQueryData(['Category-Selected'])?.courses || []);
+
 
 
 
@@ -140,40 +141,44 @@ export const CoursesCategoryList = ({  setSelectedPainel, setCourseSelected }) =
         staleTime: 1000 * 60 * 5 // 5 minutos
     });
 
+    
+
+
     // Função para buscar o curso selecionado pelo id 
-const handleGetCourseData = async (courseId) => {
-    // Obter o array de cursos cacheados
-    let coursesCached = queryClient.getQueryData(['Courses-Cached']) || [];
+    const handleGetCourseData = async (courseId) => {
+        // Obter o array de cursos cacheados
+        let coursesCached = queryClient.getQueryData(['Courses-Cached']) || [];
 
-    // Tentar encontrar o curso no cache
-    let course = coursesCached.find(course => course.id === courseId);
+        // Tentar encontrar o curso no cache
+        let course = coursesCached.find(course => course.id === courseId);
 
-    // Se o curso não estiver no cache, buscar o curso na API
-    if (!course) {
-        course = await controller.manageCourses.GetCourseById(courseId);
+        // Se o curso não estiver no cache, buscar o curso na API
+        if (!course) {
+            course = await controller.manageCourses.GetCourseById(courseId);
 
-        // Adicionar o novo curso ao array de cursos cacheados
-        coursesCached = [...coursesCached, course];
+            // Adicionar o novo curso ao array de cursos cacheados
+            coursesCached = [...coursesCached, course];
 
-        // Atualizar o cache com o novo array de cursos
-        queryClient.setQueryData(['Courses-Cached'], coursesCached);
-    }
+            // Atualizar o cache com o novo array de cursos
+            queryClient.setQueryData(['Courses-Cached'], coursesCached);
+        }
 
-    // Setar o curso selecionado no estado local
-    queryClient.setQueryData(['Course-Selected'], course);
+        // Setar o curso selecionado no estado local
+        queryClient.setQueryData(['Course-Selected'], course);
 
-    // Atualizar o painel selecionado
-    setSelectedPainel('CourseDescription');
-};
+        // Atualizar o painel selecionado
+        setSelectedPainel('CourseDescription');
+    };
 
 
 
 //função para pegar os cursos dentro de uma categoria selecionada pelo usuário
 const handleCategory = (category) => {
+    
     //console.log('categoria selecionada', category)
     setCourses(category.courses);
     //console.log('cursos da categoria', category.courses)
-    setCategory(category);
+    queryClient.setQueryData(['Category-Selected'], category);
 };
 
 
