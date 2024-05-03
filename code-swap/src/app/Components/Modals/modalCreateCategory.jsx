@@ -30,7 +30,7 @@ function ModalCreateCategory() {
         
     return (
         <>
-            <button style={{ padding: '5px', backgroundColor: '#5150e1', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={handleShow}>Adicionar Categoria</button>
+            <button style={{ padding: '5px', backgroundColor: '#034C8C', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginRight:'50px' }} onClick={handleShow}>Adicionar Categoria</button>
 
             {show && (
                 <div className="modal" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '40vh' }}>

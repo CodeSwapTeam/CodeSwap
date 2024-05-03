@@ -169,22 +169,21 @@ const CreateCourses = () => {
 
 
     return (
-        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', border: '1px solid #ccc', borderRadius: '10px', backgroundColor: '#f8f9fa' }}>
-            <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#007bff' }}>Criar Novo Curso</h2>
-            <h3>Categoria</h3>
-            <select value={selectedCategoryID} onChange={handleChangeCategory}>
+        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', border: '1px solid #ccc', borderRadius: '10px', backgroundColor: '#002449db' }}>
+            <h1 style={{ textAlign: 'center', marginBottom: '5px', color: '#04ff02', fontWeight: 'bold', fontSize: '1.5rem', '@media (max-width: 600px)': { fontSize: '1rem' } }}>Criar Novo Curso</h1>
+            <h3 style={{ fontSize: '1.25rem', color: '#04ff02', marginBottom: '10px' }}>Categoria</h3>
+            <select value={selectedCategoryID} onChange={handleChangeCategory} style={{ width: '100%', padding: '10px', fontSize: '1rem', borderRadius: '5px', border: '1px solid #ddd', marginBottom: '10px', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)' }}>
                 <option value="">Selecione uma categoria</option>
                 {categoriesData?.map((category, index) => (
-
-                    <option onClick={() => handleChangeCategory(category.id)} key={index} value={category.id}>{category.name}</option>
+                    <option key={index} value={category.id}>{category.name}</option>
                 ))}
             </select>
-
-            <button onClick={() => deleteCategory(selectedCategoryID)} style={{ padding: '5px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }}>Excluir Categoria</button>
             <ModalCreateCategory />
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
+            <button onClick={() => deleteCategory(selectedCategoryID)} style={{ padding: '5px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.1)' }}>Excluir Categoria</button>
+            
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' , marginTop:'20px'}}>
                 <div style={{ marginBottom: '20px' }}>
-                    <label htmlFor="title" style={{ fontWeight: 'bold', marginBottom: '5px', color: '#007bff' }}>Título do Curso:</label>
+                    <label htmlFor="title" style={{  marginBottom: '5px', color: '#04ff02' }}>Título do Curso:</label>
                     <input
                         type="text"
                         id="title"
@@ -194,10 +193,10 @@ const CreateCourses = () => {
                         required
                         style={{ width: '100%', padding: '10px', border: '1px solid #007bff', borderRadius: '5px' }}
                     />
-                    <p>Criador: {currentUser && currentUser.userName}</p>
+                    <p style={{color: '#04ff02' }} >Criador: {currentUser && currentUser.userName}</p>
                 </div>
                 <div style={{ marginBottom: '20px' }}>
-                    <label htmlFor="description" style={{ fontWeight: 'bold', marginBottom: '5px', color: '#007bff' }}>Descrição:</label>
+                    <label htmlFor="description" style={{  marginBottom: '5px', color: '#04ff02' }}>Descrição:</label>
                     <textarea
                         id="description"
                         name="description"
@@ -210,26 +209,26 @@ const CreateCourses = () => {
 
                 <button type="submit" style={{ padding: '10px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%' }}>Criar Curso</button>
             </form>
-            <div>
-                <label style={{ fontWeight: 'bold', color: '#007bff' }}>Upload Thumbnail:</label>
-                <form onSubmit={handleUploadThumbnail} >
-                    <input type="file" name="file" />
-                    <button style={{ padding: '5px', backgroundColor: 'blue', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} type="submit">Enviar</button>
+            <div style={{ marginBottom: '20px' }}>
+                <label style={{ fontWeight: 'bold', color: '#007bff', display: 'block', marginBottom: '10px' }}>Upload Thumbnail:</label>
+                <form onSubmit={handleUploadThumbnail} style={{ display: 'flex', alignItems: 'center' }}>
+                    <input type="file" name="file" style={{ marginRight: '10px', padding: '10px', fontSize: '1rem', borderRadius: '5px', border: '1px solid #ddd', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)' }} />
+                    <button style={{ padding: '10px 20px', backgroundColor: '#034C8C', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.1)' }} type="submit">Enviar</button>
                 </form>
                 <br />
-                {!imgUrlThumbnail && <progress value={progress} max="100" />}
-                {imgUrlThumbnail && <img src={imgUrlThumbnail} alt="Imagem do curso" style={{ width: '100px', height: '100px' }} />}
+                {!imgUrlThumbnail && <progress value={progress} max="100" style={{ width: '100%', height: '10px', borderRadius: '5px' }} />}
+                {imgUrlThumbnail && <img src={imgUrlThumbnail} alt="Imagem do curso" style={{ width: '100px', height: '100px', borderRadius: '5px', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)' }} />}
             </div>
 
-            <div>
-                <label style={{ fontWeight: 'bold', color: '#007bff' }}>Upload Capa do Curso:</label>
-                <form onSubmit={handleUploadCover} >
-                    <input type="file" name="file" />
-                    <button style={{ padding: '5px', backgroundColor: 'blue', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} type="submit">Enviar</button>
+            <div style={{ marginBottom: '20px' }}>
+                <label style={{ fontWeight: 'bold', color: '#007bff', display: 'block', marginBottom: '10px' }}>Upload Capa do Curso:</label>
+                <form onSubmit={handleUploadCover} style={{ display: 'flex', alignItems: 'center' }}>
+                    <input type="file" name="file" style={{ marginRight: '10px', padding: '10px', fontSize: '1rem', borderRadius: '5px', border: '1px solid #ddd', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)' }} />
+                    <button style={{ padding: '10px 20px', backgroundColor: '#034C8C', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.1)' }} type="submit">Enviar</button>
                 </form>
                 <br />
-                {!imgUrlCover && <progress value={progressCover} max="100" />}
-                {imgUrlCover && <img src={imgUrlCover} alt="Imagem do curso" style={{ width: '100px', height: '100px' }} />}
+                {!imgUrlCover && <progress value={progressCover} max="100" style={{ width: '100%', height: '10px', borderRadius: '5px' }} />}
+                {imgUrlCover && <img src={imgUrlCover} alt="Imagem do curso" style={{ width: '100px', height: '100px', borderRadius: '5px', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)' }} />}
             </div>
         </div>
     )
