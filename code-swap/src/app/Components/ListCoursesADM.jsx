@@ -22,7 +22,8 @@ export const H1 = styled.h1`
 export const ContainerDiv = styled.div`
 display: flex;
 margin-top: 10px;
-border: 2px solid white;
+border-radius: 5px;
+box-shadow: 0px 0px 10px rgba(4, 255, 2, 0.2);
 
 color: white;
 text-align: center;

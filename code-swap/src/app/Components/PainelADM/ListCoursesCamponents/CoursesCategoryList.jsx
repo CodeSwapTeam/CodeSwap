@@ -61,27 +61,28 @@ const StatusCourse = styled.p`
 const ManageButton = styled.button`
     border: 1px solid white;
     padding: 5px;
+    border-radius: 5px;
     margin: 5px;
     cursor: pointer;
     background-color: #020a29;
+    color: #04ff02;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    font-size: 1rem;
 
     &:hover {
-        background-color: #00ff375c;
+        color: #04ff02;
+        font-weight: bold;
+        transform: scale(1.05);
+        box-shadow: 0px 0px 10px #04ff02; // Adicionado box-shadow verde suave
+    }
+
+    @media (max-width: 600px) {
+        font-size: 0.8rem;
     }
 `;
 
-const StyledImg = styled.img`
-  height: auto; // Ajuste conforme necessário
-  width: 150px; // Ajuste conforme necessário
-  object-fit: cover; // Mantém as proporções da imagem
-  position: absolute;
-  //centralizar imagem na vertical 
-    top: 50%;
-    transform: translateY(-50%);
-    left: 5px;
-    border: 1px solid white;
-    border-radius: 5px;
-`;
+
 
 const CategoryContainer = styled.div`
     border: 1px solid white;
@@ -96,10 +97,11 @@ const CategoryContainer = styled.div`
     font-size: 1rem;
 
     &:hover {
-        background-color: #00ff375c;
-        color: #020a29;
+        
+        color: #04ff02;
         font-weight: bold;
         transform: scale(1.05);
+        box-shadow: 0px 0px 10px #04ff02; // Adicionado box-shadow verde suave
     }
 
     @media (max-width: 600px) {
@@ -107,7 +109,72 @@ const CategoryContainer = styled.div`
     }
 `;
 
+const StyledDiv = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 
+    @media (max-width: 600px) {
+        width: 100%;
+    }
+`;
+
+const StyledH4 = styled.h4`
+    text-align: center;
+    font-size: 1.2rem;
+
+    @media (max-width: 600px) {
+        font-size: 1rem;
+    }
+`;
+
+const StyledImg = styled.img`
+    border-radius: 5px;
+    height: 150px;
+    object-fit: cover;
+    box-shadow: 0px 0px 10px rgba(4, 255, 2, 0.2);
+
+    @media (max-width: 600px) {
+        width: 100%;
+        height: auto;
+    }
+`;
+
+const StyledCourseDiv = styled.div`
+    border-radius: 5px;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 150px;
+    margin: 10px 20px 10px 10px;
+    transition: all 0.3s ease;
+    background-color: #00000063;
+
+    &:hover {
+        transform: scale(1.02);
+        box-shadow: 0px 0px 10px rgba(4, 255, 2, 0.2); // Adicionado box-shadow verde suave
+    }
+
+    @media (max-width: 600px) {
+        flex-direction: column;
+        height: auto;
+    }
+`;
+
+
+
+const CourseInfoDiv = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    padding: 10px;
+
+    @media (max-width: 600px) {
+        flex-direction: column;
+    }
+`;
 
 
 
@@ -193,7 +260,7 @@ export const CoursesCategoryList = ({  setSelectedPainel }) => {
     return (
         <Container>
 
-            <div style={{ width: '30%' }}>
+            <div style={{ width: '30%' , marginRight:'10px'}}>
                 <h3>CATEGORIAS</h3>
                 <div >
                     {categoriesData?.map((category, index) => (
@@ -204,23 +271,19 @@ export const CoursesCategoryList = ({  setSelectedPainel }) => {
                 </div>
             </div>
 
-            <div style={{  display: 'flex', flexDirection: 'column' , width:'100%'}}>
-            {courses?.map(course => (
-                    <div style={{border: '1px solid black', position:"relative", display: 'flex', flexDirection: 'row', alignItems: 'center', height: '150px'}} key={course.id}>
-                    <img src={course.imgUrlThumbnail} alt="Imagem Thumbnail" style={{height: '150px', objectFit: 'cover'}} />
-                    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1}}>
-                        <h4 style={{textAlign: 'center'}}>{course.title}</h4>
-                        <ManageButton onClick={() => { handleGetCourseData(course.id) }}>Gerenciar</ManageButton>
-                    </div>
-                    <div style={{position: 'absolute', top: 0, right: 0}}>
-                        <DeleteButton onClick={() => handleDeleteCourse.mutate(course.id)}>Deletar Curso</DeleteButton>
-                    </div>
-                    <div style={{position: 'absolute', bottom: 0, right: 0}}>
-                        <StatusCourse status={course.status}>Status: {course.status}</StatusCourse>
-                    </div>
-                </div>
-            ))}
-            </div>
+            <StyledDiv>
+                {courses?.map(course => (
+                    <StyledCourseDiv key={course.id}>
+                        <StyledImg src={course.imgUrlThumbnail} alt="Imagem Thumbnail" />
+                        <CourseInfoDiv>
+                            <StyledH4>{course.title}</StyledH4>
+                            <ManageButton onClick={() => { handleGetCourseData(course.id) }}>Gerenciar</ManageButton>
+                            <DeleteButton onClick={() => handleDeleteCourse.mutate(course.id)}>Deletar Curso</DeleteButton>
+                            <StatusCourse status={course.status}>Status: {course.status}</StatusCourse>
+                        </CourseInfoDiv>
+                    </StyledCourseDiv>
+                ))}
+            </StyledDiv>
         </Container>
     );
 };
