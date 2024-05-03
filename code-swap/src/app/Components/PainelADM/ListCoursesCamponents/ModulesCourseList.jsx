@@ -13,10 +13,10 @@ const Container = styled.div`
     padding: 10px;
     color: white;
     text-align: center;
-    background-color: #0034f35c;
+    background-color: #0f1425d6;
 `;
 
-const ModuleContainer = styled.div`
+/* const ModuleContainer = styled.div`
     display: flex;
     flex-direction: column;
     border: 1px solid white;
@@ -25,7 +25,7 @@ const ModuleContainer = styled.div`
  
     background-color: #020a29;
     border-radius: 5px;
-`;
+`; */
 
 const DeleteButton = styled.button`
 
@@ -38,15 +38,75 @@ const DeleteButton = styled.button`
 `;
 
 const ManageButton = styled.button`
-    border: 1px solid white;
-    padding: 5px;
-    margin: 5px;
-    cursor: pointer;
-    background-color: #020a29;
+margin: 10px;
+align-self: center;
+font-size: calc(0,5em + 1vw); // Ajusta o tamanho da fonte com base na largura da viewport
+@media (max-width: 600px) {
+  align-self: center;
+}
 
-    &:hover {
-        background-color: #00ff375c;
-    }
+border: 1px solid white;
+  padding: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #020a29;
+  color: #04ff02;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+
+  &:hover {
+      color: #04ff02;
+      
+      transform: scale(1.05);
+      box-shadow: 0px 0px 10px #04ff02; // Adicionado box-shadow verde suave
+  }
+
+  @media (max-width: 600px) {
+      font-size: 0.8rem;
+  }
+`;
+
+
+
+const ModulesList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
+`;
+
+const ModuleContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 40%;
+  background-color: #00000063;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+
+  &:hover {
+    border: 1px solid green;
+    transform: scale(1.01);
+    box-shadow: 0px 0px 10px #04ff02; // Adicionado box-shadow verde suave
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
+const ModuleTitle = styled.h2`
+  font-weight: bold;
+  color: #07ff07;
 `;
 
 export default function ModulesCourseList({ setSelectedPainel }) {
@@ -118,23 +178,23 @@ const { data: modules } = useQuery({
         <>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <button style={{ backgroundColor: 'blue', padding: '5px', borderRadius: '5px', alignSelf: 'flex-start' }} onClick={() => { setSelectedPainel('CourseDescription') }} >Voltar </button>
-            <h1>{courseSelected.title} </h1>
+            <h1 style={{fontSize:'1.5rem'}}>{courseSelected.title} </h1>
             <div></div>
           </div>
-          <div style={{ display: 'flex' }}>
-            {modules && modules.length > 0 ? (
-              modules.map((module, index) => (
-                <ModuleContainer key={index} >
-                  <h2 style={{ font: 'bold', color: '#07ff07' }}>{module.title}</h2>
-                  <p>{module.description}</p>
-                  <ManageButton onClick={()=>{ handleManageModule(module.id)}}>Gerenciar Módulo</ManageButton>
-                  <DeleteButton onClick={() => handleDeleteModule.mutate(module)}>Excluir Módulo</DeleteButton>
-                </ModuleContainer>
-              ))
-            ) : (
-              <h2>Nenhum módulo cadastrado</h2>
-            )}
-          </div>
+          <ModulesList>
+  {modules && modules.length > 0 ? (
+    modules.map((module, index) => (
+      <ModuleContainer key={index}>
+        <ModuleTitle>{module.title}</ModuleTitle>
+        <p>{module.description}</p>
+        <ManageButton onClick={()=>{ handleManageModule(module.id)}}>Gerenciar Módulo</ManageButton>
+        <DeleteButton onClick={() => handleDeleteModule.mutate(module)}>Excluir Módulo</DeleteButton>
+      </ModuleContainer>
+    ))
+  ) : (
+    <h2>Nenhum módulo cadastrado</h2>
+  )}
+</ModulesList>
         </>
 
       <AddModuleModal />

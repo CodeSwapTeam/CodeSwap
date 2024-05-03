@@ -2,7 +2,31 @@ import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Controller from '@/Controller/controller';
 import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
-import { ContextDataCache } from '@/app/contexts/ContextDataCache';
+import styled from 'styled-components';
+
+const AddModuleButton = styled.button`
+    border: 1px solid white;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: #020a29;
+    color: #04ff02;
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    font-size: 1rem;
+
+    &:hover {
+        color: #04ff02;
+        font-weight: bold;
+        transform: scale(1.05);
+        box-shadow: 0px 0px 2px #04ff02;
+    }
+
+    @media (max-width: 600px) {
+        font-size: 0.8rem;
+    }
+`;
 
 function AddModuleModal() {
 
@@ -91,24 +115,26 @@ function AddModuleModal() {
 
     return (
         <>
-            <button style={{ padding: '5px', backgroundColor: '#5150e1', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={handleShow}>Adicionar Modulo</button>
+            <AddModuleButton  onClick={handleShow}>Adicionar Modulo</AddModuleButton>
 
             {show && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <div className="modal-header">
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '40vh' }}>
+                <div style={{ backgroundColor: '#fff', borderRadius: '5px', maxWidth: '500px', width: '90%', boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.1)' }}>
+                    <div className="modal-header">
 
-                        </div>
-                        <div className="modal-body" style={{ display: 'flex', flexDirection: 'column' }}>
-                            <input style={{ margin: '4px', color: 'black' }} type="text" placeholder="Nome do Módulo" value={moduleName} onChange={(e) => setModuleName(e.target.value)} />
-                            <input style={{ margin: '4px', color: 'black' }} type="text" placeholder="Descrição do Módulo" value={moduleDescription} onChange={(e) => setModuleDescription(e.target.value)} />
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" style={{ padding: '5px', backgroundColor: '#232323', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={handleClose}>Fechar</button>
-                            <button type="button" style={{ padding: '5px', backgroundColor: '#16ff66', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }} onClick={handleSubmit}>Salvar Módulo</button>
-                        </div>
+                    </div>
+                    <div className="modal-header" style={{ borderBottom: '1px solid #f2f2f2', padding: '10px 15px' }}>
+                <h5 className="modal-title" style={{ margin: 0, fontWeight: '500', fontSize: '1.25rem', color: '#333' }}>Adicionar Módulo</h5>
+              </div>
+                    <div  style={{ display: 'flex', flexDirection: 'column' }}>
+                        <input style={{ margin: '10px', color: 'black' }} type="text" placeholder="Nome do Módulo" value={moduleName} onChange={(e) => setModuleName(e.target.value)} />
+                        <textarea style={{ margin: '10px', color: 'black', height:'100px' }} placeholder="Descrição do Módulo" value={moduleDescription} onChange={(e) => setModuleDescription(e.target.value)} />                    </div>
+                    <div className="modal-footer">
+                        <button type="button" style={{ padding: '5px', backgroundColor: '#232323', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={handleClose}>Fechar</button>
+                        <button type="button" style={{ padding: '5px', backgroundColor: '#16ff66', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }} onClick={handleSubmit}>Salvar Módulo</button>
                     </div>
                 </div>
+            </div>
             )}
         </>
     );
