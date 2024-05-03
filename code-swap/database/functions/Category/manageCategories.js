@@ -45,16 +45,20 @@ export const UpdateCategoryData = async (categoryId, data) => {
 // Função para deletar uma categoria no banco de dados
 export const DeleteCategory = async (categoryId) => {
     try {
-        //Remover a categoria do cache local
-        /* const categoriesLocal = sessionStorage.getItem('categories');
-        if(categoriesLocal){
-            const categories = JSON.parse(categoriesLocal);
-            const newCategories = categories.filter(category => category.id !== categoryId);
-            sessionStorage.setItem('categories', JSON.stringify(newCategories));
-        } */
 
         //Deletar a categoria do banco de dados
         await deleteDoc(doc(db, 'Categories', categoryId));
+
+        //Deletar todos os cursos da categoria
+        const coursesRef = query(collection(db, 'Courses'), where('category', '==', categoryId));
+        const querySnapshot = await getDocs(coursesRef);
+
+        querySnapshot.forEach(async (doc) => {
+            await deleteDoc(doc.ref);
+        });
+
+
+
 
         alert('Categoria deletada com sucesso!');
 
