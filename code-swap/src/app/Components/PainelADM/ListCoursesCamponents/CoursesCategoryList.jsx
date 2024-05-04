@@ -218,8 +218,15 @@ export const CoursesCategoryList = ({  setSelectedPainel }) => {
     const { data: categoriesData } = useQuery({
         queryKey: ['All-Categories'],
         queryFn: async () => {
-            const categories = await controller.manageCategories.GetCategories();
-            return categories;
+            const response = await fetch('/api/gets');
+
+            if (!response.ok) {
+                throw new Error('Erro ao buscar as categorias');
+              }
+
+              const categories = await response.json();
+
+              return categories;
         },
         staleTime: 1000 * 60 * 5 // 5 minutos
     });

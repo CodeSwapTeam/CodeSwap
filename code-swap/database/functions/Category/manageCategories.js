@@ -69,7 +69,7 @@ export const DeleteCategory = async (categoryId) => {
 };
 
 
-// Função para retornar todas as categorias do banco de dados
+// >>>>FUNÇÃO ALTERNADA PARA API<<<< Função para retornar todas as categorias do banco de dados
 export const GetCategories = async () => {
     const categories = [];
     try {
@@ -79,27 +79,12 @@ export const GetCategories = async () => {
             categories.push(doc.data());
         });
 
-        //salvar no cache local
-        SaveCategoriesLocal(categories);
-
         return categories;
 
     } catch (error) {
         console.error('Erro ao buscar as categorias:', error);
         throw error;
     }
-};
-
-//função para buscar as categorias no sessionStorage
-export const GetCategoriesLocal = () => {
-    const categories = JSON.parse(sessionStorage.getItem('categories'));
-    return categories ? categories : null;
-};
-
-
-//função para salvar as categorias no sessionStorage
-export const SaveCategoriesLocal = (categories) => {
-    sessionStorage.setItem('categories', JSON.stringify(categories));
 };
 
 

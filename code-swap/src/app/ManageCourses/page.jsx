@@ -29,6 +29,12 @@ const StyledButtonNavBar = styled.button`
   }
 `;
 
+const StyledButtons = styled.div`
+display: flex;
+justify-content: space-around;
+color: white;
+`;
+
 const PainelAdm = () => {
 
     const controller = Controller();
@@ -53,11 +59,11 @@ const PainelAdm = () => {
 
     return (
         <div >
-            <div style={{ display: 'flex', justifyContent: 'space-around', color:'white' }}>
+            <StyledButtons>
                 <StyledButtonNavBar onClick={() => setSelectedPainel('createCourse')}>Criar Curso</StyledButtonNavBar>
                 <StyledButtonNavBar  onClick={() => setSelectedPainel('listCourses')}>Listar Cursos</StyledButtonNavBar>
                 <StyledButtonNavBar  onClick={() => setSelectedPainel('listUsers')}>Listar Usuários</StyledButtonNavBar>
-            </div>
+            </StyledButtons>
             
             {selectedPainel === 'createCourse' ? (
                 <div style={{  padding: '20px' }}>
