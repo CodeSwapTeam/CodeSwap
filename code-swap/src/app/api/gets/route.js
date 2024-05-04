@@ -1,19 +1,38 @@
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDocs, getDoc } from "firebase/firestore";
 import { db } from "../../../../database/firebase";
 import { NextResponse } from "next/server";
 
 export async function GET(request){
+    const { searchParams } =  new URL(request.url);
+    const id = searchParams.get('id');
+    const type = searchParams.get('type');
 
-    console.log('GET request Server..............:', request);
+    console.log('GET request Server..............:', id);
 
-    const querySnapshot = await getDocs(collection(db, 'Categories'));
-    const categories = [];
-    querySnapshot.forEach((doc) => {
-        categories.push(doc.data());
-    });
-    if(!categories) throw new Error('Erro no servidor ao buscar as categorias');
+    switch (type) {
+        case 'categories': {
+            const querySnapshot = await getDocs(collection(db, 'Categories'));
+            const categories = [];
+            querySnapshot.forEach((doc) => {
+                categories.push(doc.data());
+            });
+            if (!categories) throw new Error('Erro no servidor ao buscar as categorias');
+    
+            return NextResponse.json(categories);
+        }
+        case 'courseId': {
+            const docRef = doc(db, 'Courses', id);
+            const docSnap = await getDoc(docRef);
 
-    return NextResponse.json(categories);
+            if (!docSnap.exists()) throw new Error('Curso não encontrado');
+            
+            const coursesLocal = [docSnap.data()];
+            return NextResponse.json(coursesLocal);
+        }
+
+        default:
+            return NextResponse.error('Tipo de busca inválido', 400);
+    }   
 }
 
 /* export async function GET(request){

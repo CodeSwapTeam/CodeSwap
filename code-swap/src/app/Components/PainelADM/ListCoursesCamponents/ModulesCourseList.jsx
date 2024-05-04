@@ -121,9 +121,10 @@ const { data: modules } = useQuery({
   queryKey: ["Modules-Course"],
   queryFn: async () => {
     try {  
-      const modules = await controller.manageModules.GetModules(courseSelected.id); 
-
-      return modules  // Retornar um array vazio se modules for undefined
+      const modules = await fetch(`/api/gets?id=${courseSelected.id}&type=courseId`);    
+      const data  = await modules.json();
+      return data[0].modules;
+      
     } catch (error) {
       console.error('Error fetching modules:', error);
       // Retornar um array vazio em caso de erro

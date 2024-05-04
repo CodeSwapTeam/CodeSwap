@@ -32,36 +32,24 @@ background-color: #0f1425d6;
 
 
 
-const ListCourses = () => {
+const ListCoursesADM = () => {
+    const [selectedPainel, setSelectedPainel] = useState('courses');
     const controller = Controller();
 
-    const [selectedPainel, setSelectedPainel] = useState('courses');
-    const [category, setCategory] = useState(null);
-
-
     // Função para buscar as categorias no cache local ou no banco de dados
-    const { data: categoriesData } = useQuery({
-        
+    const { data: categoriesData } = useQuery({      
         queryKey: ['All-Categories'],
         queryFn: async () => {
-            const response = await fetch('/api/gets');
-
-            if (!response.ok) {
-                throw new Error('Erro ao buscar as categorias');
-              }
-
-              const categories = await response.json();
-
+            const categories = await controller.manageCategories.GetCategories();
               return categories;
         },
         staleTime: 1000 * 60 * 5 // 5 minutos
     });
 
-
     return (
         <div >
             <H1>
-                {selectedPainel === 'courses' ? `Lista de Cursos ${category ? category.name : ''}` :
+                {selectedPainel === 'courses' ? `Lista de Cursos ` :
                     selectedPainel === 'ModuleDescription' ? 'Módulos e Aulas' :
                         'Cursos e Módulos'}
             </H1>
@@ -69,7 +57,7 @@ const ListCourses = () => {
             <ContainerDiv>
 
                 {selectedPainel === 'courses' ? (
-                    <CoursesCategoryList categoriesData={categoriesData} category={category} setSelectedPainel={setSelectedPainel} />
+                    <CoursesCategoryList categoriesData={categoriesData} setSelectedPainel={setSelectedPainel} />
                 ) : selectedPainel === 'CourseDescription' ? (                  
                     <ConfigCourse setSelectedPainel={setSelectedPainel} />                
                 ) : selectedPainel === 'Modules' ? (
@@ -83,4 +71,4 @@ const ListCourses = () => {
     );
 };
 
-export default ListCourses;
+export default ListCoursesADM;

@@ -184,7 +184,7 @@ const BottomDiv = styled.div`
 
 
 
-export const CoursesCategoryList = ({  setSelectedPainel }) => {
+export const CoursesCategoryList = ({  setSelectedPainel, categoriesData }) => {
     const queryClient = useQueryClient();
     const controller = Controller();
 
@@ -214,22 +214,6 @@ export const CoursesCategoryList = ({  setSelectedPainel }) => {
         }
     });
 
-    // Função para buscar as categorias no cache local ou no banco de dados
-    const { data: categoriesData } = useQuery({
-        queryKey: ['All-Categories'],
-        queryFn: async () => {
-            const response = await fetch('/api/gets');
-
-            if (!response.ok) {
-                throw new Error('Erro ao buscar as categorias');
-              }
-
-              const categories = await response.json();
-
-              return categories;
-        },
-        staleTime: 1000 * 60 * 5 // 5 minutos
-    });
 
     // Função para buscar o curso selecionado pelo id 
     const handleGetCourseData = async (courseId) => {
@@ -241,9 +225,10 @@ export const CoursesCategoryList = ({  setSelectedPainel }) => {
 
         // Se o curso não estiver no cache, buscar o curso na API
         if (!course) {
+            // Buscar o curso na API
             course = await controller.manageCourses.GetCourseById(courseId);
 
-            // Adicionar o novo curso ao array de cursos cacheados
+            // Adicionar o novo curso ao array de cursos em cache
             coursesCached = [...coursesCached, course];
 
             // Atualizar o cache com o novo array de cursos
@@ -261,10 +246,7 @@ export const CoursesCategoryList = ({  setSelectedPainel }) => {
 
     //função para pegar os cursos dentro de uma categoria selecionada pelo usuário
     const handleCategory = (category) => {
-        
-        //console.log('categoria selecionada', category)
         setCourses(category.courses);
-        //console.log('cursos da categoria', category.courses)
         queryClient.setQueryData(['Category-Selected'], category);
     };
 

@@ -71,15 +71,11 @@ export const DeleteCategory = async (categoryId) => {
 
 // >>>>FUNÇÃO ALTERNADA PARA API<<<< Função para retornar todas as categorias do banco de dados
 export const GetCategories = async () => {
-    const categories = [];
+
     try {
-        const querySnapshot = await getDocs(collection(db, 'Categories'));
-
-        querySnapshot.forEach((doc) => {
-            categories.push(doc.data());
-        });
-
-        return categories;
+        const response = await fetch('/api/gets?type=categories');
+        const data = await response.json();
+        return data;
 
     } catch (error) {
         console.error('Erro ao buscar as categorias:', error);

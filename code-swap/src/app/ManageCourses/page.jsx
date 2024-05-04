@@ -7,6 +7,7 @@ import CreateCourse from '../Components/PainelADM/CreateCourse/CreateCourse';
 import { ContextDataCache } from '../contexts/ContextDataCache';
 import UserList from '../Components/ListUsers';
 import styled from 'styled-components';
+import ListCoursesADM from '../Components/ListCoursesADM';
 
 
 const StyledButtonNavBar = styled.button`
@@ -71,7 +72,7 @@ const PainelAdm = () => {
                 </div>
             ) : selectedPainel === 'listCourses' ? (
                 <div style={{  padding: '20px' }}>
-                 {userDataPermission > 2 ? <ListCourses /> : <h1>Você não tem permissão para listar cursos</h1>}
+                 {userDataPermission > 2 ? <ListCoursesADM /> : <h1>Você não tem permissão para listar cursos</h1>}
                 </div>
             ) : (
                 <div style={{  padding: '20px' }}>

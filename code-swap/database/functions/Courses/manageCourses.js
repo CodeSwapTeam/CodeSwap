@@ -58,34 +58,24 @@ export async function CreateCourse(formData) {
 
 };
 
-//função para deletar um curso
+//>>>>ALTERADO PARA API ROUTER<<<<função para deletar um curso
 export async function DeleteCourse(docId) {
 
     const controller = Controller();
     try {
 
-        ////////DELETE NO CACHE LOCAL /////////////////////////////////////////
+        const response = await fetch(`/api/delete?id=${docId}&type=course`, {
+            method: 'DELETE',
+          });
 
-        //deletar o curso da categoria no cache local
-        const categoriesLocal = JSON.parse(sessionStorage.getItem('categories'));
-        categoriesLocal.forEach(category => {
-            category.courses = category.courses.filter(course => course.id !== docId)
-        });
-        sessionStorage.setItem('categories', JSON.stringify(categoriesLocal));
+          if (!response.ok) {
+            throw new Error('Erro ao deletar o curso');
+          }
 
-        //deletar o curso do cache local de cursos
-        const coursesLocal = JSON.parse(sessionStorage.getItem('courses'));
-        const course = coursesLocal.find(course => course.id === docId);
-        coursesLocal.splice(coursesLocal.indexOf(course), 1);
-        sessionStorage.setItem('courses', JSON.stringify(coursesLocal));
+          const data = await response.json();
+            alert(data.message);
 
-        ///////////////////////////////////////////////////////////////////////
-
-
-        ////////DELETE NO BANCO DE DADOS /////////////////////////////////////////
-
-        //deletar o curso do banco de dados
-        await deleteDoc(doc(db, 'Courses', docId));
+        ////////DELETE NO BANCO DE DADOS //////////////////////////////////////////
 
         //deletar o curso da categoria no banco de dados
         const categoriesDB = await controller.manageCategories.GetCategories();
@@ -197,26 +187,15 @@ export async function UpdateConfigCourseData(data) {
 
 
 
-//função para buscar um curso pelo id
-export async function GetCourseById(courseId) {
+//>>>>ALTERADO PARA API ROUTE<<<< função para buscar um curso pelo id
+export async function GetCourseById(Id) {
     try {
 
+        let course = await fetch(`/api/gets?id=${Id}&type=courseId`);
+        let data = await course.json();
+        course = data[0];
 
-        //se não encontrar buscar no banco de dados
-        const docRef = doc(db, 'Courses', courseId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-            //salvar no cache local em 'courses', se não existir criar o array
-            const coursesLocal = JSON.parse(sessionStorage.getItem('courses')) || [];
-            coursesLocal.push(docSnap.data());
-            sessionStorage.setItem('courses', JSON.stringify(coursesLocal));
-
-
-
-            return docSnap.data();
-
-
-        }
+        return course;
     } catch (error) {
         console.error('Erro ao buscar o curso:', error);
         throw error;
