@@ -210,7 +210,6 @@ export const CoursesCategoryList = ({  setSelectedPainel, categoriesData }) => {
         },
         onSuccess: (data, variables) => {
             queryClient.refetchQueries(['All-Categories']);
-            alert('Curso deletado com sucesso');
         }
     });
 

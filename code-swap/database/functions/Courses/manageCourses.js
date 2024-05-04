@@ -27,6 +27,27 @@ export async function CreateCourse(formData) {
             SequentialModule: formData.SequentialModule,
             modules: [],
         };
+
+
+        //////////////////////////////////////////////////////////////////////////
+        //>>>>ALTERADO PARA API ROUTER<<<<
+        //api router POST para criar um curso no banco de dados
+        const response = await fetch('/api/posts?type=course', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(courseData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro ao criar o curso');
+        }
+
+        const data = await response.json();
+        alert(data.message);
+
+/* 
         const docRef = await addDoc(collection(db, 'Courses'), courseData);
         //setar o id do curso com o id do documento
         await updateDoc(doc(db, 'Courses', docRef.id), {
@@ -40,8 +61,8 @@ export async function CreateCourse(formData) {
             courses: arrayUnion({ id: docRef.id, title: courseData.title, description: courseData.description, imgUrlThumbnail: courseData.imgUrlThumbnail, status: courseData.status })
         });
 
-        alert('Curso criado com sucesso');
-        return courseID;
+        alert('Curso criado com sucesso'); */
+        //return courseID;
     }
     catch (error) {
         alert('Erro ao criar o curso, tente novamente!');

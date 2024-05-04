@@ -1,11 +1,12 @@
 import { deleteDoc, doc, setDoc, updateDoc, addDoc, collection, arrayUnion, getDoc, where, getDocs } from "firebase/firestore";
 import { db } from "../../../../database/firebase";
+import {NextResponse, NextRequest} from 'next/server';
 
 //api router POST para criar um curso no banco de dados
-export async function POST() {
-    const { searchParams } = new URL(request.url);
+export async function POST(NextRequest) {
+    const { searchParams } = new URL(NextRequest.url);
     const type = searchParams.get('type');
-    const data = await request.json();
+    const data = await NextRequest.json();
 
     console.log('POST request Server..............:', data, type);
 
@@ -14,22 +15,23 @@ export async function POST() {
             try {
                 const courseData = {
                     title: data.title,
-                    status: 'pending', // pending, approved, reviewed, rejected
+                    status: data.status, // pending, approved, reviewed, rejected
                     description: data.description,
                     owner: data.owner,
                     experience: data.experience,
-                    difficulty: data.difficulty,
+                    difficulty: '',
                     codes: data.codes,
-                    courseObservations: data.courseObservations,
+                    courseObservations: '',
                     id: '',
-                    imgUrlThumbnail: data.thumbnail,
-                    imgUrlCover: data.cover,
+                    imgUrlThumbnail: data.imgUrlThumbnail,
+                    imgUrlCover: data.imgUrlCover,
                     coursePremium: data.coursePremium,
                     category: data.category,
                     SequentialModule: data.SequentialModule,
                     modules: [],
                 };
                 const docRef = await addDoc(collection(db, 'Courses'), courseData);
+                
                 //setar o id do curso com o id do documento
                 await updateDoc(doc(db, 'Courses', docRef.id), {
                     id: docRef.id
@@ -66,6 +68,6 @@ export async function POST() {
 
         }
         default:
-            return NextResponse.error('Tipo de busca inválido', 400);
+            return NextResponse.error('Tipo de busca inválido', 500);
     }
 }

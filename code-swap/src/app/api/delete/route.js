@@ -8,8 +8,6 @@ export async function DELETE(request){
     const id = searchParams.get('id');
     const type = searchParams.get('type');
 
-    console.log('DELETE request Server..............:', id, type);
-
     switch (type) {
         case 'course': {
             try {
