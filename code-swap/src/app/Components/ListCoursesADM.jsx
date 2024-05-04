@@ -40,7 +40,7 @@ const ListCoursesADM = () => {
     const { data: categoriesData } = useQuery({      
         queryKey: ['All-Categories'],
         queryFn: async () => {
-            const categories = await controller.manageCategories.GetCategories();
+            const categories = await controller.manageCategories.GetAllCategories();
               return categories;
         },
         staleTime: 1000 * 60 * 5 // 5 minutos

@@ -7,11 +7,12 @@ export async function POST(NextRequest) {
     const { searchParams } = new URL(NextRequest.url);
     const type = searchParams.get('type');
     const data = await NextRequest.json();
-
+    
     console.log('POST request Server..............:', data, type);
+    
 
     switch (type) {
-        case 'course': {
+        case 'CreateCourse': { //Criar um curso
             try {
                 const courseData = {
                     title: data.title,
@@ -48,7 +49,7 @@ export async function POST(NextRequest) {
                 return NextResponse.error('Erro ao criar o curso, tente novamente!');
             }
         }
-        case 'category': {
+        case 'CreateCategory': {//Criar uma categoria
             try {
                 const categoryData = {
                     name: data.name,
@@ -67,6 +68,63 @@ export async function POST(NextRequest) {
 
 
         }
+        case 'UpdateInfoCourse': {//Atualizar informações do curso
+            try {
+                const courseData = {
+                    title: data.courseData.title,
+                    description: data.courseData.description,
+                }
+                await updateDoc(doc(db, 'Courses', data.courseId), courseData);
+
+                // Atualizar informações do curso na categoria
+                const categoryDoc = doc(db, 'Categories', data.categoryId);
+                const categorySnapshot = await getDoc(categoryDoc);
+                if (categorySnapshot.exists()) {
+                    const categoryData = categorySnapshot.data();
+                    const courses = categoryData.courses;
+                    const updatedCourses = courses.map(course => {
+                        if (course.id === data.courseId) {
+                            return { ...course, title: courseData.title, description: courseData.description };
+                        } else {
+                            return course;
+                        }
+                    });
+                    await updateDoc(categoryDoc, { courses: updatedCourses });
+                }
+
+                    return NextResponse.json({ message: 'Informações do curso atualizadas com sucesso!' });
+                } catch (error) {
+                return NextResponse.error('Erro ao atualizar informações do curso:', error);
+            }
+        }
+        case 'UpdateCourseConfigs': {//Atualizar configurações do curso
+            try {
+                // Atualizar configurações do curso
+                await updateDoc(doc(db, 'Courses', data.courseId), data.courseData);
+
+                // Atualizar configurações do curso na categoria
+                const categoryDoc = doc(db, 'Categories', data.categoryId);
+                const categorySnap = await getDoc(categoryDoc);
+                const category = categorySnap.data();
+                const course = category.courses.find(course => course.id === data.courseId);
+
+                course.status = data.courseData.status;
+                course.imgUrlThumbnail = data.courseData.imgUrlThumbnail;
+
+
+                //atualizar a categoria no banco de dados
+                await updateDoc(categoryDoc, {
+                    courses: category.courses
+                });
+
+                return NextResponse.json({ message: 'Configurações do curso atualizadas com sucesso!' });
+               
+            } catch (error) {
+                return NextResponse.error('Erro ao atualizar configurações do curso:', error);
+                
+            }
+        }
+        
         default:
             return NextResponse.error('Tipo de busca inválido', 500);
     }

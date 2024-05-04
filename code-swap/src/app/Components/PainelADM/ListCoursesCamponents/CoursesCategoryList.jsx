@@ -207,9 +207,6 @@ export const CoursesCategoryList = ({  setSelectedPainel, categoriesData }) => {
             queryClient.setQueryData(['All-Categories'], categories);
 
             await controller.manageCourses.DeleteCourse(courseId);
-        },
-        onSuccess: (data, variables) => {
-            queryClient.refetchQueries(['All-Categories']);
         }
     });
 
@@ -236,6 +233,9 @@ export const CoursesCategoryList = ({  setSelectedPainel, categoriesData }) => {
 
         // Setar o curso selecionado no estado local
         queryClient.setQueryData(['Course-Selected'], course);
+
+        //Setar o ["Modules-Course"] com os módulos do curso selecionado
+        queryClient.setQueryData(['Modules-Course'], course.modules);
 
         // Atualizar o painel selecionado
         setSelectedPainel('CourseDescription');

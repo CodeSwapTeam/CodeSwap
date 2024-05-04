@@ -32,7 +32,7 @@ function UpdateCourseModal(props) {
         courseSelected.description = courseDescription;
         //salvar o curso selecionado no cache
         queryClient.setQueryData(['Course-Selected'], courseSelected);
-        queryClient.invalidateQueries(['Course-Selected']);
+        //queryClient.invalidateQueries(['Course-Selected']);
 
 
 

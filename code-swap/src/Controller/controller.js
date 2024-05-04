@@ -4,7 +4,7 @@ import { CreateUser, GetUserById, GetUserDataBase, GetUserLocalData, RemoveUser,
 //import { QueryRequests } from "@/app/services/QueryRequests";
 
 import { getUserCache, removeUserCache, saveUserCache } from "@/app/services/saveUserCache";
-import { CreateCategory, DeleteCategory, GetCategories, GetCategoriesLocal, SaveCategoriesLocal, SaveImgUrlThumbnail, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
+import { CreateCategory, DeleteCategory, GetAllCategories, GetCategories, GetCategoriesLocal, SaveCategoriesLocal, SaveImgUrlThumbnail, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
 import { CreateCourse, DeleteCourse, GetCourseById, GetCoursesByCategory, UpdateConfigCourseData, UpdateCover, UpdateInfoCourse,  UpdateThumbnail } from "../../database/functions/Courses/manageCourses";
 import { GetLessonsModule, GetModuleById, GetModules, GetModulesLocal, createModule, deleteModule, updateInfoModule, updateModuleSettings } from "../../database/functions/Modules/manageModules";
 import { handleUpdateThumbnail } from "@/app/services/UpdateThumbnail";
@@ -78,11 +78,12 @@ export default function Controller(){
          * Retorna um objeto com as funções de gerenciamento de categorias
          */
         manageCategories: {
-            CreateCategory: CreateCategory,
+            CreateCategory: CreateCategory, //ACESSO A API PARA CRIAR CATEGORIA
+            GetAllCategories: GetAllCategories, //ACESSO A API PARA BUSCAR TODAS AS CATEGORIAS
+            
             UpdateCategoryData: UpdateCategoryData,
             DeleteCategory: DeleteCategory,
 
-            GetCategories: GetCategories, //Retorna as categorias do banco de dados
             SaveImgUrlThumbnail: SaveImgUrlThumbnail
         },
         /**

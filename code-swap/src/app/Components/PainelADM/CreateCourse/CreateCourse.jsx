@@ -58,7 +58,7 @@ const CreateCourses = () => {
                 sessionStorage.removeItem('erro_save');
             }
 
-            const categories = await controller.manageCategories.GetCategories();
+            const categories = await controller.manageCategories.GetAllCategories();
             return categories;
         },
         staleTime: 1000 * 60 * 5 // 5 minutos

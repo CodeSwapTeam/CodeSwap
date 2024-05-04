@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Controller from '@/Controller/controller';
@@ -48,32 +49,28 @@ function AddModuleModal() {
 
     const createModuleMutate = useMutation({
         mutationFn: async (data) => {
-
-            const newModule = {
-                title: moduleName,
-                description: moduleDescription,
-                id: data.moduleId,            
-            };
-
-            //pegar os modulos do cache local do clientQuery
-            const modulesCourse = courseSelected.modules;
-            //adicionar o novo modulo no array de modulos
-            modulesCourse.push(newModule);
-            //atualizar os modulos dentro do curso selecionado
-            queryClient.setQueryData(["Course-Selected"], courseSelected);  
-            
-            //adicionar o nodulo novo em ["Modules-Course"] junto com os modulos antigos
-            queryClient.invalidateQueries(["Modules-Course"]);
-
-            
-            
+          const newModule = {
+            title: moduleName,
+            description: moduleDescription,
+            id: data.moduleId,            
+          };
+      
+          // Criar uma cópia do array de módulos
+          const modulesCourse = [...courseSelected.modules];
+          // Adicionar o novo módulo no array de módulos
+          modulesCourse.push(newModule);
+      
+          // Atualizar os módulos dentro do curso selecionado
+          const updatedCourse = { ...courseSelected, modules: modulesCourse };
+          queryClient.setQueryData(["Course-Selected"], updatedCourse);  
+      
+          // Adicionar o módulo novo em ["Modules-Course"] ...mais os módulos existentes
+          queryClient.setQueryData(["Modules-Course"], modulesCourse);
         },
         onSuccess: (data) => {
-            
-
+          //queryClient.invalidateQueries(["Modules-Course"]);
         }
-
-    })
+      });
 
     
     //função que ira retornar o nivel de permisão do modulo
@@ -107,7 +104,6 @@ function AddModuleModal() {
         const moduleID = await controller.manageModules.CreateModule(courseSelected.id, newModule);
 
         createModuleMutate.mutate({courseID: courseSelected.id, moduleId: moduleID, module: newModule});
-
         setModuleName('');
         setModuleDescription('');
         handleClose();

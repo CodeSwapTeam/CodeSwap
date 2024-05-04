@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Controller from "@/Controller/controller";
 
-import { useQuery,useMutation,useQueryClient, } from "@tanstack/react-query";
+import {useQueryClient, } from "@tanstack/react-query";
 
 function ModalCreateCategory() {
     const controller = Controller();
@@ -15,18 +15,17 @@ function ModalCreateCategory() {
     const handleShow = () => setShow(true);
 
 
-    const createNewCategory = async (data) => {
-        await controller.manageCategories.CreateCategory(data);
-        queryClient.refetchQueries(['All-Categories']);      
-    }
+  const handleSubmit = async () => {
+    await controller.manageCategories.CreateCategory({ 
+      name: categoryName, 
+      description: categoryDescription 
+    });
+    queryClient.refetchQueries(['All-Categories']);
 
-
-    const handleSubmit = async () => {
-       await createNewCategory({ name: categoryName, description: categoryDescription });
-        setCategoryName('');
-        setCategoryDescription('');
-        handleClose();
-    };
+    setCategoryName('');
+    setCategoryDescription('');
+    handleClose();
+  };
         
     return (
         <>

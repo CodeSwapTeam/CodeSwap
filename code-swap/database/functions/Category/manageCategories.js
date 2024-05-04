@@ -1,7 +1,7 @@
 import { addDoc, collection, doc, getDocs, query, updateDoc, where, deleteDoc, arrayUnion, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 
-//Funcão para criar uma categoria
+//>>>>FUNÇÃO ALTERNADA PARA API<<<< Funcão para criar uma categoria
 export const CreateCategory = async (data) => {
 
     const categoryData = {
@@ -11,54 +11,58 @@ export const CreateCategory = async (data) => {
     }
 
     try {
-        // Criar a categoria no banco de dados
-        const docRef = await addDoc(collection(db, 'Categories'), categoryData, { merge: true });
-    
-        // Adicionar o id da categoria no documento
-        await updateDoc(doc(db, 'Categories', docRef.id), { id: docRef.id });
-        
-        alert(`Categoria ${data.name} criada com sucesso!`);
+        //////////////////////////////////////////////////////////////////////////
+        //>>>>ALTERADO PARA API ROUTER<<<<
+        //api router POST para criar uma categoria no banco de dados
+        const response = await fetch('/api/posts?type=CreateCategory', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(categoryData)
+        });
 
-        return docRef.id;
+        if (!response.ok) {
+            throw new Error('Erro ao criar a categoria');
+        }
 
-        // Retornar o array de categorias
-        //return categories;
+        const data = await response.json();
+        alert(data.message);
+
     } catch (error) {
         console.error('Erro ao Criar categoria:', error);
         throw error;
     }
 };
 
-// >>>>NÃO IMPLEMENTADO<<<< Função para atualizar uma categoria no banco de dados 
-export const UpdateCategoryData = async (categoryId, data) => {
-    try {
-        const categoryRef = doc(db, 'Categories', categoryId);
+// >>>>FUNÇÃO ALTERNADA PARA API<<<< Função para retornar todas as categorias do banco de dados
+export const GetAllCategories = async () => {
 
-        await updateDoc(categoryRef, data);
+    try {
+        const response = await fetch('/api/gets?type=categories');
+        const data = await response.json();//retorna um array de objetos com as categorias
+        return data;
 
     } catch (error) {
-        console.error('Erro ao atualizar a categoria:', error);
+        console.error('Erro ao buscar as categorias:', error);
         throw error;
     }
 };
 
+
 // Função para deletar uma categoria no banco de dados
 export const DeleteCategory = async (categoryId) => {
-    try {
-
-        //Deletar a categoria do banco de dados
-        await deleteDoc(doc(db, 'Categories', categoryId));
-
-        //Deletar todos os cursos da categoria
-        const coursesRef = query(collection(db, 'Courses'), where('category', '==', categoryId));
-        const querySnapshot = await getDocs(coursesRef);
-
-        querySnapshot.forEach(async (doc) => {
-            await deleteDoc(doc.ref);
+    try {       
+        //////////////////////////////////////////////////////////////////////////
+        //>>>>ALTERADO PARA API ROUTER<<<<
+        //api router DELETE para deletar uma categoria no banco de dados
+        const response = await fetch(`/api/delete?type=category&id=${categoryId}`, {
+            method: 'DELETE'
         });
 
-
-
+        if (!response.ok) {
+            throw new Error('Erro ao deletar a categoria');
+        }
 
         alert('Categoria deletada com sucesso!');
 
@@ -69,19 +73,7 @@ export const DeleteCategory = async (categoryId) => {
 };
 
 
-// >>>>FUNÇÃO ALTERNADA PARA API<<<< Função para retornar todas as categorias do banco de dados
-export const GetCategories = async () => {
 
-    try {
-        const response = await fetch('/api/gets?type=categories');
-        const data = await response.json();
-        return data;
-
-    } catch (error) {
-        console.error('Erro ao buscar as categorias:', error);
-        throw error;
-    }
-};
 
 
 //fução para salvar a imgUrlThumbnail no banco de dados e no cache local
@@ -113,3 +105,16 @@ export const SaveImgUrlThumbnail = async (categoryId, courseId, imgUrlThumbnail)
 };
 
 
+
+        // >>>>NÃO IMPLEMENTADO<<<< Função para atualizar uma categoria no banco de dados 
+        export const UpdateCategoryData = async (categoryId, data) => {
+            try {
+                const categoryRef = doc(db, 'Categories', categoryId);
+        
+                await updateDoc(categoryRef, data);
+        
+            } catch (error) {
+                console.error('Erro ao atualizar a categoria:', error);
+                throw error;
+            }
+        };

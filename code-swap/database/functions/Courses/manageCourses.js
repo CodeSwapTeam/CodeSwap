@@ -5,7 +5,7 @@ import Controller from "@/Controller/controller";
 
 
 
-
+//>>>>ALTERADO PARA API ROUTER<<<<
 export async function CreateCourse(formData) {
     let courseID;
 
@@ -32,7 +32,7 @@ export async function CreateCourse(formData) {
         //////////////////////////////////////////////////////////////////////////
         //>>>>ALTERADO PARA API ROUTER<<<<
         //api router POST para criar um curso no banco de dados
-        const response = await fetch('/api/posts?type=course', {
+        const response = await fetch('/api/posts?type=CreateCourse', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -79,7 +79,22 @@ export async function CreateCourse(formData) {
 
 };
 
-//>>>>ALTERADO PARA API ROUTER<<<<função para deletar um curso
+//>>>>ALTERADO PARA API ROUTE<<<<  função para buscar um curso pelo id
+export async function GetCourseById(Id) {
+    try {
+
+        let course = await fetch(`/api/gets?id=${Id}&type=courseId`);
+        let data = await course.json();
+        course = data[0];
+
+        return course;
+    } catch (error) {
+        console.error('Erro ao buscar o curso:', error);
+        throw error;
+    }
+};
+
+//>>>>ALTERADO PARA API ROUTER<<<< função para deletar um curso
 export async function DeleteCourse(docId) {
 
     const controller = Controller();
@@ -99,7 +114,7 @@ export async function DeleteCourse(docId) {
         ////////DELETE NO BANCO DE DADOS //////////////////////////////////////////
 
         //deletar o curso da categoria no banco de dados
-        const categoriesDB = await controller.manageCategories.GetCategories();
+      /*   const categoriesDB = await controller.manageCategories.GetAllCategories();
         categoriesDB.forEach(category => {
             category.courses = category.courses.filter(course => course.id !== docId);
         });
@@ -107,11 +122,11 @@ export async function DeleteCourse(docId) {
             await updateDoc(doc(db, 'Categories', category.id), {
                 courses: category.courses
             });
-        });
+        }); */
 
         ///////////////////////////////////////////////////////////////////////
 
-        return true;
+  
     }
     catch (error) {
         console.error('Erro ao deletar o curso:', error);
@@ -119,85 +134,58 @@ export async function DeleteCourse(docId) {
     }
 };
 
-//função para buscar todos os cursos
-export async function GetCourses() {
-    const courses = [];
-    try {
-        const querySnapshot = await getDocs(collection(db, 'Courses'));
 
-        querySnapshot.forEach((doc) => {
-            courses.push(doc.data());
-        });
-        return courses;
-    }
-    catch (error) {
-        console.error('Erro ao buscar os cursos:', error);
-        throw error;
-    }
-};
 
 //função para atualizar apenas título e descrição do curso
 export async function UpdateInfoCourse(courseId, courseCategoryId, courseData) {
     try {
-        //Atualização do titulo e descrição do curso no banco de dados     
-        await updateDoc(doc(db, 'Courses', courseId), {
-            title: courseData.title,
-            description: courseData.description
+
+        //////////////////////////////////////////////////////////////////////////
+        //>>>>ALTERADO PARA API ROUTER<<<<
+        //api router POST para atualizar o titulo e descrição do curso no banco de dados
+        const response = await fetch('/api/posts?type=UpdateInfoCourse', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ courseId, courseData, categoryId: courseCategoryId })
         });
 
-        //Atualização do titulo e descrição do curso na categoria no banco de dados
-        const categoryDoc = doc(db, 'Categories', courseCategoryId);
-        const categorySnapshot = await getDoc(categoryDoc);
-        if (categorySnapshot.exists()) {
-            const categoryData = categorySnapshot.data();
-            const courses = categoryData.courses;
-            const updatedCourses = courses.map(course => {
-                if (course.id === courseId) {
-                    return { ...course, title: courseData.title, description: courseData.description };
-                } else {
-                    return course;
-                }
-            });
-            await updateDoc(categoryDoc, { courses: updatedCourses });
+        if (!response.ok) {
+            throw new Error('Erro ao atualizar o curso');
         }
-        alert('Curso atualizado com sucesso');
+
+        const data = await response.json();
+        alert(data.message);
     }
     catch (error) {
         console.error('Erro ao atualizar o curso:', error);
     }
 };
 
+
 export async function UpdateConfigCourseData(data) {
     const { courseId, courseData, categoryId } = data;
-
-    // Funções auxiliares para atualizar o banco de dados
-    const updateDatabaseCourse = async (courseId, courseData) => {
-        await updateDoc(doc(db, 'Courses', courseId), courseData);
-    }
-
-    const updateDatabaseCategory = async (categoryId, courseId, courseData) => {
-        const categoryDoc = doc(db, 'Categories', categoryId);
-        const categorySnap = await getDoc(categoryDoc);
-        const category = categorySnap.data();
-        const course = category.courses.find(course => course.id === courseId);
-        
-        course.status = courseData.status;
-        course.imgUrlThumbnail = courseData.imgUrlThumbnail;
-
-
-        //atualizar a categoria no banco de dados
-        await updateDoc(categoryDoc, {
-            courses: category.courses
+    try {     
+        //////////////////////////////////////////////////////////////////////////
+        //>>>>ALTERADO PARA API ROUTER<<<<
+        //api router POST para atualizar as configurações do curso no banco de dados
+        const response = await fetch('/api/posts?type=UpdateCourseConfigs', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ courseId, courseData, categoryId })
         });
-    }
+
+        if (!response.ok) {
+            throw new Error('Erro ao atualizar o curso');
+        }
+
+        const data = await response.json();
+        alert(data.message);
 
 
-    try {
-       
-
-        //Atualização das configurações do curso no banco de dados
-        await updateDatabaseCourse(courseId, courseData);
-        await updateDatabaseCategory(categoryId, courseId, courseData);
     } catch (error) {
         console.error('Erro ao atualizar o curso:', error);
         throw error;
@@ -205,25 +193,7 @@ export async function UpdateConfigCourseData(data) {
 
 }
 
-
-
-
-//>>>>ALTERADO PARA API ROUTE<<<< função para buscar um curso pelo id
-export async function GetCourseById(Id) {
-    try {
-
-        let course = await fetch(`/api/gets?id=${Id}&type=courseId`);
-        let data = await course.json();
-        course = data[0];
-
-        return course;
-    } catch (error) {
-        console.error('Erro ao buscar o curso:', error);
-        throw error;
-    }
-};
-
-//função para atualizar a thumbnail do curso
+//função para atualizar a thumbnail do curso >>>>>>>>> NA CRIAÇÃO DO CURSO<<<<<<<<<<
 export async function UpdateThumbnail(courseId, imgUrlThumbnail) {
     try {
         await updateDoc(doc(db, 'Courses', courseId), {
@@ -259,7 +229,14 @@ export async function UpdateCover(courseId, imgUrlCover) {
 };
 
 
-//função para buscar cursos pela categoria
+
+
+
+
+
+
+
+//--- NÃO IMPLEMENTADO --- função para buscar cursos pela categoria
 export async function GetCoursesByCategory(categoryId) {
     const courses = [];
     try {
@@ -274,3 +251,20 @@ export async function GetCoursesByCategory(categoryId) {
         throw error;
     }
 }
+
+//--- NÃO IMPLEMENTADO --- função para buscar todos os cursos
+export async function GetCourses() {
+    const courses = [];
+    try {
+        const querySnapshot = await getDocs(collection(db, 'Courses'));
+
+        querySnapshot.forEach((doc) => {
+            courses.push(doc.data());
+        });
+        return courses;
+    }
+    catch (error) {
+        console.error('Erro ao buscar os cursos:', error);
+        throw error;
+    }
+};

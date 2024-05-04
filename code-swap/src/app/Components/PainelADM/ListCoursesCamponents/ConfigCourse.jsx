@@ -222,6 +222,7 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
 
     },
     refetchOnWindowFocus: false,
+
   })
 
 
@@ -248,8 +249,11 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
   //Função para atualizar a thumbnail do curso//
   const UpdateThumbnail = async (e) => {
     e.preventDefault();
+
+    ////////////ATUALIZAR A IMAGEM NO BANCO DE DADOS////////////////
     const urlThumbnail = await controller.services.manageImages.handleUpdateThumbnail(e, courseSelected.id, courseSelected.category, courseSelected.imgUrlThumbnail);
 
+    ////////////ATUALIZAR A IMAGEM NO CACHE////////////////
     // Invalidate a query ['Course-Selected'] após a atualização da imagem
     const courseData = queryClient.getQueryData(['Course-Selected']);
     queryClient.setQueryData(['Course-Selected'], { ...courseData, imgUrlThumbnail: urlThumbnail });
@@ -276,8 +280,6 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
 
 
 
-
-
   //Função para atualizar as informações do curso e status
   const handleConfigCourse = useMutation({
     mutationFn: async () => {
@@ -293,7 +295,10 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
         imgUrlCover: imgUrlCover
       };
 
+      ////////////ATUALIZAR AS INFORMAÇÕES DO CURSO NO BANCO DE DADOS////////////////
       await controller.manageCourses.UpdateConfigCourseData({ courseId: courseId, categoryId: courseSelected.category, courseData: courseData });
+      
+      ////////////ATUALIZAR AS INFORMAÇÕES DO CURSO NO CACHE////////////////
       //atualizar a query 'Course-Selected' alterando somente os dados alterados 
       queryClient.setQueryData(['Course-Selected'], { ...courseSelected, ...courseData });
 
@@ -306,7 +311,11 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
       coursesCached[courseIndex] = { ...coursesCached[courseIndex], ...courseData };
       queryClient.setQueryData(['Courses-Cached'], coursesCached);
 
-      alert('Curso atualizado com sucesso');
+      //Atualizar a query ["Category-Selected"]
+      const categorySelected = queryClient.getQueryData(["Category-Selected"]);
+      const categoryIndex = categorySelected.courses.findIndex(course => course.id === courseId);
+      categorySelected.courses[categoryIndex] = { ...categorySelected.courses[categoryIndex], ...courseData };
+      queryClient.setQueryData(["Category-Selected"], categorySelected);
     }
   });
 
