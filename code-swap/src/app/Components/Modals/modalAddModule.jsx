@@ -68,7 +68,6 @@ function AddModuleModal() {
           queryClient.setQueryData(["Modules-Course"], modulesCourse);
         },
         onSuccess: (data) => {
-          //queryClient.invalidateQueries(["Modules-Course"]);
         }
       });
 

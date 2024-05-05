@@ -6,6 +6,8 @@ import { db } from "../../firebase";
 //função para criar uma lesson dentro de um modulo de um curso
 
 export async function createLesson(moduleId, lessonData) {
+    console.log('lessonData:', lessonData);
+    console.log('moduleId:', moduleId);
     try {
 
         const docRef = await addDoc(collection(db, 'Lessons'), lessonData ,{merge: true})

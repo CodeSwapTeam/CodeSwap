@@ -20,27 +20,33 @@ function UpdateModuleModal({moduleSelected, setPanelUpdateModule}) {
             description: moduleDescription
         };
        await controller.manageModules.updateInfoModule(moduleSelected.courseId, moduleSelected.id, updatedModule);
+       
+       
        //ATUALIZAR ["Modules-Course"]
-       const modulesCourseSelected = await queryClient.getQueryData(["Modules-Course"]);
-         const moduleIndexCourse = modulesCourseSelected.findIndex(module => module.id === moduleSelected.id);
-            modulesCourseSelected[moduleIndexCourse] = {...moduleSelected, title: moduleName, description: moduleDescription};
-            queryClient.setQueryData(["Modules-Course"], modulesCourseSelected);
+const modulesCourseSelected = await queryClient.getQueryData(["Modules-Course"]);
+const moduleIndexCourse = modulesCourseSelected.findIndex(module => module.id === moduleSelected.id);
+const updatedModulesCourseSelected = [...modulesCourseSelected];
+updatedModulesCourseSelected[moduleIndexCourse] = {...moduleSelected, title: moduleName, description: moduleDescription};
+queryClient.setQueryData(["Modules-Course"], updatedModulesCourseSelected);
 
-        //atualizar a query ["Module-Selected"] com o novo modulo atualizado
-        const moduleUpdated = await queryClient.getQueryData(['Module-Selected']);
-        queryClient.setQueryData(['Module-Selected'], {...moduleUpdated, title: moduleName, description: moduleDescription});
+//atualizar a query ["Module-Selected"] com o novo modulo atualizado
+const moduleUpdated = await queryClient.getQueryData(['Module-Selected']);
+queryClient.setQueryData(['Module-Selected'], {...moduleUpdated, title: moduleName, description: moduleDescription});
 
-        const courseSelected = await queryClient.getQueryData(['Course-Selected']);
-        const moduleIndex = courseSelected.modules.findIndex(module => module.id === moduleSelected.id);
-        courseSelected.modules[moduleIndex] = {...moduleSelected, title: moduleName, description: moduleDescription};
+const courseSelected = await queryClient.getQueryData(['Course-Selected']);
+const moduleIndex = courseSelected.modules.findIndex(module => module.id === moduleSelected.id);
+const updatedCourseSelected = {...courseSelected};
+updatedCourseSelected.modules = [...courseSelected.modules];
+updatedCourseSelected.modules[moduleIndex] = {...moduleSelected, title: moduleName, description: moduleDescription};
 
-        //Atualizar o  modulos em ["Modules-Cached"] com o novo modulo atualizado
-        const modulesCached = await queryClient.getQueryData(["Modules-Cached"]);
-        //procurar o modulo no cache
-        const moduleIndexCached = modulesCached.findIndex(module => module.id === moduleSelected.id);
-        //atualizar o modulo no cache
-        modulesCached[moduleIndexCached] = {...moduleSelected, title: moduleName, description: moduleDescription};
-        queryClient.setQueryData(["Modules-Cached"], modulesCached);
+//Atualizar o  modulos em ["Modules-Cached"] com o novo modulo atualizado
+const modulesCached = await queryClient.getQueryData(["Modules-Cached"]);
+//procurar o modulo no cache
+const moduleIndexCached = modulesCached.findIndex(module => module.id === moduleSelected.id);
+//atualizar o modulo no cache
+const updatedModulesCached = [...modulesCached];
+updatedModulesCached[moduleIndexCached] = {...moduleSelected, title: moduleName, description: moduleDescription};
+queryClient.setQueryData(["Modules-Cached"], updatedModulesCached);
        //
 
         setModuleName('');

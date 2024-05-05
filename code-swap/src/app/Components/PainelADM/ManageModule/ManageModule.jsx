@@ -55,20 +55,42 @@ export default function ManageModule({ setSelectedPainel }) {
   const controller = Controller();
   const queryClient = useQueryClient();
 
+  const [panelUpdateModule, setPanelUpdateModule] = useState(false);
+
+  const [permissionModule, setPermissionModule] = useState(0);
+  //Codes do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar 0
+  const [codesModule, setCodesModule] = useState(0);
+  //XP do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar 0
+  const [xpModule, setXpModule] = useState(0);
+  //Dificuldade do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar 'iniciante'
+  const [difficultyModule, setDifficultyModule] = useState('iniciante');
+  //Observações do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar ''
+  const [moduleObservations, setModuleObservations] = useState('');
+
 
   const { data: moduleSelected, isLoading } = useQuery({
     queryKey: ['Module-Selected'],
     queryFn: async () => {
       const moduleSelected = await queryClient.getQueryData(['Module-Selected']);
-      return moduleSelected || {}; // retorna um objeto vazio se moduleSelected for undefined
+      const module = moduleSelected[0] || {}; // retorna um objeto vazio se moduleSelected for undefined
+      setPermissionModule(module.permission);
+      setXpModule(module.experience);
+      setCodesModule(module.codes);
+      setDifficultyModule(module.difficulty);
+      setModuleObservations(module.observations);
+
+      return module || {}; // retorna um objeto vazio se moduleSelected for undefined
     }
   });
 
   const {data : lessonsModule} = useQuery({
     queryKey: ['Lessons-Module'],
     queryFn: async () => {
-      const Lessons = await controller.manageModules.GetLessonsModule(moduleSelected.id);
-      return Lessons || {}; // retorna um objeto vazio se moduleSelected for undefined
+      if(moduleSelected){
+        console.log(moduleSelected);
+        const Lessons = await controller.manageModules.GetLessonsModule(moduleSelected[0].id);
+        return Lessons || {}; // retorna um objeto vazio se moduleSelected for undefined
+      }
     },
     staleTime: 1000 * 60 * 5 // 5 minutos
   });
@@ -85,17 +107,7 @@ export default function ManageModule({ setSelectedPainel }) {
 
   //if(moduleSelected) console.log(moduleSelected);
 
-  const [panelUpdateModule, setPanelUpdateModule] = useState(false);
-
-  const [permissionModule, setPermissionModule] = useState(moduleSelected.permission);
-  //Codes do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar 0
-  const [codesModule, setCodesModule] = useState(moduleSelected.codes || 0);
-  //XP do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar 0
-  const [xpModule, setXpModule] = useState(moduleSelected.xp || 0);
-  //Dificuldade do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar 'iniciante'
-  const [difficultyModule, setDifficultyModule] = useState(moduleSelected.difficulty || 'iniciante');
-  //Observações do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar ''
-  const [moduleObservations, setModuleObservations] = useState(moduleSelected.observations || '');
+  
 
 
   const handleSelectChange = (event) => {
@@ -133,9 +145,13 @@ export default function ManageModule({ setSelectedPainel }) {
     const modulesCached = await queryClient.getQueryData(["Modules-Cached"]);
     //procurar o modulo no cache
     const moduleIndexCached = modulesCached.findIndex(module => module.id === moduleSelected.id);
-    //atualizar o modulo no cache
-    modulesCached[moduleIndexCached] = { ...moduleSelected, permission: permissionModule, xp: xpModule, codes: codesModule, difficulty: difficultyModule, observations: moduleObservations };
-    queryClient.setQueryData(["Modules-Cached"], modulesCached);
+    //caso o modulo não esteja no cache, adicionar, caso esteja, atualizar
+    if (moduleIndexCached === -1) {
+      queryClient.setQueryData(["Modules-Cached"], [...modulesCached, { ...moduleSelected, permission: permissionModule, xp: xpModule, codes: codesModule, difficulty: difficultyModule, observations: moduleObservations }]);
+    } else {
+      modulesCached[moduleIndexCached] = { ...moduleSelected, permission: permissionModule, xp: xpModule, codes: codesModule, difficulty: difficultyModule, observations: moduleObservations };
+      queryClient.setQueryData(["Modules-Cached"], modulesCached);
+    }
     //
   };
 
@@ -179,7 +195,7 @@ export default function ManageModule({ setSelectedPainel }) {
               width: '40%',
               boxShadow: '0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 5px #00ff00, 0 0 5px #00ff00'
             }}>
-              <label style={{  display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start', marginTop: '5px', width: 'auto', }}>Permissão do Módulo:<input type="number" style={{ width: '100px', color: "black" }} value={permissionModule} onChange={(e) => setPermissionModule(e.target.value)} /></label>
+              <label style={{  display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start', marginTop: '5px', width: 'auto' }}>Permissão do Módulo:<input type="number" style={{ width: '100px', color: "black" }} value={permissionModule} onChange={(e) => setPermissionModule(e.target.value)} /></label>
               <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start', marginTop: '5px', width: 'auto', }}>XP do Módulo:<input type="number" style={{ width: '100px', color: "black" }} value={xpModule} onChange={(e) => setXpModule(e.target.value)} /></label>
               <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start', marginTop: '5px', width: 'auto', }}>Codes do módulo:<input type="number" style={{ width: '100px', color: "black" }} value={codesModule} onChange={(e) => setCodesModule(e.target.value)} /></label>
               
@@ -200,7 +216,7 @@ export default function ManageModule({ setSelectedPainel }) {
               <h2>Aulas</h2>
 
 
-              {lessonsModule && lessonsModule.length > 0 ? (
+              {lessonsModule?.length > 0 ? (
                 lessonsModule.map((lesson, index) => (
                   <LessonContainer key={index} >
                     <h2 style={{ font: 'bold', color: '#07ff07' }}>{lesson.nameLesson}</h2>

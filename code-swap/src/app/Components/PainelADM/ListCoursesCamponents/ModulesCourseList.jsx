@@ -171,7 +171,7 @@ export default function ModulesCourseList({ setSelectedPainel }) {
         queryClient.setQueryData(['Modules-Cached'], modulesCached);
     }
 
-    // Setar o módulo selecionado no estado local
+    // Setar o módulo selecionado no estado localp
     queryClient.setQueryData(['Module-Selected'], module);
 
     // Atualizar o painel selecionado
@@ -184,7 +184,7 @@ export default function ModulesCourseList({ setSelectedPainel }) {
       <>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <button style={{ backgroundColor: 'blue', padding: '5px', borderRadius: '5px', alignSelf: 'flex-start' }} onClick={() => { setSelectedPainel('CourseDescription') }} >Voltar </button>
-          <h1 style={{ fontSize: '1.5rem' }}>{courseSelected.title} </h1>
+          <h1 style={{ fontSize: '1.5rem' }}>{courseSelected?.title} </h1>
           <div></div>
         </div>
         <ModulesList>

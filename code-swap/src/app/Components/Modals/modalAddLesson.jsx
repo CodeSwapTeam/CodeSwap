@@ -25,14 +25,14 @@ function AddLessonModal() {
         //adicionar em ['Module-Selected'] dentro de Lessons a nova lição
         const moduleSelected = {...queryClient.getQueryData(['Module-Selected'])};
         
-        const lessonID =  await controller.manageLessons.CreateLesson(moduleSelected.id, lessonData);
+        const lessonID =  await controller.manageLessons.CreateLesson(moduleSelected[0].id, lessonData);
         //atualizar a ["Lessons-Module"]
         const lessons = [...queryClient.getQueryData(["Lessons-Module"])];
         lessonData.id = lessonID;
         lessons.push(lessonData);
         queryClient.setQueryData(["Lessons-Module"], lessons);
 
-        moduleSelected.lessons = [...moduleSelected.lessons, lessonData];
+        moduleSelected[0].lessons = [...moduleSelected[0].lessons, lessonData];
 
         queryClient.setQueryData(['Module-Selected'], moduleSelected);
 

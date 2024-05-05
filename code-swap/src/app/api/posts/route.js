@@ -124,6 +124,63 @@ export async function POST(NextRequest) {
                 
             }
         }
+        case 'CreateModule': {//Criar um módulo
+            try {
+                const moduleData = {
+                    title: data.title,
+                    description: data.description,
+                    courseId: data.courseId,
+                    experience: 0,
+                    codes: 0,
+                    difficulty: '',
+                    moduleObservations: '',
+                    id: '',
+                    permission: data.permission,
+                    lessons: []
+                };
+                const docRef = await addDoc(collection(db, 'Modules'), moduleData, { merge: true });
+                //setar o id do modulo com o id do documento
+                await updateDoc(doc(db, 'Modules', docRef.id), {
+                    id: docRef.id
+                });
+                //adicionar o modulo no array de modulos do curso
+                await updateDoc(doc(db, 'Courses', data.courseId), {
+                    modules: arrayUnion({ id: docRef.id, title: moduleData.title, description: moduleData.description })
+                });
+                return NextResponse.json({ message: 'Módulo criado com sucesso!', moduleId: docRef.id});
+            } catch (error) {
+                return NextResponse.error('Erro ao criar o módulo:', error);
+            }
+
+        }
+        case 'updateInfoModule': {//Atualizar informações do módulo
+            try {
+                const moduleData = {
+                    title: data.title,
+                    description: data.description
+                }
+                await updateDoc(doc(db, 'Modules', data.moduleId), moduleData);
+
+                // Atualizar informações do módulo no curso
+                const courseDoc = doc(db, 'Courses', data.courseId);
+                const courseSnapshot = await getDoc(courseDoc);
+                if (courseSnapshot.exists()) {
+                    const courseData = courseSnapshot.data();
+                    const moduleIndex = courseData.modules.findIndex(module => module.id === data.moduleId);
+
+                    // Faça uma cópia do módulo, atualize os campos necessários e substitua o módulo antigo
+                    const updatedModule = { ...courseData.modules[moduleIndex], title: moduleData.title, description: moduleData.description};
+                    courseData.modules[moduleIndex] = updatedModule;
+
+                    // Atualize o documento com o novo array de módulos
+                    await updateDoc(courseDoc, { modules: courseData.modules });
+                }
+
+                return NextResponse.json({ message: 'Informações do módulo atualizadas com sucesso!' });
+            } catch (error) {
+                return NextResponse.error('Erro ao atualizar informações do módulo:', error);
+            }
+        }
         
         default:
             return NextResponse.error('Tipo de busca inválido', 500);

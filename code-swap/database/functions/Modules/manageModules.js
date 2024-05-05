@@ -3,32 +3,38 @@ import { db } from "../../firebase";
 
 //import { ContextDataCache } from "@/app/contexts/ContextDataCache";
 
-//função para criar um modulo dentro de um curso
-
+////>>>>ALTERADO PARA API ROUTER<<<<função para criar um modulo dentro de um curso
 export async function createModule(courseId, newModule) {
     try {
+        ///////////////////////////////////////////////////////////
+        //>>>>ALTERADO PARA API ROUTER<<<<
+        //api router POST para criar um modulo no banco de dados
+        const moduleData = {
+            title: newModule.title,
+            description: newModule.description,
+            courseId: courseId,
+            id: '',
+            permission: newModule.permission,
+            lessons: []
+        };
 
-        
-        //console.log('courseId', courseId);
-        //console.log('newModule', newModule);
-
-        //////Criar o modulo no database/////////////////////////////////////
-
-        const docRef = await addDoc(collection(db, 'Modules'), newModule ,{merge: true})
-        const moduleRef = doc(db, 'Modules', docRef.id);
-
-        await updateDoc(moduleRef, {id: docRef.id});
-
-        //adicionar no database em Courses.Modules que é um array de objetos com o id do modulo, o titulo e a descrição
-        await updateDoc(doc(db, 'Courses', courseId), {
-        //adicionar o id do modulo no array de modulos do curso
-          modules: arrayUnion({ id: docRef.id, title: newModule.title, description: newModule.description })
+        const response = await fetch('/api/posts?type=CreateModule', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(moduleData)
         });
 
-        return docRef.id;
+        if (!response.ok) {
+            throw new Error('Erro ao criar o módulo');
+        }
 
+        const data = await response.json();
 
-        alert('Módulo criado com sucesso');
+        alert(data.message);
+
+        return data.moduleId;
 
     } catch (error) {
         console.error('Erro ao criar o módulo:', error);
@@ -36,75 +42,60 @@ export async function createModule(courseId, newModule) {
     }
 }
 
-//função para buscar todos os modulos de um curso
-export async function GetModules(courseId) {
-    const modules = [];
-    try {
-        const docRef = doc(db, 'Courses', courseId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-            const courseData = docSnap.data();
-            courseData.modules.forEach(module => {
-                modules.push(module);
-            });
-            //salvar os modulos no sessionStorage
-            sessionStorage.setItem('modules', JSON.stringify(modules));
-            return modules;
-        }
-    } catch (error) {
-        console.error('Erro ao buscar os módulos:', error);
-        throw error;
-    }
-};
 
-//função para buscar um modulo PELO ID
+
+////>>>>ALTERADO PARA API ROUTER<<<<função para buscar um modulo PELO ID
 export async function GetModuleById(moduleId) {
     try {
-        const docRef = doc(db, 'Modules', moduleId);
+        ///////////////////////////////////////////////////////////
+        //>>>>ALTERADO PARA API ROUTER<<<<
+        //api router GET para buscar um modulo pelo id
+        const response = await fetch(`/api/gets?type=moduleID&id=${moduleId}`);
+        const data = await response.json();
+        return data;
+
+
+        /* const docRef = doc(db, 'Modules', moduleId);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
             return docSnap.data();
-        }
+        } */
     } catch (error) {
         console.error('Erro ao buscar o módulo:', error);
         throw error;
     }
 };
 
-//função para buscar os modulos do curso no cache local
-export async function GetModulesLocal() {
 
-    //const { setModules } = ContextDataCache();
-
-    const modules = JSON.parse(sessionStorage.getItem('modules'));
-    if (modules) {
-       // setModules(modules);
-        return modules;
-    }
-}
-
-//função para atualizar um modulo dentro de um curso
+//>>>>ALTERADO PARA API ROUTER<<<<função para atualizar um modulo dentro de um curso
 export async function updateInfoModule(courseId, moduleId, newInfoModule) {
 
     try {
-        // atualizar o title e a descrição do modulo no database
-        await updateDoc(doc(db, 'Modules', moduleId), newInfoModule);
+        //////////////////////////////////////////////////////////////////////
+        //>>>>ALTERADO PARA API ROUTER<<<<
+        //api router POST para atualizar um modulo no banco de dados
+        const moduleData = {
+            courseId: courseId,
+            moduleId: moduleId,
+            title: newInfoModule.title,
+            description: newInfoModule.description
+        };
 
-        // Recupere o documento atual
-        const courseDoc = doc(db, 'Courses', courseId);
-        const courseSnapshot = await getDoc(courseDoc);
-        const courseData = courseSnapshot.data();
+        const response = await fetch(`/api/posts?type=updateInfoModule`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(moduleData)
+        });
 
-        const moduleIndex = courseData.modules.findIndex(module => module.id === moduleId);
+        if (!response.ok) {
+            throw new Error('Erro ao atualizar o módulo');
+        }
 
-        // Faça uma cópia do módulo, atualize os campos necessários e substitua o módulo antigo
-        const updatedModule = { ...courseData.modules[moduleIndex], title: newInfoModule.title, description: newInfoModule.description };
-        courseData.modules[moduleIndex] = updatedModule;
+        const data = await response.json();
 
-        // Atualize o documento com o novo array de módulos
-        await updateDoc(courseDoc, { modules: courseData.modules });
-
-
+        alert(data.message);
 
     } catch (error) {
         console.error('Erro ao atualizar o módulo:', error);
@@ -161,6 +152,34 @@ export async function GetLessonsModule(moduleId) {
         }
     } catch (error) {
         console.error('Erro ao buscar as aulas:', error);
+        throw error;
+    }
+};
+
+
+
+
+
+
+
+
+//>>>NÃO UTILIZADO AINDA<<<<<função para buscar todos os modulos de um curso
+export async function GetModules(courseId) {
+    const modules = [];
+    try {
+        const docRef = doc(db, 'Courses', courseId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const courseData = docSnap.data();
+            courseData.modules.forEach(module => {
+                modules.push(module);
+            });
+            //salvar os modulos no sessionStorage
+            sessionStorage.setItem('modules', JSON.stringify(modules));
+            return modules;
+        }
+    } catch (error) {
+        console.error('Erro ao buscar os módulos:', error);
         throw error;
     }
 };

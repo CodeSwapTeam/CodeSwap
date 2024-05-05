@@ -30,10 +30,14 @@ export async function GET(request){
             const coursesLocal = [docSnap.data()];
             return NextResponse.json(coursesLocal);
         }
-        case 'GetCoursesByCategory': {//Buscar cursos por categoria
-            const querySnapshot = await getDocs(collection(db, 'Courses'), where('category', '==', categoryId));
+        case 'moduleID': { //Buscar um módulo pelo id
+            const docRef = doc(db, 'Modules', id);
+            const docSnap = await getDoc(docRef);
 
-
+            if (!docSnap.exists()) throw new Error('Módulo não encontrado');
+            
+            const modulesLocal = [docSnap.data()];
+            return NextResponse.json(modulesLocal);
         }
         default:
             return NextResponse.error('Tipo de busca inválido', 400);

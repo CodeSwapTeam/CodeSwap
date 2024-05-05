@@ -4,9 +4,9 @@ import { CreateUser, GetUserById, GetUserDataBase, GetUserLocalData, RemoveUser,
 //import { QueryRequests } from "@/app/services/QueryRequests";
 
 import { getUserCache, removeUserCache, saveUserCache } from "@/app/services/saveUserCache";
-import { CreateCategory, DeleteCategory, GetAllCategories, GetCategories, GetCategoriesLocal, SaveCategoriesLocal, SaveImgUrlThumbnail, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
+import { CreateCategory, DeleteCategory, GetAllCategories, SaveImgUrlThumbnail, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
 import { CreateCourse, DeleteCourse, GetCourseById, GetCoursesByCategory, UpdateConfigCourseData, UpdateCover, UpdateInfoCourse,  UpdateThumbnail } from "../../database/functions/Courses/manageCourses";
-import { GetLessonsModule, GetModuleById, GetModules, GetModulesLocal, createModule, deleteModule, updateInfoModule, updateModuleSettings } from "../../database/functions/Modules/manageModules";
+import { GetLessonsModule, GetModuleById, GetModules, createModule, deleteModule, updateInfoModule, updateModuleSettings } from "../../database/functions/Modules/manageModules";
 import { handleUpdateThumbnail } from "@/app/services/UpdateThumbnail";
 import { handleUpdateCover } from "@/app/services/UpdateCover";
 import { createLesson, deleteLesson } from "../../database/functions/Lessons/manageLessons";
@@ -43,8 +43,6 @@ export default function Controller(){
             GetModules: GetModules,
             DeleteModule: deleteModule,
             updateInfoModule: updateInfoModule,
-
-            GetModulesLocal: GetModulesLocal,
             GetModuleById: GetModuleById,
             GetLessonsModule: GetLessonsModule,
             UpdateModuleSettings: updateModuleSettings
