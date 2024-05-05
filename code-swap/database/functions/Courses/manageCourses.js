@@ -97,7 +97,8 @@ export async function GetCourseById(Id) {
 //>>>>ALTERADO PARA API ROUTER<<<< função para deletar um curso
 export async function DeleteCourse(docId) {
 
-    const controller = Controller();
+    console.log('relete course:', docId);
+
     try {
 
         const response = await fetch(`/api/delete?id=${docId}&type=course`, {

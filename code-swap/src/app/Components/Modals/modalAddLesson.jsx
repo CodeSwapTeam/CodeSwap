@@ -19,26 +19,46 @@ function AddLessonModal() {
         const lessonData = {
             nameLesson: lessonName,
             description: lessonDescription,
-            id: ''
+            id: '',
+            moduleId: ''
         };
 
         //adicionar em ['Module-Selected'] dentro de Lessons a nova lição
         const moduleSelected = {...queryClient.getQueryData(['Module-Selected'])};
-        
-        const lessonID =  await controller.manageLessons.CreateLesson(moduleSelected[0].id, lessonData);
-        //atualizar a ["Lessons-Module"]
-        const lessons = [...queryClient.getQueryData(["Lessons-Module"])];
+        lessonData.moduleId = moduleSelected.id;
+        const lessonID =  await controller.manageLessons.CreateLesson(moduleSelected.id, lessonData);
         lessonData.id = lessonID;
+        
+        //Atualizar a ["Module-Selected"]
+        const moduleSelectedCached = {...queryClient.getQueryData(['Module-Selected'])};
+        //Fazer copia do objeto moduleSelected
+        const module = {...moduleSelectedCached};
+        const lessonsModule = module.lessons;
+        lessonsModule.push(lessonData);
+        queryClient.setQueryData(['Module-Selected'], module);
+
+
+        //atualizar a ["Lessons-Module"]
+        const lessonsCached = [...queryClient.getQueryData(["Lessons-Module"])] || [];
+        //Fazer copia do array de lessons
+        const lessons = [...lessonsCached];
+        //verificar se o array de lessons está vazio
+        if (lessons.length === 0) {
+            //se estiver vazio, adicionar a primeira lesson
+            lessons.push(lessonData);
+            queryClient.setQueryData(["Lessons-Module"], lessons);
+            setLessonName('');
+            setLessonDescription('');
+            handleClose();
+            return;
+        }
+        //se não estiver vazio, adicionar a nova lesson no array
         lessons.push(lessonData);
         queryClient.setQueryData(["Lessons-Module"], lessons);
-
-        moduleSelected[0].lessons = [...moduleSelected[0].lessons, lessonData];
-
-        queryClient.setQueryData(['Module-Selected'], moduleSelected);
-
         setLessonName('');
         setLessonDescription('');
         handleClose();
+
 
         
     };

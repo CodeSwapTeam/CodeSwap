@@ -181,13 +181,37 @@ export async function POST(NextRequest) {
                 return NextResponse.error('Erro ao atualizar informações do módulo:', error);
             }
         }
-        case 'UpdateModuleConfigs': {//Atualizar configurações do módulo
-            try {
-                // Atualizar configurações do módulo
-                await updateDoc(doc(db, 'Modules', data.moduleId), data.moduleData);
+        case 'updateModuleConfigs': {//Atualizar configurações do módulo
+            try { 
+                await updateDoc(doc(db, 'Modules', data.moduleId), data.settings);
                 return NextResponse.json({ message: 'Configurações do módulo atualizadas com sucesso!' });
             } catch (error) {
                 return NextResponse.error('Erro ao atualizar configurações do módulo:', error);
+            }
+        }
+        case 'CreateLesson': {//Criar uma lição
+            try {
+                const lessonData = {
+                    nameLesson: data.lessonData.nameLesson,
+                    description: data.lessonData.description,
+                    id: '',
+                    moduleId: data.lessonData.moduleId
+                };
+                const docRef = await addDoc(collection(db, 'Lessons'), lessonData, { merge: true });
+                //setar o id da lição com o id do documento
+                await updateDoc(doc(db, 'Lessons', docRef.id), {
+                    id: docRef.id
+                });
+               
+                //adicionar no database em Courses.Modules que é um array de objetos com o id do modulo, o titulo e a descrição
+                
+                await updateDoc(doc(db, 'Modules', data.moduleId), {
+                    //adicionar o id do modulo no array de modulos do curso
+                    lessons: arrayUnion({ id: docRef.id, nameLesson: lessonData.nameLesson, description: lessonData.description, moduleId: data.moduleId})
+                });
+                return NextResponse.json({ message: 'Lição criada com sucesso!', lessonId: docRef.id});
+            } catch (error) {
+                return NextResponse.error('Erro ao criar a lição:', error);
             }
         }
         default:

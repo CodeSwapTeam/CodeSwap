@@ -39,6 +39,19 @@ export async function GET(request){
             const modulesLocal = [docSnap.data()];
             return NextResponse.json(modulesLocal);
         }
+        case 'getLessonsModuleId': { //Buscar todas as lições de um módulo pelo id
+            const lessons = [];
+            const docRef = doc(db, 'Modules', id);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const moduleData = docSnap.data();
+                moduleData.lessons.forEach(lesson => {
+                    lessons.push(lesson);
+                });
+
+                return NextResponse.json(lessons);
+            }
+        }
         default:
             return NextResponse.error('Tipo de busca inválido', 400);
     }   

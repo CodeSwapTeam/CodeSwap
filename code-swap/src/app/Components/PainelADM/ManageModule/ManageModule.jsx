@@ -80,6 +80,10 @@ export default function ManageModule({ setSelectedPainel }) {
       setDifficultyModule(module.difficulty);
       setModuleObservations(module.moduleObservations);
 
+      const Lessons = await controller.manageModules.GetLessonsModule(module.id);
+      queryClient.setQueryData(['Lessons-Module'], Lessons);
+
+
       return module || {}; // retorna um objeto vazio se moduleSelected for undefined
     }
   });
@@ -87,10 +91,9 @@ export default function ManageModule({ setSelectedPainel }) {
   const {data : lessonsModule} = useQuery({
     queryKey: ['Lessons-Module'],
     queryFn: async () => {
-      if(moduleSelected){
-        const Lessons = await controller.manageModules.GetLessonsModule(moduleSelected[0].id);
-        return Lessons || {}; // retorna um objeto vazio se moduleSelected for undefined
-      }
+      const lessons = queryClient.getQueryData(['Lessons-Module']);
+      return lessons || [];
+
     },
     staleTime: 1000 * 60 * 5 // 5 minutos
   });
@@ -104,10 +107,6 @@ export default function ManageModule({ setSelectedPainel }) {
   if (isLoading) {
     return <div>Carregando...</div>; // ou qualquer outro componente de carregamento
   }
-
-  //if(moduleSelected) console.log(moduleSelected);
-
-  
 
 
   const handleSelectChange = (event) => {
@@ -162,6 +161,33 @@ export default function ManageModule({ setSelectedPainel }) {
       lessonsModule.splice(lessonIndex, 1);
       queryClient.setQueryData(['Lessons-Module'], lessonsModule);
     }
+
+    //Deletar do ["Module-Selected"]
+    let moduleSelectedCached = await queryClient.getQueryData(['Module-Selected']);
+    //copiar o objeto para não alterar o original
+    const moduleSelectedObj = { ...moduleSelectedCached };
+    const lessons = moduleSelectedObj.lessons;
+    const lessonIndexModule = lessons.findIndex(lesson => lesson.id === lessonToDelete.id);
+    if (lessonIndexModule !== -1) {
+      lessons.splice(lessonIndexModule, 1);
+      queryClient.setQueryData(['Module-Selected'], moduleSelected);
+    }
+    
+    //deletar de ["Modules-Cached"]
+    let modulesCached = await queryClient.getQueryData(["Modules-Cached"]);
+    //copiar o objeto para não alterar o original
+    modulesCached = [...modulesCached];
+    const moduleCache = modulesCached.find(module => module.id === moduleSelected.id);
+    if (moduleCache) {
+      const lessonsCache = moduleCache.lessons;
+      const lessonIndexCache = lessonsCache.findIndex(lesson => lesson.id === lessonToDelete.id);
+      if (lessonIndexCache !== -1) {
+        lessonsCache.splice(lessonIndexCache, 1);
+        queryClient.setQueryData(["Modules-Cached"], modulesCached);
+      }
+    }
+
+
   };
 
 

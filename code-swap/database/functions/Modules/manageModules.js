@@ -1,7 +1,7 @@
 import { doc, getDoc, setDoc, updateDoc, collection, addDoc, arrayUnion, deleteDoc, arrayRemove } from "firebase/firestore";
 import { db } from "../../firebase";
 
-//import { ContextDataCache } from "@/app/contexts/ContextDataCache";
+
 
 ////>>>>ALTERADO PARA API ROUTER<<<<função para criar um modulo dentro de um curso
 export async function createModule(courseId, newModule) {
@@ -41,7 +41,6 @@ export async function createModule(courseId, newModule) {
         throw error; // Lança o erro para tratamento em um nível superior
     }
 }
-
 
 
 ////>>>>ALTERADO PARA API ROUTER<<<<função para buscar um modulo PELO ID
@@ -103,13 +102,27 @@ export async function updateInfoModule(courseId, moduleId, newInfoModule) {
     }
 }
 
-//Função para atualizar as configuracoes do modulo
+//>>>>ALTERADO PARA API ROUTER<<<<Função para atualizar as configuracoes do modulo
 export async function UpdateModuleConfigs(moduleId, settings) {
     try {
-        // atualizar as configurações do modulo no database
-        await updateDoc(doc(db, 'Modules', moduleId), settings);
+        //////////////////////////////////////////////////////////////////////
+        //>>>>ALTERADO PARA API ROUTER<<<<
+        //api router POST para atualizar as configurações do modulo
+        const response = await fetch(`/api/posts?type=updateModuleConfigs`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ moduleId, settings })
+        });
 
-        alert('Configurações do módulo atualizadas com sucesso');
+        if (!response.ok) {
+            throw new Error('Erro ao atualizar as configurações do módulo');
+        }
+
+        const data = await response.json();
+
+        alert(data.message);
 
     } catch (error) {
         console.error('Erro ao atualizar as configurações do módulo:', error);
@@ -118,18 +131,29 @@ export async function UpdateModuleConfigs(moduleId, settings) {
 }
 
 
-//função para deletar um modulo de um curso com base no indice do array modules no curso
+//>>>>ALTERADO PARA API ROUTER<<<<função para deletar um modulo de um curso com base no indice do array modules no curso
 export const deleteModule = async (courseSelectedId, moduleSelected) => {
     
     try {
-
-        //deletar o modulo do curso no database
-        await deleteDoc(doc(db, 'Modules', moduleSelected.id));
-
-        //deletar o modulo do array de modulos do curso
-        await updateDoc(doc(db, 'Courses', courseSelectedId), {
-            modules: arrayRemove(moduleSelected)
+        ///////////////////////////////////////////////////////////
+        //>>>>ALTERADO PARA API ROUTER<<<<
+        //api router DELTE para deletar um modulo no banco de dados
+        const response = await fetch(`/api/delete?type=deleteModule`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ courseSelectedId, moduleSelected })
         });
+
+        if (!response.ok) {
+            throw new Error('Erro ao deletar o módulo');
+        }
+
+        const data = await response.json();
+
+        alert(data.message);
+        
 
     } catch (error) {
         console.error('Erro ao deletar o módulo:', error);
@@ -137,19 +161,18 @@ export const deleteModule = async (courseSelectedId, moduleSelected) => {
     }
 };
 
-//função para buscar as aulas do modulo
+////>>>>ALTERADO PARA API ROUTER<<<<função para buscar as aulas do modulo
 export async function GetLessonsModule(moduleId) {
-    const lessons = [];
+
     try {
-        const docRef = doc(db, 'Modules', moduleId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-            const moduleData = docSnap.data();
-            moduleData.lessons.forEach(lesson => {
-                lessons.push(lesson);
-            });
-            return lessons;
-        }
+        //////////////////////////////////////////////////////////////////////
+        //>>>>ALTERADO PARA API ROUTER<<<<
+        //api router GET para buscar todas as aulas de um modulo
+        const response = await fetch(`/api/gets?type=getLessonsModuleId&id=${moduleId}`);
+        const data = await response.json();
+
+        return data;
+
     } catch (error) {
         console.error('Erro ao buscar as aulas:', error);
         throw error;
