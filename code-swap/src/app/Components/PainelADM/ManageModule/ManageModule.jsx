@@ -63,7 +63,7 @@ export default function ManageModule({ setSelectedPainel }) {
   //XP do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar 0
   const [xpModule, setXpModule] = useState(0);
   //Dificuldade do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar 'iniciante'
-  const [difficultyModule, setDifficultyModule] = useState('iniciante');
+  const [difficultyModule, setDifficultyModule] = useState('');
   //Observações do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar ''
   const [moduleObservations, setModuleObservations] = useState('');
 
@@ -72,12 +72,13 @@ export default function ManageModule({ setSelectedPainel }) {
     queryKey: ['Module-Selected'],
     queryFn: async () => {
       const moduleSelected = await queryClient.getQueryData(['Module-Selected']);
-      const module = moduleSelected[0] || {}; // retorna um objeto vazio se moduleSelected for undefined
+      const module = moduleSelected || {}; // retorna um objeto vazio se moduleSelected for undefined
+      
       setPermissionModule(module.permission);
       setXpModule(module.experience);
       setCodesModule(module.codes);
       setDifficultyModule(module.difficulty);
-      setModuleObservations(module.observations);
+      setModuleObservations(module.moduleObservations);
 
       return module || {}; // retorna um objeto vazio se moduleSelected for undefined
     }
@@ -87,7 +88,6 @@ export default function ManageModule({ setSelectedPainel }) {
     queryKey: ['Lessons-Module'],
     queryFn: async () => {
       if(moduleSelected){
-        console.log(moduleSelected);
         const Lessons = await controller.manageModules.GetLessonsModule(moduleSelected[0].id);
         return Lessons || {}; // retorna um objeto vazio se moduleSelected for undefined
       }
@@ -119,50 +119,45 @@ export default function ManageModule({ setSelectedPainel }) {
   const handleUpdateModule = async () => {
     const updatedModule = {
       permission: permissionModule,
-      xp: xpModule,
+      experience: xpModule,
       codes: codesModule,
       difficulty: difficultyModule,
-      observations: moduleObservations
+      moduleObservations: moduleObservations
     };
 
-    await controller.manageModules.UpdateModuleSettings(moduleSelected.courseId, moduleSelected.id, updatedModule);
-
-    //ATUALIZAR ["Modules-Course"]
-    const modulesCourseSelected = await queryClient.getQueryData(["Modules-Course"]);
-    const moduleIndexCourse = modulesCourseSelected.findIndex(module => module.id === moduleSelected.id);
-    modulesCourseSelected[moduleIndexCourse] = { ...moduleSelected, permission: permissionModule, xp: xpModule, codes: codesModule, difficulty: difficultyModule, observations: moduleObservations };
-    queryClient.setQueryData(["Modules-Course"], modulesCourseSelected);
+    await controller.manageModules.UpdateModuleConfigs(moduleSelected.id, updatedModule);
 
     //atualizar a query ["Module-Selected"] com o novo modulo atualizado
-    const moduleUpdated = await queryClient.getQueryData(['Module-Selected']);
-    queryClient.setQueryData(['Module-Selected'], { ...moduleUpdated, permission: permissionModule, xp: xpModule, codes: codesModule, difficulty: difficultyModule, observations: moduleObservations });
-
-    const courseSelected = await queryClient.getQueryData(['Course-Selected']);
-    const moduleIndex = courseSelected.modules.findIndex(module => module.id === moduleSelected.id);
-    courseSelected.modules[moduleIndex] = { ...moduleSelected, permission: permissionModule, xp: xpModule, codes: codesModule, difficulty: difficultyModule, observations: moduleObservations };
+    let moduleUpdated = await queryClient.getQueryData(['Module-Selected']);
+    moduleUpdated = { ...moduleUpdated, ...updatedModule };
+    queryClient.setQueryData(['Module-Selected'], moduleUpdated);
 
     //Atualizar o  modulos em ["Modules-Cached"] com o novo modulo atualizado
-    const modulesCached = await queryClient.getQueryData(["Modules-Cached"]);
-    //procurar o modulo no cache
-    const moduleIndexCached = modulesCached.findIndex(module => module.id === moduleSelected.id);
-    //caso o modulo não esteja no cache, adicionar, caso esteja, atualizar
-    if (moduleIndexCached === -1) {
-      queryClient.setQueryData(["Modules-Cached"], [...modulesCached, { ...moduleSelected, permission: permissionModule, xp: xpModule, codes: codesModule, difficulty: difficultyModule, observations: moduleObservations }]);
-    } else {
-      modulesCached[moduleIndexCached] = { ...moduleSelected, permission: permissionModule, xp: xpModule, codes: codesModule, difficulty: difficultyModule, observations: moduleObservations };
-      queryClient.setQueryData(["Modules-Cached"], modulesCached);
+    let modulesCached = await queryClient.getQueryData(["Modules-Cached"]);
+
+    //procurar dentro  do array o objeto do modulo no cache que contenha o id do modulo selecionado
+    const moduleCache = modulesCached.find(module => module.id === moduleSelected.id);
+
+    //se o modulo estiver no cache, atualizar o modulo no cache
+    if (moduleCache) {
+      const modulesUpdated = modulesCached.map(module => {
+        if (module.id === moduleSelected.id) {
+          return { ...module, ...updatedModule };
+        }
+        return module;
+      });
+      queryClient.setQueryData(["Modules-Cached"], modulesUpdated);
     }
-    //
   };
 
   //Função apra deletar a aula
   const handleDeleteLesson = async (lessonToDelete) => {
     await controller.manageLessons.DeleteLesson(moduleSelected.id, lessonToDelete.id);
-  
+
     // Atualizar ["Lessons-Module"]
     const lessonsModule = [...queryClient.getQueryData(['Lessons-Module'])];
     const lessonIndex = lessonsModule.findIndex(lesson => lesson.id === lessonToDelete.id);
-    
+
     if (lessonIndex !== -1) {
       lessonsModule.splice(lessonIndex, 1);
       queryClient.setQueryData(['Lessons-Module'], lessonsModule);

@@ -104,7 +104,7 @@ export async function updateInfoModule(courseId, moduleId, newInfoModule) {
 }
 
 //Função para atualizar as configuracoes do modulo
-export async function updateModuleSettings(moduleId, settings) {
+export async function UpdateModuleConfigs(moduleId, settings) {
     try {
         // atualizar as configurações do modulo no database
         await updateDoc(doc(db, 'Modules', moduleId), settings);

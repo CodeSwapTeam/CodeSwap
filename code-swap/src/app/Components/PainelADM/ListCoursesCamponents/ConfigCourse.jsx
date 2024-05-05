@@ -206,6 +206,9 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
     queryFn: async () => {
       const course = queryClient.getQueryData(['Course-Selected']);
 
+      //Setar os modulos do curso em ["Modules-Course"]
+      queryClient.setQueryData(['Modules-Course'], course.modules);
+
       setImgUrlThumbnail(course.imgUrlThumbnail);
       setImgUrlCover(course.imgUrlCover);
       setDifficulty(course.difficulty);

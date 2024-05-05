@@ -139,16 +139,24 @@ export default function ModulesCourseList({ setSelectedPainel }) {
   const handleDeleteModule = useMutation({
     mutationFn: async (moduleToDelete) => {
       await controller.manageModules.DeleteModule(courseSelected.id, moduleToDelete);
-
+  
       // Criar uma cópia do array de módulos
       const modulesCourse = [...courseSelected.modules];
       // Remover o módulo do array de módulos
       const updatedModules = modulesCourse.filter(module => module.id !== moduleToDelete.id);
-
+  
       // Atualizar os módulos dentro do curso selecionado
       const updatedCourse = { ...courseSelected, modules: updatedModules };
       queryClient.setQueryData(["Course-Selected"], updatedCourse);
       queryClient.invalidateQueries(["Course-Selected"]);
+  
+      //Atualizar o cache ["Courses-Cached"] dentro do curso selecionado com os modulos
+      const coursesCached = queryClient.getQueryData(["Courses-Cached"]) || [];
+      const updatedCoursesCached = coursesCached.map(course => 
+        course.id === courseSelected.id ? { ...course, modules: updatedModules } : course
+      );
+      queryClient.setQueryData(["Courses-Cached"], updatedCoursesCached);
+      queryClient.invalidateQueries(["Courses-Cached"]);
     }
   });
 
@@ -159,23 +167,26 @@ export default function ModulesCourseList({ setSelectedPainel }) {
 
     // Tentar encontrar o módulo no cache
     let module = modulesCached.find(module => module.id === moduleId);
-
+    if(module){
+      // Setar o módulo selecionado no estado local
+      queryClient.setQueryData(['Module-Selected'], module);
+  
+      // Atualizar o painel selecionado
+      setSelectedPainel('ModuleDescription');
+    }
     // Se o módulo não estiver no cache, buscar o módulo na API
     if (!module) {
         module = await controller.manageModules.GetModuleById(moduleId);
-
         // Adicionar o novo módulo ao array de módulos cacheados
-        modulesCached = [...modulesCached, module];
+        modulesCached = [...modulesCached, module[0]];
 
         // Atualizar o cache com o novo array de módulos
         queryClient.setQueryData(['Modules-Cached'], modulesCached);
+        queryClient.setQueryData(['Module-Selected'], module[0]);
+        // Atualizar o painel selecionado
+      setSelectedPainel('ModuleDescription');
     }
 
-    // Setar o módulo selecionado no estado localp
-    queryClient.setQueryData(['Module-Selected'], module);
-
-    // Atualizar o painel selecionado
-    setSelectedPainel('ModuleDescription');
 };
 
   return (

@@ -59,6 +59,19 @@ function AddModuleModal() {
           const modulesCourse = [...courseSelected.modules];
           // Adicionar o novo módulo no array de módulos
           modulesCourse.push(newModule);
+
+          //Atualizar o cache ["Courses-Cached"] dentro do curso selecionado com os modulos
+           //égar o cursos em cache
+            const coursesCached = queryClient.getQueryData(["Courses-Cached"]);
+            //criar uma copia do array de cursos
+            const courses = [...coursesCached];
+            //pegar o indice do curso selecionado
+            const index = courses.findIndex(course => course.id === courseSelected.id);
+            //atualizar o array de modulos do curso selecionado
+            courses[index].modules = modulesCourse;
+            //atualizar o cache com os cursos atualizados
+            queryClient.setQueryData(["Courses-Cached"], courses);
+            
       
           // Atualizar os módulos dentro do curso selecionado
           const updatedCourse = { ...courseSelected, modules: modulesCourse };

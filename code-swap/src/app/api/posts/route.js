@@ -181,7 +181,15 @@ export async function POST(NextRequest) {
                 return NextResponse.error('Erro ao atualizar informações do módulo:', error);
             }
         }
-        
+        case 'UpdateModuleConfigs': {//Atualizar configurações do módulo
+            try {
+                // Atualizar configurações do módulo
+                await updateDoc(doc(db, 'Modules', data.moduleId), data.moduleData);
+                return NextResponse.json({ message: 'Configurações do módulo atualizadas com sucesso!' });
+            } catch (error) {
+                return NextResponse.error('Erro ao atualizar configurações do módulo:', error);
+            }
+        }
         default:
             return NextResponse.error('Tipo de busca inválido', 500);
     }
