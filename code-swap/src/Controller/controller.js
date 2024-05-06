@@ -4,9 +4,12 @@ import { CreateUser, GetUserById, GetUserDataBase, GetUserLocalData, RemoveUser,
 //import { QueryRequests } from "@/app/services/QueryRequests";
 
 import { getUserCache, removeUserCache, saveUserCache } from "@/app/services/saveUserCache";
-import { CreateCategory, DeleteCategory, GetCategories, GetCategoriesLocal, SaveCategoriesLocal, SaveImgUrlThumbnail, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
-import { CreateCourse, DeleteCourse, GetCourseById, UpdateConfigCourseData, UpdateCover, UpdateInfoCourse,  UpdateThumbnail } from "../../database/functions/Courses/manageCourses";
-import { GetModules, GetModulesLocal, createModule, deleteModule, updateModule } from "../../database/functions/Modules/manageModules";
+import { CreateCategory, DeleteCategory, GetAllCategories, SaveImgUrlThumbnail, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
+import { CreateCourse, DeleteCourse, GetCourseById, GetCoursesByCategory, UpdateConfigCourseData, UpdateCover, UpdateInfoCourse,  UpdateThumbnail } from "../../database/functions/Courses/manageCourses";
+import { GetLessonsModule, GetModuleById, GetModules, UpdateModuleConfigs, createModule, deleteModule, updateInfoModule, updateModuleSettings } from "../../database/functions/Modules/manageModules";
+import { handleUpdateThumbnail } from "@/app/services/UpdateThumbnail";
+import { handleUpdateCover } from "@/app/services/UpdateCover";
+import { createLesson, deleteLesson } from "../../database/functions/Lessons/manageLessons";
 
 
 
@@ -25,8 +28,9 @@ export default function Controller(){
             DeleteCourse: DeleteCourse,
             UpdateInfoCourse: UpdateInfoCourse,
             GetCourseById: GetCourseById,
+            GetCoursesByCategory: GetCoursesByCategory,
             UpdateThumbnailCourse: UpdateThumbnail,
-            UpdateCoverCourse: UpdateCover,
+            UpdateCover: UpdateCover,
             UpdateConfigCourseData: UpdateConfigCourseData
             
         },
@@ -38,16 +42,19 @@ export default function Controller(){
             CreateModule: createModule,
             GetModules: GetModules,
             DeleteModule: deleteModule,
-            updateModule: updateModule,
+            updateInfoModule: updateInfoModule,
+            GetModuleById: GetModuleById,
+            GetLessonsModule: GetLessonsModule,
+            UpdateModuleConfigs: UpdateModuleConfigs
 
-            GetModulesLocal: GetModulesLocal
         },
         /**
          * Gerenciador de lições,
          * Retorna um objeto com as funções de gerenciamento de lições
          */
         manageLessons: {
-
+            CreateLesson: createLesson,
+            DeleteLesson: deleteLesson
         },
         /**
          * Gerenciador de usuários,
@@ -69,13 +76,12 @@ export default function Controller(){
          * Retorna um objeto com as funções de gerenciamento de categorias
          */
         manageCategories: {
-            CreateCategory: CreateCategory,
+            CreateCategory: CreateCategory, //ACESSO A API PARA CRIAR CATEGORIA
+            GetAllCategories: GetAllCategories, //ACESSO A API PARA BUSCAR TODAS AS CATEGORIAS
+            
             UpdateCategoryData: UpdateCategoryData,
             DeleteCategory: DeleteCategory,
 
-            GetCategories: GetCategories,
-            GetCategoriesLocal: GetCategoriesLocal,
-            SaveCategoriesLocal: SaveCategoriesLocal,
             SaveImgUrlThumbnail: SaveImgUrlThumbnail
         },
         /**
@@ -96,6 +102,10 @@ export default function Controller(){
                 saveUserCache: saveUserCache,
                 getUserCache: getUserCache,
                 removeUserCache: removeUserCache
+            },
+            manageImages: {
+                handleUpdateThumbnail: handleUpdateThumbnail,
+                handleUpdateCover: handleUpdateCover,
             },
             phrases: {
 

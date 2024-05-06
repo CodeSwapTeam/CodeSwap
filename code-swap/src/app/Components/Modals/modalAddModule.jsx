@@ -1,10 +1,41 @@
+"use client";
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Controller from '@/Controller/controller';
+import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
+import styled from 'styled-components';
 
-function AddModuleModal(props) {
+const AddModuleButton = styled.button`
+    border: 1px solid white;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: #020a29;
+    color: #04ff02;
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    font-size: 1rem;
+
+    &:hover {
+        color: #04ff02;
+        font-weight: bold;
+        transform: scale(1.05);
+        box-shadow: 0px 0px 2px #04ff02;
+    }
+
+    @media (max-width: 600px) {
+        font-size: 0.8rem;
+    }
+`;
+
+function AddModuleModal() {
 
     const controller = Controller();
+
+    const queryClient = useQueryClient();
+
+    const courseSelected = queryClient.getQueryData(["Course-Selected"]);
 
     const [show, setShow] = useState(false);
     const [moduleName, setModuleName] = useState('');
@@ -13,51 +44,105 @@ function AddModuleModal(props) {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const handleSubmit = () => {
-        
-        const newModule = {
-            nameModule: moduleName,
+
+    //função mutate para criar um novo modulo
+
+    const createModuleMutate = useMutation({
+        mutationFn: async (data) => {
+          const newModule = {
+            title: moduleName,
             description: moduleDescription,
-            courseId : props.courseId,
-            id: '',
-            lessons: [ ]
-        };
+            id: data.moduleId,            
+          };
+      
+          // Criar uma cópia do array de módulos
+          const modulesCourse = [...courseSelected.modules];
+          // Adicionar o novo módulo no array de módulos
+          modulesCourse.push(newModule);
 
-        //prev => prev.concat(newModule)
+          //Atualizar o cache ["Courses-Cached"] dentro do curso selecionado com os modulos
+           //égar o cursos em cache
+            const coursesCached = queryClient.getQueryData(["Courses-Cached"]);
+            //criar uma copia do array de cursos
+            const courses = [...coursesCached];
+            //pegar o indice do curso selecionado
+            const index = courses.findIndex(course => course.id === courseSelected.id);
+            //atualizar o array de modulos do curso selecionado
+            courses[index].modules = modulesCourse;
+            //atualizar o cache com os cursos atualizados
+            queryClient.setQueryData(["Courses-Cached"], courses);
+            
+      
+          // Atualizar os módulos dentro do curso selecionado
+          const updatedCourse = { ...courseSelected, modules: modulesCourse };
+          queryClient.setQueryData(["Course-Selected"], updatedCourse);  
+      
+          // Adicionar o módulo novo em ["Modules-Course"] ...mais os módulos existentes
+          queryClient.setQueryData(["Modules-Course"], modulesCourse);
+        },
+        onSuccess: (data) => {
+        }
+      });
 
-        //props.setModules(prev => [...prev, newModule]);
+    
+    //função que ira retornar o nivel de permisão do modulo
+    const permissionModule = async () => {
+        let permission = 0;
+        if(courseSelected.SequentialModule){
+        //pegar a quantidade de modulos do curso no cache local
+        const modules = courseSelected.modules;
         
+        //pegar o tamanho do array de modulos
+         permission = modules.length + 1;
+        
+        }else{
+            permission = 1;
+        }
+        return permission;
+    }
 
+    const handleSubmit = async () => {
+        
+    
+        const newModule = {
+            title: moduleName,
+            description: moduleDescription,
+            courseId: courseSelected.id,
+            id: '',
+            permission: await permissionModule(),
+            lessons: []
+        };
+    
+        const moduleID = await controller.manageModules.CreateModule(courseSelected.id, newModule);
 
-        controller.manageModules.CreateModule(props.courseId, newModule);
-
+        createModuleMutate.mutate({courseID: courseSelected.id, moduleId: moduleID, module: newModule});
         setModuleName('');
         setModuleDescription('');
         handleClose();
-
-        
     };
 
     return (
         <>
-            <button style={{ padding: '5px', backgroundColor: '#5150e1', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={handleShow}>Adicionar Modulo</button>
+            <AddModuleButton  onClick={handleShow}>Adicionar Modulo</AddModuleButton>
 
             {show && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            
-                        </div>
-                        <div className="modal-body" style={{display:'flex', flexDirection: 'column'}}>
-                            <input style={{margin:'4px', color: 'black'}} type="text" placeholder="Nome do Módulo" value={moduleName} onChange={(e) => setModuleName(e.target.value)} />
-                            <input style={{margin:'4px', color: 'black'}}  type="text" placeholder="Descrição do Módulo" value={moduleDescription} onChange={(e) => setModuleDescription(e.target.value)} />
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" style={{ padding: '5px', backgroundColor: '#232323', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer'  }} onClick={handleClose}>Fechar</button>
-                            <button type="button" style={{ padding: '5px', backgroundColor: '#16ff66', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }}  onClick={handleSubmit}>Salvar Módulo</button>
-                        </div>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '40vh' }}>
+                <div style={{ backgroundColor: '#fff', borderRadius: '5px', maxWidth: '500px', width: '90%', boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.1)' }}>
+                    <div className="modal-header">
+
+                    </div>
+                    <div className="modal-header" style={{ borderBottom: '1px solid #f2f2f2', padding: '10px 15px' }}>
+                <h5 className="modal-title" style={{ margin: 0, fontWeight: '500', fontSize: '1.25rem', color: '#333' }}>Adicionar Módulo</h5>
+              </div>
+                    <div  style={{ display: 'flex', flexDirection: 'column' }}>
+                        <input style={{ margin: '10px', color: 'black' }} type="text" placeholder="Nome do Módulo" value={moduleName} onChange={(e) => setModuleName(e.target.value)} />
+                        <textarea style={{ margin: '10px', color: 'black', height:'100px' }} placeholder="Descrição do Módulo" value={moduleDescription} onChange={(e) => setModuleDescription(e.target.value)} />                    </div>
+                    <div className="modal-footer">
+                        <button type="button" style={{ padding: '5px', backgroundColor: '#232323', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={handleClose}>Fechar</button>
+                        <button type="button" style={{ padding: '5px', backgroundColor: '#16ff66', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }} onClick={handleSubmit}>Salvar Módulo</button>
                     </div>
                 </div>
+            </div>
             )}
         </>
     );

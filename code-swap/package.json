@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.32.0",
+    "@tanstack/react-query-devtools": "^5.32.0",
     "firebase": "^10.11.0",
     "image-conversion": "^2.1.1",
     "next": "^14.1.4",
