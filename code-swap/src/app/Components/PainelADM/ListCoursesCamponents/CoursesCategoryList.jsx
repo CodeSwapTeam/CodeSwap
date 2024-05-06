@@ -191,6 +191,8 @@ export const CoursesCategoryList = ({  setSelectedPainel, categoriesData }) => {
     //se ouver categoria selecionada ['Category-Selected'], setar os cursos da categoria no estado local, se não, setar um array vazio
     const [courses, setCourses] = useState(queryClient.getQueryData(['Category-Selected'])?.courses || []);
 
+    
+
     //função para deletar um curso
     const handleDeleteCourse = useMutation({
         mutationFn: async (courseId) => {
@@ -250,6 +252,43 @@ export const CoursesCategoryList = ({  setSelectedPainel, categoriesData }) => {
     };
 
 
+    // Adicione um estado para o status de filtro
+    const [filterStatus, setFilterStatus] = useState('approved');
+
+    // Adicione um estado para os cursos ordenados
+    const [sortedCourses, setSortedCourses] = useState([]);
+
+    // Adicione uma função para lidar com a mudança de filtro
+    const handleFilterChange = (status) => {
+        setFilterStatus(status);
+    }
+
+    // Crie uma função de ordenação
+    const sortCourses = (courses) => {
+        return [...courses].sort((a, b) => {
+            // Se ambos os cursos têm o mesmo status, mantenha a ordem original
+            if (a.status === b.status) {
+                return 0;
+            }
+            // Se o curso a tem o status do filtro, ele deve vir primeiro
+            if (a.status === filterStatus) {
+                return -1;
+            }
+            // Se o curso b tem o status do filtro, ele deve vir primeiro
+            if (b.status === filterStatus) {
+                return 1;
+            }
+            // Se nenhum dos cursos tem o status do filtro, mantenha a ordem original
+            return 0;
+        });
+    }
+
+    // Use o hook useEffect para atualizar os cursos ordenados sempre que o filtro for alterado
+    useEffect(() => {
+        const sorted = sortCourses(courses);
+        setSortedCourses(sorted);
+    }, [filterStatus, courses]);
+
 
     return (
         <Container>
@@ -265,8 +304,20 @@ export const CoursesCategoryList = ({  setSelectedPainel, categoriesData }) => {
                 </div>
             </div>
 
+            
+
             <StyledDiv>
-                {courses?.map(course => (
+                <div style={{alignSelf:'flex-end'}}>
+                    <label>Filtrar Por: </label>
+                    <select onChange={(e) => handleFilterChange(e.target.value)} style={{ color: 'black' }}>
+                        <option value="all">Todos</option>
+                        <option value="pending">Pendente</option>
+                        <option value="approved">Aprovado</option>
+                        <option value="revision">Revisão</option>
+                        <option value="rejected">Rejeitado</option>
+                    </select>
+                </div>
+                {sortedCourses?.map(course => (
                     <StyledCourseDiv key={course.id}>
                         <StyledImg src={course.imgUrlThumbnail} alt="Imagem Thumbnail" />
                         <CourseInfoDiv>

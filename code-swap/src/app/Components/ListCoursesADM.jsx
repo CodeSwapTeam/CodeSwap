@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Controller from '@/Controller/controller';
-import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { CoursesCategoryList } from './PainelADM/ListCoursesCamponents/CoursesCategoryList';
 import { ConfigCourse } from './PainelADM/ListCoursesCamponents/ConfigCourse';
 import ManageModule from './PainelADM/ManageModule/ManageModule';
