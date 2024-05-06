@@ -80,15 +80,15 @@ function UpdateCourseModal(props) {
 
     return (
         <>
-                <div className="modal">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">Atualizar informações</h5>
+                <div style={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                    <div style={{ backgroundColor: '#fff', borderRadius: '5px', width: '90%', boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.1)' }}>
+                        <div style={{ borderBottom: '1px solid #f2f2f2', padding: '10px 15px' }}>
+                            <h5  style={{ margin: 0, fontWeight: '500', fontSize: '1.25rem', color: '#333' }}>Atualizar informações</h5>
                             
                         </div>
                         <div className="modal-body" style={{display: 'flex', flexDirection: 'column'}}>
-                            <textarea style={{color: 'black', margin: '5px'}} type="text" placeholder="Título do Curso" value={courseTitle} onChange={(e) => setCourseTitle(e.target.value)} />
-                            <textarea style={{color: 'black', margin: '5px' , height:'15rem'}} type="text" placeholder="Descrição do Curso" value={courseDescription} onChange={(e) => setCourseDescription(e.target.value)} />
+                            <textarea style={{color: 'black', margin: '5px', padding:'10px', borderRadius:'5px', border:'1px solid black'}} type="text" placeholder="Título do Curso" value={courseTitle} onChange={(e) => setCourseTitle(e.target.value)} />
+                            <textarea style={{color: 'black', margin: '5px' , height:'15rem', padding:'10px', borderRadius:'5px', border:'1px solid black'}} type="text" placeholder="Descrição do Curso" value={courseDescription} onChange={(e) => setCourseDescription(e.target.value)} />
                         </div>
                         <div className="modal-footer">
                             <button type="button" style={{ padding: '5px', backgroundColor: '#232323', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer'  }} onClick={()=> props.setPainelUpdateCourse(false)}>Fechar</button>

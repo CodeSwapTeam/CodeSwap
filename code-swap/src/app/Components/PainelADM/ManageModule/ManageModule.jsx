@@ -9,7 +9,7 @@ import AddLessonModal from '../../Modals/modalAddLesson';
 
 
 const Container = styled.div`
-    flex: 80%;
+    width: 100%;
     border: 2px solid white;
     padding: 10px;
     color: white;
@@ -23,9 +23,19 @@ const LessonContainer = styled.div`
     border: 1px solid white;
     padding: 5px;
     margin: 5px;
- 
-    background-color: #020a29;
     border-radius: 5px;
+    transition: all 0.3s ease;
+    background-color: #00000063;
+
+    &:hover {
+        transform: scale(1.02);
+        box-shadow: 0px 10px 20px rgba(4, 255, 2, 0.2); // Adicionado box-shadow verde suave
+    }
+
+    @media (max-width: 600px) {
+        flex-direction: column;
+        height: auto;
+    }
 `;
 
 const DeleteButton = styled.button`
@@ -38,15 +48,178 @@ const DeleteButton = styled.button`
     }
 `;
 
+const Title = styled.h4`
+  text-align: center;
+  width: 100%;
+  font-size: calc(1.2em + 1.2vw); // Ajusta o tamanho da fonte com base na largura da viewport
+`;
+
 const ManageButton = styled.button`
+border: 1px solid white;
+padding: 5px;
+border-radius: 5px;
+margin: 5px;
+cursor: pointer;
+background-color: #020a29;
+color: #04ff02;
+box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+transition: all 0.3s ease;
+font-size: 1rem;
+
+&:hover {
+    color: #04ff02;
+    font-weight: bold;
+    transform: scale(1.05);
+    box-shadow: 0px 0px 10px #04ff02; // Adicionado box-shadow verde suave
+}
+
+@media (max-width: 600px) {
+    font-size: 0.8rem;
+}
+`;
+
+const Button = styled.button`
+
+  margin: 10px;
+  align-self: flex-start;
+  font-size: calc(1em + 1vw); // Ajusta o tamanho da fonte com base na largura da viewport
+  @media (max-width: 600px) {
+    align-self: center;
+  }
+
+  border: 1px solid white;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #020a29;
+    color: #04ff02;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+
+    &:hover {
+        color: #04ff02;
+        
+        transform: scale(1.05);
+        box-shadow: 0px 0px 10px #04ff02; // Adicionado box-shadow verde suave
+    }
+
+    @media (max-width: 600px) {
+        font-size: 0.8rem;
+    }
+`;
+
+const UpdateInfo = styled.button`
     border: 1px solid white;
     padding: 5px;
+    border-radius: 5px;
     margin: 5px;
     cursor: pointer;
     background-color: #020a29;
+    color: #04ff02;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    font-size: 1rem;
 
     &:hover {
-        background-color: #00ff375c;
+        color: #04ff02;
+        font-weight: bold;
+        transform: scale(1.05);
+        box-shadow: 0px 0px 10px #04ff02; // Adicionado box-shadow verde suave
+    }
+
+    @media (max-width: 600px) {
+        font-size: 0.8rem;
+    }
+`;
+
+const FlexDiv = styled.div`
+    
+    
+    display: flex;
+    justify-content: space-between;
+
+    @media (max-width: 600px) {
+        flex-direction: column;
+        //centraliza o conteúdo 
+        align-items: center;
+    }
+`;
+
+
+const ConfigModule = styled.div`
+    padding: 5px;
+    margin: 5px;
+    margin-top: 20px;
+    border: 2px solid black;
+    border-radius: 5px;
+    width: 40%;
+    box-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 5px #00ff00, 0 0 5px #00ff00;
+
+    @media (max-width: 600px) {
+        width: 100%;
+    }
+`;
+
+
+const LessionsList = styled.div`
+    margin: 5px;
+    padding: 5px;
+    margin-top: 20px;
+    border: 2px solid black;
+    width: 55%;
+    border-radius: 5px;
+    box-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 5px #00ff00, 0 0 5px #00ff00;
+
+    @media (max-width: 600px) {
+        width: 100%;
+    }
+`;
+
+const StyledLessonDiv = styled.div`
+    border-radius: 5px;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 150px;
+    margin: 10px 20px 10px 10px;
+    transition: all 0.3s ease;
+    background-color: #00000063;
+
+    &:hover {
+        transform: scale(1.02);
+        box-shadow: 0px 0px 10px rgba(4, 255, 2, 0.2); // Adicionado box-shadow verde suave
+    }
+
+    @media (max-width: 600px) {
+        flex-direction: column;
+        height: auto;
+    }
+`;
+
+
+const SaveModule = styled.button`
+    border: 1px solid white;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px;
+    margin-top: 20px;
+    cursor: pointer;
+    background-color: #020a29;
+    color: #04ff02;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+
+    &:hover {
+        color: #04ff02;
+        font-weight: bold;
+        transform: scale(1.05);
+        box-shadow: 0px 0px 10px #04ff02; // Adicionado box-shadow verde suave
+    }
+
+    @media (max-width: 600px) {
+        font-size: 0.8rem;
     }
 `;
 
@@ -197,32 +370,24 @@ export default function ManageModule({ setSelectedPainel }) {
       {!panelUpdateModule ? (
         <>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <button style={{ backgroundColor: 'blue', padding: '5px', borderRadius: '5px', alignSelf: 'flex-start' }} onClick={() => setSelectedPainel('Modules')} >Voltar </button>
-            <h4 style={{ textAlign: 'center', width: '100%' }}>{moduleSelected?.title}</h4>
+            <Button  onClick={() => setSelectedPainel('Modules')} >Voltar </Button>
+            <Title>{moduleSelected?.title}</Title>
             <div style={{ width: 'same-as-button' }}></div>
           </div>
 
           <p>{moduleSelected.description}</p>
-          <button style={{ backgroundColor: 'blue', padding: '5px', borderRadius: '5px', alignSelf: 'flex-start' }} onClick={() => setPanelUpdateModule(true)} >Atualizar Informações </button>
+          <UpdateInfo onClick={() => setPanelUpdateModule(true)} >Atualizar Informações </UpdateInfo>
           
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <FlexDiv>
 
-            <div style={{
-              padding:'5px',
-              margin: '5px',
-              marginTop: '20px',
-              border: '2px solid black',
-              borderRadius: '5px',
-              width: '40%',
-              boxShadow: '0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 5px #00ff00, 0 0 5px #00ff00'
-            }}>
+            <ConfigModule>
               <label style={{  display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start', marginTop: '5px', width: 'auto' }}>Permissão do Módulo:<input type="number" style={{ width: '100px', color: "black" }} value={permissionModule} onChange={(e) => setPermissionModule(e.target.value)} /></label>
               <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start', marginTop: '5px', width: 'auto', }}>XP do Módulo:<input type="number" style={{ width: '100px', color: "black" }} value={xpModule} onChange={(e) => setXpModule(e.target.value)} /></label>
               <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start', marginTop: '5px', width: 'auto', }}>Codes do módulo:<input type="number" style={{ width: '100px', color: "black" }} value={codesModule} onChange={(e) => setCodesModule(e.target.value)} /></label>
               
               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start', marginTop: '5px', width: 'auto' }}>Nível de dificuldade do Módulo:</label>
-                <select style={{ color: 'black', marginBottom: '10px' }} value={difficultyModule} onChange={handleSelectChange}>
+                <select style={{ color:'black', width: '100%', padding: '10px', fontSize: '1rem', borderRadius: '5px', border: '1px solid #ddd', marginBottom: '10px', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)'}} value={difficultyModule} onChange={handleSelectChange}>
                   <option value="iniciante">Iniciante</option>
                   <option value="intermediário">Intermediário</option>
                   <option value="avançado">Avançado</option>
@@ -231,16 +396,16 @@ export default function ManageModule({ setSelectedPainel }) {
 
               <textarea style={{padding:'5px',borderRadius: '5px',color: 'black', height: '10rem', width: '100%' }} type="text" placeholder="Observações do Curso" value={moduleObservations} onChange={(e) => setModuleObservations(e.target.value)} />
 
-            </div>
+            </ConfigModule>
 
-            <div style={{ margin: '5px', marginTop: '20px', border: '2px solid black', width: '55%', borderRadius: '5px', boxShadow: '0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 5px #00ff00, 0 0 5px #00ff00' }}>
+            <LessionsList>
               <h2>Aulas</h2>
 
 
               {lessonsModule?.length > 0 ? (
                 lessonsModule.map((lesson, index) => (
                   <LessonContainer key={index} >
-                    <h2 style={{ font: 'bold', color: '#07ff07' }}>{lesson.nameLesson}</h2>
+                    <h2 style={{ font: 'bold', color: 'White' }}>{lesson.nameLesson}</h2>
                     <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                       <ManageButton onClick={() => { () => selectLesson(lesson) }} >Gerenciar Aula</ManageButton>
                       <DeleteButton onClick={() => handleDeleteLesson(lesson)} >Excluir Aula</DeleteButton>
@@ -250,11 +415,11 @@ export default function ManageModule({ setSelectedPainel }) {
                 ))
               ) : (<h2>Nenhuma aula cadastrada</h2>)}
                 <AddLessonModal courseId={moduleSelected.courseId} moduleId={moduleSelected.id} />
-            </div>
-          </div>
+            </LessionsList>
+          </FlexDiv>
 
 
-          <button style={{ marginTop: '20px', backgroundColor: 'blue', padding: '5px', borderRadius: '5px', alignSelf: 'flex-start' }} onClick={() => handleUpdateModule()} >Salvar Módulo </button>
+          <SaveModule  onClick={() => handleUpdateModule()} >Salvar Módulo </SaveModule>
 
         </>
       ) : (<UpdateModuleModal moduleSelected={moduleSelected} setPanelUpdateModule={setPanelUpdateModule} />)}

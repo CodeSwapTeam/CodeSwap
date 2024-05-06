@@ -82,7 +82,11 @@ const ManageButton = styled.button`
     }
 `;
 
-
+const Title = styled.h4`
+  text-align: center;
+  width: 100%;
+  font-size: calc(1.2em + 1.2vw); // Ajusta o tamanho da fonte com base na largura da viewport
+`;
 
 const CategoryContainer = styled.div`
     border: 1px solid white;
@@ -289,7 +293,7 @@ export const CoursesCategoryList = ({  setSelectedPainel, categoriesData }) => {
         setSortedCourses(sorted);
     }, [filterStatus, courses]);
 
-
+    
     return (
         <Container>
 
@@ -317,7 +321,7 @@ export const CoursesCategoryList = ({  setSelectedPainel, categoriesData }) => {
                         <option value="rejected">Rejeitado</option>
                     </select>
                 </div>
-                {sortedCourses?.map(course => (
+                {sortedCourses.length != 0 ? sortedCourses?.map(course => (
                     <StyledCourseDiv key={course.id}>
                         <StyledImg src={course.imgUrlThumbnail} alt="Imagem Thumbnail" />
                         <CourseInfoDiv>
@@ -329,7 +333,7 @@ export const CoursesCategoryList = ({  setSelectedPainel, categoriesData }) => {
                             </BottomDiv>
                         </CourseInfoDiv>
                     </StyledCourseDiv>
-                ))}
+                )) : <Title>Painel de Estatísticas</Title>}
             </StyledDiv>
         </Container>
     );

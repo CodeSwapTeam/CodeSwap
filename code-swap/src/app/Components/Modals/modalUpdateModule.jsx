@@ -58,16 +58,16 @@ function UpdateModuleModal({moduleSelected, setPanelUpdateModule}) {
     };
     return (
     
-        <div className="modal">
-            <div className="modal-content">
-                <div className="modal-header">
-                    <h5 className="modal-title">Atualizar Título de Descrição</h5>
+        <div style={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            <div style={{ backgroundColor: '#fff', borderRadius: '5px', width: '90%', boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.1)' }}>
+                <div style={{ borderBottom: '1px solid #f2f2f2', padding: '10px 15px' }}>
+                    <h5 style={{ margin: 0, fontWeight: '500', fontSize: '1.25rem', color: '#333' }}>Atualizar Título de Descrição</h5>
                 </div>
 
                 <div >
                     <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-                        <input style={{color: 'black'}} type="text" placeholder="Nome do Módulo" value={moduleName} onChange={(e) => setModuleName(e.target.value)} />
-                        <input style={{color: 'black'}} type="text" placeholder="Descrição do Módulo" value={moduleDescription} onChange={(e) => setModuleDescription(e.target.value)} />
+                        <input style={{color: 'black', margin: '5px', padding:'10px', borderRadius:'5px', border:'1px solid black'}} type="text" placeholder="Nome do Módulo" value={moduleName} onChange={(e) => setModuleName(e.target.value)} />
+                        <textarea style={{color: 'black', margin: '5px' , height:'15rem', padding:'10px', borderRadius:'5px', border:'1px solid black'}} type="text" placeholder="Descrição do Módulo" value={moduleDescription} onChange={(e) => setModuleDescription(e.target.value)} />
                     </div>
                     <div className="modal-footer">
                         <button type="button" style={{ padding: '5px', backgroundColor: '#232323', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer'  }} onClick={()=> setPanelUpdateModule(false)}>Fechar</button>

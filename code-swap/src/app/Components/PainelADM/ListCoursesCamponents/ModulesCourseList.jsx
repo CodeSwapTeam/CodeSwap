@@ -16,16 +16,35 @@ const Container = styled.div`
     background-color: #0f1425d6;
 `;
 
-/* const ModuleContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    border: 1px solid white;
+const Button = styled.button`
+
+  margin: 10px;
+  align-self: flex-start;
+  font-size: calc(1em + 1vw); // Ajusta o tamanho da fonte com base na largura da viewport
+  @media (max-width: 600px) {
+    align-self: center;
+  }
+
+  border: 1px solid white;
     padding: 5px;
-    margin: 5px;
- 
-    background-color: #020a29;
     border-radius: 5px;
-`; */
+    cursor: pointer;
+    background-color: #020a29;
+    color: #04ff02;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+
+    &:hover {
+        color: #04ff02;
+        
+        transform: scale(1.05);
+        box-shadow: 0px 0px 10px #04ff02; // Adicionado box-shadow verde suave
+    }
+
+    @media (max-width: 600px) {
+        font-size: 0.8rem;
+    }
+`;
 
 const DeleteButton = styled.button`
 
@@ -107,6 +126,12 @@ const ModuleContainer = styled.div`
 const ModuleTitle = styled.h2`
   font-weight: bold;
   color: #07ff07;
+`;
+
+const Title = styled.h4`
+  text-align: center;
+  width: 100%;
+  font-size: calc(1.2em + 1.2vw); // Ajusta o tamanho da fonte com base na largura da viewport
 `;
 
 export default function ModulesCourseList({ setSelectedPainel }) {
@@ -194,8 +219,8 @@ export default function ModulesCourseList({ setSelectedPainel }) {
 
       <>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <button style={{ backgroundColor: 'blue', padding: '5px', borderRadius: '5px', alignSelf: 'flex-start' }} onClick={() => { setSelectedPainel('CourseDescription') }} >Voltar </button>
-          <h1 style={{ fontSize: '1.5rem' }}>{courseSelected?.title} </h1>
+          <Button onClick={() => { setSelectedPainel('CourseDescription') }} >Voltar </Button>
+          <Title>{courseSelected?.title} </Title>
           <div></div>
         </div>
         <ModulesList>

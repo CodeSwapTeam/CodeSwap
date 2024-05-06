@@ -123,22 +123,20 @@ function AddModuleModal() {
 
     return (
         <>
-            <AddModuleButton  onClick={handleShow}>Adicionar Modulo</AddModuleButton>
+            <AddModuleButton onClick={handleShow}>Adicionar Modulo</AddModuleButton>
 
             {show && (
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '40vh' }}>
-                <div style={{ backgroundColor: '#fff', borderRadius: '5px', maxWidth: '500px', width: '90%', boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.1)' }}>
-                    <div className="modal-header">
-
-                    </div>
-                    <div className="modal-header" style={{ borderBottom: '1px solid #f2f2f2', padding: '10px 15px' }}>
-                <h5 className="modal-title" style={{ margin: 0, fontWeight: '500', fontSize: '1.25rem', color: '#333' }}>Adicionar Módulo</h5>
-              </div>
-                    <div  style={{ display: 'flex', flexDirection: 'column' }}>
-                        <input style={{ margin: '10px', color: 'black' }} type="text" placeholder="Nome do Módulo" value={moduleName} onChange={(e) => setModuleName(e.target.value)} />
-                        <textarea style={{ margin: '10px', color: 'black', height:'100px' }} placeholder="Descrição do Módulo" value={moduleDescription} onChange={(e) => setModuleDescription(e.target.value)} />                    </div>
-                    <div className="modal-footer">
-                        <button type="button" style={{ padding: '5px', backgroundColor: '#232323', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={handleClose}>Fechar</button>
+                    <div style={{ backgroundColor: '#fff', borderRadius: '5px', maxWidth: '500px', width: '90%', boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.1)' }}>
+                        <div className="modal-header"></div>
+                        <div className="modal-header" style={{ borderBottom: '1px solid #f2f2f2', padding: '10px 15px' }}>
+                            <h5 className="modal-title" style={{ margin: 0, fontWeight: '500', fontSize: '1.25rem', color: '#333' }}>Adicionar Módulo</h5>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <input style={{ margin: '10px', color: 'black' }} type="text" placeholder="Nome do Módulo" value={moduleName} onChange={(e) => setModuleName(e.target.value)} />
+                            <textarea style={{ margin: '10px', color: 'black', height: '100px' }} placeholder="Descrição do Módulo" value={moduleDescription} onChange={(e) => setModuleDescription(e.target.value)} />                    </div>
+                        <div className="modal-footer">
+                            <button type="button" style={{ padding: '5px', backgroundColor: '#232323', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer' }} onClick={handleClose}>Fechar</button>
                         <button type="button" style={{ padding: '5px', backgroundColor: '#16ff66', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', marginLeft: '10px' }} onClick={handleSubmit}>Salvar Módulo</button>
                     </div>
                 </div>
