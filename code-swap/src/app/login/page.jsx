@@ -13,6 +13,7 @@ import Image from 'next/image';
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { GetPhrases } from "../services/phrases";
 import Controller from "@/Controller/controller";
+import AuthService from "../services/AuthService";
 ;
 
 const Container = styled.div`
@@ -198,7 +199,9 @@ export default function Login() {
     }
 
 
+    
 
+    
     
     const router = useRouter();
 
@@ -215,11 +218,16 @@ export default function Login() {
         e.preventDefault();
 
         try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+           /*  const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
             //buscar objeto User que tem o userId == user. uid
-            const userData = await controller.manageUsers.GetUserDataBase(user.uid);
+            const userData = await controller.manageUsers.GetUserDataBase(user.uid); */
+
+            const authService = AuthService();
+
+            const userData = await authService.login(email, password);
+            console.log(userData);
             
             setEmail('');
             setPassword('');
