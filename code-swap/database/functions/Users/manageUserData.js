@@ -1,6 +1,9 @@
 import { addDoc, collection, doc, getDocs, query, updateDoc, where, deleteDoc } from "firebase/firestore";
 import { db } from "../../firebase";
+import Controller from "@/Controller/controller";
 
+
+const jose = require('jose')
 
 //função para buscar os dados do usuário
 export async function GetUserLocalData(){
@@ -12,14 +15,48 @@ export async function GetUserLocalData(){
 
 // Função para buscar um usuário no banco de dados
 export const GetUserDataBase = async (userCredential) => {
+    const controller = Controller();
     try {
         //Buscar usuário no banco de dados pelo userCredential 
         const q = query(collection(db, 'Users'), where('userCredential', '==', userCredential));
         const querySnapshot = await getDocs(q);
+
+        const userData = querySnapshot.docs[0].data();
+
+        //Cripitografar o token de acesso do usuário
+        const secret = new TextEncoder().encode(
+            'cc7e0d44fd473002f1c42167459001140ec6389b7353f8088f4d9a95f2f596f2',
+          );
+
+        const jwt = await new jose.SignJWT({ userData : userData})
+            .setProtectedHeader({ alg: 'HS256' })
+            .setIssuedAt()
+            .setExpirationTime('2h')
+            .sign(secret)
         
 
-        return querySnapshot.docs[0].data();
+          //salvar nos cookies o token de acesso
+            controller.services.manageCookies.setCookiesAcessToken(jwt);
+
+
         
+        
+
+        /* const secret = jose.base64url.decode('zH4NRP1HMALxxCFnRZABFA7GOJtzU_gIj02alfL1lvI')
+
+        const jwt = await new jose.EncryptJWT({ userData : userData.id})
+            .setProtectedHeader({ alg: 'dir', enc: 'A128CBC-HS256' })
+            .setIssuedAt()
+            .setIssuer('urn:example:issuer')
+            .setAudience('urn:example:audience')
+            .setExpirationTime('2h')
+            .encrypt(secret)
+
+        console.log(jwt) */
+
+
+        return querySnapshot.docs[0].data();
+
     } catch (error) {
         console.error('Erro ao buscar o usuário:', error);
         throw error; // Lança o erro para tratamento em um nível superior
