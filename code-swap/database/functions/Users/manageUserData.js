@@ -31,7 +31,7 @@ export const GetUserDataBase = async (userCredential) => {
         const jwt = await new jose.SignJWT({ userData : userData})
             .setProtectedHeader({ alg: 'HS256' })
             .setIssuedAt()
-            .setExpirationTime('2h')
+            .setExpirationTime('1m')
             .sign(secret)
         
 

@@ -28,23 +28,48 @@ export default async function middleware( NextRequest){
         console.log(NextRequest.url)
     }
 
+
+    // Verificando se a página atual é a página inicial
+    const isHomePage = NextRequest.nextUrl.pathname === '/';
+
+    // Verificando se a página atual é a página de login
+    const isLoginPage = NextRequest.nextUrl.pathname === '/login';
+
     
-    if(NextRequest.nextUrl.pathname.startsWith('/login') && !tokenVerify){
-        return
+    // Se o usuário não estiver autenticado e não estiver na página de login
+    if(!tokenVerify && !isLoginPage){
+        // Se estiver na página inicial, continue com a próxima resposta
+        if(isHomePage){
+            return NextResponse.next();
+        }
+        // Caso contrário, redirecione para a página inicial
+        return NextResponse.redirect(new URL('/', NextRequest.url));
     }
 
-    if(NextRequest.url.includes('/login') && tokenVerify){
-        return NextResponse.redirect( new URL('/Dashboard', NextRequest.url))
+    
+    // Se estiver na página de login
+    if(isLoginPage){
+        // Se o usuário estiver autenticado, redirecione para a página do painel
+        if(tokenVerify){
+            return NextResponse.redirect(new URL('/Dashboard', NextRequest.url));
+        }
     }
+    
+    // Se estiver na página inicial
+    else if(isHomePage){
+        // Se o usuário estiver autenticado, redirecione para a página do painel
+        if(tokenVerify){
+            return NextResponse.redirect(new URL('/Dashboard', NextRequest.url));
+        }
+    }
+     
 
-    if(!tokenVerify){
-        return NextResponse.redirect( new URL('/login', NextRequest.url))
-    }
+
 
    
 }
 
 // Configuração de rotas que utilizarão este middleware
 export const config = {
-        matcher: ['/Dashboard:path*', '/ManageCourses','/Cursos/:id/modulo/:moduleId*', '/MyCourses']
+        matcher: ['/','/Dashboard:path*', '/ManageCourses','/Cursos/:id/modulo/:moduleId*', '/MyCourses']
 }
