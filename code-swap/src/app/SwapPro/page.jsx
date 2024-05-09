@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { getCookies } from '@/app/services/cookies';
-import { decryptObjectData } from '@/app/services/encryptedAlgorithm';
+import { decryptObjectData } from '@/app/services/persistenceData';
 import Controller from '@/Controller/controller';
 //import { getPlanById } from '../../../database/functions/getPlanById';
 

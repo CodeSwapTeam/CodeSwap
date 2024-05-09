@@ -15,6 +15,7 @@ export async function GetUserLocalData(){
 
 // Função para buscar um usuário no banco de dados
 export const GetUserDataBase = async (userCredential) => {
+    
     const controller = Controller();
     try {
         //Buscar usuário no banco de dados pelo userCredential 
@@ -31,28 +32,12 @@ export const GetUserDataBase = async (userCredential) => {
         const jwt = await new jose.SignJWT({ userData : userData})
             .setProtectedHeader({ alg: 'HS256' })
             .setIssuedAt()
-            .setExpirationTime('1m')
+            .setExpirationTime('1h')
             .sign(secret)
         
 
           //salvar nos cookies o token de acesso
             controller.services.manageCookies.setCookiesAcessToken(jwt);
-
-
-        
-        
-
-        /* const secret = jose.base64url.decode('zH4NRP1HMALxxCFnRZABFA7GOJtzU_gIj02alfL1lvI')
-
-        const jwt = await new jose.EncryptJWT({ userData : userData.id})
-            .setProtectedHeader({ alg: 'dir', enc: 'A128CBC-HS256' })
-            .setIssuedAt()
-            .setIssuer('urn:example:issuer')
-            .setAudience('urn:example:audience')
-            .setExpirationTime('2h')
-            .encrypt(secret)
-
-        console.log(jwt) */
 
 
         return querySnapshot.docs[0].data();

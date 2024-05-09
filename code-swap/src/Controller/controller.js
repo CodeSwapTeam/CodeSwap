@@ -1,12 +1,11 @@
 
 import { getCookiesAcessToken, removeCookiesAcessToken, setCookiesAcessToken } from "@/app/services/cookies";
 import { CreateUser, GetUserById, GetUserDataBase, GetUserLocalData, RemoveUser, UpdateUserData } from "../../database/functions/Users/manageUserData";
-//import { QueryRequests } from "@/app/services/QueryRequests";
 
-import { getUserCache, removeUserCache, saveUserCache } from "@/app/services/saveUserCache";
+
 import { CreateCategory, DeleteCategory, GetAllCategories, SaveImgUrlThumbnail, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
 import { CreateCourse, DeleteCourse, GetCourseById, GetCoursesByCategory, UpdateConfigCourseData, UpdateCover, UpdateInfoCourse,  UpdateThumbnail } from "../../database/functions/Courses/manageCourses";
-import { GetLessonsModule, GetModuleById, GetModules, UpdateModuleConfigs, createModule, deleteModule, updateInfoModule, updateModuleSettings } from "../../database/functions/Modules/manageModules";
+import { GetLessonsModule, GetModuleById, GetModules, UpdateModuleConfigs, createModule, deleteModule, updateInfoModule } from "../../database/functions/Modules/manageModules";
 import { handleUpdateThumbnail } from "@/app/services/UpdateThumbnail";
 import { handleUpdateCover } from "@/app/services/UpdateCover";
 import { createLesson, deleteLesson } from "../../database/functions/Lessons/manageLessons";
@@ -98,11 +97,9 @@ export default function Controller(){
                 setCookiesAcessToken: setCookiesAcessToken,
                 removeCookiesAcessToken: removeCookiesAcessToken
             },
-            manageLocalCache: {
-                saveUserCache: saveUserCache,
-                getUserCache: getUserCache,
-                removeUserCache: removeUserCache
-            },
+            /**
+             * Gerenciador de imagens,
+             */
             manageImages: {
                 handleUpdateThumbnail: handleUpdateThumbnail,
                 handleUpdateCover: handleUpdateCover,

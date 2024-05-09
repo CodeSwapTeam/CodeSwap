@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../database/firebase";
-import { ContextDataCache, useAuthContext } from "../contexts/ContextDataCache";
+import { ContextDataCache, useAuthContext } from "../Providers/ContextDataCache";
 import { useRouter } from "next/navigation";
 import Link from 'next/link'
 import styled from 'styled-components';

@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -9,12 +8,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
     },
     mutations: {
-        /*
-      onSettled: (data, error, variables, context, mutation) => {
-        const queryKey = mutation.options.mutationKey;
-        queryClient.invalidateQueries(queryKey);
-      },
-      */
+        
     },
   },
 });

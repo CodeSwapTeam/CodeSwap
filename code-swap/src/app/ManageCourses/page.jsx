@@ -4,10 +4,11 @@ import React, { useEffect, useState } from 'react';
 import Controller from '@/Controller/controller';
 import ListCourses from '../Components/ListCoursesADM';
 import CreateCourse from '../Components/PainelADM/CreateCourse/CreateCourse';
-import { ContextDataCache } from '../contexts/ContextDataCache';
+import { ContextDataCache } from '../Providers/ContextDataCache';
 import UserList from '../Components/ListUsers';
 import styled from 'styled-components';
 import ListCoursesADM from '../Components/ListCoursesADM';
+import { TokenVerify } from '../services/AuthService';
 
 
 const StyledButtonNavBar = styled.button`
@@ -48,10 +49,16 @@ const PainelAdm = () => {
 
     async function getUser() {
         if(!currentUser){
-            const userCached = await controller.services.manageLocalCache.getUserCache();
+            //pegar o token nos cookies e buscar o usuário no banco de dados 
+            const token = await controller.services.manageCookies.getCookiesAcessToken(); 
+            const userDecrypted = await TokenVerify(token.value);
+         
+            const userCached = await controller.manageUsers.GetUserDataBase(userDecrypted.userData.userCredential);
             setCurrentUser(userCached);
             setuserDataPermission(userCached.permissionAcess);
-        };          
+        } else {
+            setuserDataPermission(currentUser.permissionAcess);
+        }
     }
 
     useEffect(() => {

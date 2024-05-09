@@ -6,7 +6,7 @@ import { getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import { ref } from "firebase/storage";
 
 import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
-import { ContextDataCache } from '@/app/contexts/ContextDataCache';
+import { ContextDataCache } from '@/app/Providers/ContextDataCache';
 
 
 const CreateCourses = () => {

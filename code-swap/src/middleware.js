@@ -1,16 +1,11 @@
 // Importando as classe necessária do pacote 'next/server'
 import {NextResponse} from 'next/server'
 
-// Importando a função 'cookies' do pacote 'next/headers'
-import { cookies } from 'next/headers'
-
-// Importando a classe 'Controller' do arquivo 'controller.js'
-import Controller from './Controller/controller';
-
 import { TokenVerify } from './app/services/AuthService';
 
+
 // Função middleware que será exportada como padrão
-export default async function middleware( NextRequest){
+export default async function middleware( NextRequest ){
 
     const request = NextRequest.cookies.get('user');
     const token = request?.value;
@@ -19,15 +14,8 @@ export default async function middleware( NextRequest){
     const tokenVerify = 
         token && 
         (await TokenVerify(token).catch((error) => {
-        console.error('Erro ao verificar o token:', error); 
+        console.error(error); 
     }));
-
-    if(tokenVerify){
-        console.log('Token válido')
-        //imprimir a rotas que o usuário está
-        console.log(NextRequest.url)
-    }
-
 
     // Verificando se a página atual é a página inicial
     const isHomePage = NextRequest.nextUrl.pathname === '/';
@@ -63,9 +51,6 @@ export default async function middleware( NextRequest){
         }
     }
      
-
-
-
    
 }
 
