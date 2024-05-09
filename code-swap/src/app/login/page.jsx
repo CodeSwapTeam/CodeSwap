@@ -228,8 +228,8 @@ export default function Login() {
             setCurrentUser(userData); //ATUALIZA O USUÁRIO NO CONTEXTO
             
             //salvar nos cookies o token de acesso       
-            controller.services.manageCookies.setCookiesAcessToken(userData);   
-            router.push('/Dashboard');
+            //controller.services.manageCookies.setCookiesAcessToken(userData);   
+            router.push('/MyCourses');
 
         } catch (error) {
             setError(error.message);

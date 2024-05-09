@@ -104,7 +104,6 @@ const NavBarPrivate = (props) => {
     <nav style={navbarStyle}>
       <div style={flexContainer}>
         <div style={navBarLeft}>
-          <Link href='/' style={navButtonStyle}>Home</Link>
           <Link href='/MyCourses' style={navButtonStyle}>Meus Cursos</Link>
           <Link href='/' style={navButtonStyle}>Comunidade</Link>
         </div>

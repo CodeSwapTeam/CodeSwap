@@ -53,7 +53,7 @@ const PainelAdm = () => {
             const token = await controller.services.manageCookies.getCookiesAcessToken(); 
             const userDecrypted = await TokenVerify(token.value);
          
-            const userCached = await controller.manageUsers.GetUserDataBase(userDecrypted.userData.userCredential);
+            const userCached = await controller.manageUsers.GetUserDataBase(userDecrypted.userId);
             setCurrentUser(userCached);
             setuserDataPermission(userCached.permissionAcess);
         } else {

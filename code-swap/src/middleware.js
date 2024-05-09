@@ -14,7 +14,7 @@ export default async function middleware( NextRequest ){
     const tokenVerify = 
         token && 
         (await TokenVerify(token).catch((error) => {
-        console.error(error); 
+        //console.error(error); 
     }));
 
     // Verificando se a página atual é a página inicial
@@ -39,7 +39,7 @@ export default async function middleware( NextRequest ){
     if(isLoginPage){
         // Se o usuário estiver autenticado, redirecione para a página do painel
         if(tokenVerify){
-            return NextResponse.redirect(new URL('/Dashboard', NextRequest.url));
+            return NextResponse.redirect(new URL('/MyCourses', NextRequest.url));
         }
     }
     
@@ -47,7 +47,7 @@ export default async function middleware( NextRequest ){
     else if(isHomePage){
         // Se o usuário estiver autenticado, redirecione para a página do painel
         if(tokenVerify){
-            return NextResponse.redirect(new URL('/Dashboard', NextRequest.url));
+            return NextResponse.redirect(new URL('/MyCourses', NextRequest.url));
         }
     }
      
@@ -56,5 +56,5 @@ export default async function middleware( NextRequest ){
 
 // Configuração de rotas que utilizarão este middleware
 export const config = {
-        matcher: ['/','/Dashboard:path*', '/ManageCourses','/Cursos/:id/modulo/:moduleId*', '/MyCourses']
+        matcher: ['/', '/ManageCourses','/Cursos/:id/modulo/:moduleId*', '/MyCourses']
 }
