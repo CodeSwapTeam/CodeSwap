@@ -7,10 +7,13 @@ import Controller from '@/Controller/controller';
 
 
 const navbarStyle = {
+  position: 'fixed',
+  top: '0',
+  width: '100%',
   backgroundColor: 'rgba(0, 0, 0, 0.5)',
   overflow: 'hidden',
   display: 'flex',
-
+  zIndex: 1000,
 };
 
 const navButtonStyle = {

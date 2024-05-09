@@ -1,117 +1,124 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useAuthContext } from '@/app/Providers/ContextDataCache';
+import { ContextDataCache } from '@/app/Providers/ContextDataCache';
 import Controller from '@/Controller/controller';
+import styled from 'styled-components';
+
+const BackgroundImage = styled.div`
+    background-image: url('/assets/bgCurso.webp');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: fixed;
+    top: 0;
+    
+    width: 100%;
+    height: 100%;
+    z-index: -1; 
+`;
+
+/* const Content = styled.div`
+    z-index: 2;
+    // other styles...
+`; */
+
+
+
+
+
+const Container = styled.div`
+    border: 1px solid green;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`;
+
+const Content = styled.div`
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
+`;
+
+const LeftContent = styled.div`
+
+
+
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+`;
+
+const RightContent = styled.div`
+
+    width: 40%;
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+`;
+
+const ModuleList = styled.div`
+    margin-top: 20px;
+    height: 300px;
+    width: 100%;
+    overflow-y: auto;
+`;
+
+const ModuleItem = styled.div`
+    padding: 10px;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+`;
 
 const Page = () => {
 
     const controller = Controller();
 
-    const { currentUser, setCurrentUser } = useAuthContext(); // Contexto de autenticação e dados do usuário
+    const { currentUser, setCurrentUser } = ContextDataCache(); // Contexto de autenticação e dados do usuário
     const router = useRouter(); // Roteador para navegação
-    const { categoria } = useParams(); // Parâmetro de categoria da URL
-    const [courses, setCourses] = useState([]); // Estado para armazenar os cursos
+    const { categoria } = useParams(); // Parâmetro de courseId da URL
+    const [modules, setModules] = useState([]); // Estado para armazenar os módulos do curso
     const [userLogged, setUserLogged] = useState(); // Estado para verificar se o usuário está logado
     const [userPermission, setUserPermission] = useState(); // Estado para armazenar as permissões do usuário
     const [userSubscribed, setUserSubscribed] = useState(false); // Estado para verificar se o usuário está inscrito
 
 
-    //Ao carregar a página, verifica se o usuário está logado checando os cookies e se está inscrito no curso
-    async function decryptUserData() {
-        let cookies;
-        // Obtém os cookies se o usuário atual não estiver definido
-        if (currentUser == null) {
-            cookies = await controller.services.manageCookies.getCookies();
+    const [course, setCourse] = useState([]); // Estado para armazenar os cursos
 
-            // Define o usuário como não logado se não houver cookies
-            if (!cookies) {
-                setUserLogged(false);
-                return;
-            }
-        }
-        // Define o usuário como logado se houver cookies
-        setUserLogged(true);
-        // Descriptografa os dados do usuário ou usa o usuário atual
-        const userDecrypted = !currentUser ? controller.encryptionAlgorithm.decryptObjectData(cookies.value) : currentUser;
-        // Atualiza o usuário atual com os dados descriptografados
-        setCurrentUser(userDecrypted);
-
-        // Define o usuário como não logado se não houver dados descriptografados
-        if (!userDecrypted) {
-            setUserLogged(false);
-            return;
-        }
-
-        // Cria uma permissão padrão
-        const defaultPermission = [{ courseId: categoria, permissionModule: 0 }];
-
-        // Define a permissão do usuário como a permissão padrão se o usuário não tiver permissões de curso
-        if (userDecrypted.CoursesPermissions.length === 0) {
-            setUserPermission(defaultPermission);
-            return;
-        }
-
-        // Procura uma permissão de curso que corresponda à categoria
-        const hasCoursePermission = userDecrypted.CoursesPermissions.find(
-            (permission) => permission.courseId === categoria
-        );
-
-        // Define a permissão do usuário como a permissão padrão se o usuário não tiver permissão para o curso
-        if (!hasCoursePermission) {
-            setUserPermission(defaultPermission);
-            return;
-        }
-
-        // Define a permissão do usuário e marca o usuário como inscrito se o usuário tiver permissão para o curso
-        setUserPermission(hasCoursePermission);
-        setUserSubscribed(true);
-    }
-
-    //Se a pagina for recarregada, o context perde as informações então pegar os dados do usuário nos cookies
-    async function pegarDadosCookies() {
-        // Verifica se o usuário atual não está definido
-        if (currentUser == null) {
-            // Obtém os cookies do usuário
-            const userCript = await controller.services.manageCookies.getCookies();
-
-            // Se não houver cookies, define o usuário como não logado e retorna
-            if (!userCript) {
-                setUserLogged(false);
-                return;
-            }
-
-            // Descriptografa os dados do usuário
-            const userDescript = controller.encryptionAlgorithm.decryptObjectData(userCript.value);
-
-            // Define o usuário atual com os dados descriptografados
-            setCurrentUser(userDescript);
-            // Define o usuário como logado
-            setUserLogged(true);
-        }
-        // Retorna da função
-        return;
-    }
 
     const fetchCourses = async () => {
-        // Busca os cursos por categoria
-        const coursesData = await controller.manageCategories.getCoursesByCategory(categoria);
-        // Atualiza o estado dos cursos com os dados obtidos
-        setCourses(coursesData);
+
+        const course = await controller.manageCourses.GetCourseById(categoria);
+
+        console.log('course', course);
+
+        setCourse(course);
+        setModules(course.modules);
     };
 
     useEffect(() => {
-        pegarDadosCookies(); // Obtém os dados do usuário nos cookies
-        fetchCourses(); // Busca os cursos
-        decryptUserData(); // Descriptografa os dados do usuário e armazena as permissões
+        fetchCourses();
     }, [categoria, currentUser]);
 
     //função para redirecionar para a página de descrição do modulo
     function redirectToModuleDescription(idModule) {
         router.push(`/Cursos/${categoria}/modulo/${idModule}`);
 
-       // Inscreve o usuário no módulo
-       controller.manageUsers.subscribeUserModule(categoria, idModule); // Inscreve o usuário no módulo
+        // Inscreve o usuário no módulo
+        controller.manageUsers.subscribeUserModule(categoria, idModule); // Inscreve o usuário no módulo
     }
 
 
@@ -156,76 +163,38 @@ const Page = () => {
 
 
     return (
-        <div>
-            {courses.map((course, index) => (
-                <div key={index} style={{ backgroundColor: '#f0f0f0', margin: '20px', padding: '10px' }}>
-                    <h2 style={{ color: 'blue' }}>{course.title}</h2>
+        <>
+            <BackgroundImage />
 
-                    {/** --------------------------------------------- */}
-                    {userLogged && !userSubscribed && (
-                        <button
-                            style={{ padding: '5px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%' }}
-                            onClick={() => subscribeUser(course)}
-                        >
-                            Inscrever-se
-                        </button>
-                    )}
-                    {/** --------------------------------------------- */}
+            <Container>
+                {course &&
+                    <Content>
+                        <LeftContent>
+                            <div style={{marginTop:'50px', paddingLeft: '100px', paddingRight: '100px', height: '40%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                                <h1 style={{ color: 'green', fontSize: '2rem', marginTop: '20px' }}>{course.title}</h1>
+                                <p style={{ color: 'white', fontSize: '0.8rem', margin: '20px' }}>{course.description}</p>
+                                <button style={{ color: 'green', border: '1px solid green', padding: '10px' }}>INSCREVA-SE</button>
+                            </div>
 
-                    <p>{course.description}</p>
+                            <ModuleList>
+                                {modules && modules.map((module, index) => (
+                                    <ModuleItem key={index}>
+                                        <h2 style={{ color: 'green', fontSize: '1rem', marginTop: '5px' }}>{module.title}</h2>
+                                    </ModuleItem>
+                                ))}
+                            </ModuleList>
+                        </LeftContent>
 
-                    <div style={{ border: '1px solid black', height: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} >
-                        {course.modules.map((module, indexC) => {
-
-                            {/** --------------------------------------------- */ }
-
-                            //busca os modulos do curso
-                            const modulesCourses = course.modules;
-                            //busca a permissão do usuário no modulo
-                            const modulePermission = modulesCourses[indexC].modulePermission;
-                            //busca os registros do usuario no modulo
-                            const registrationModules = modulesCourses[indexC].registrationsModule;
-                            //procura o usuario na lista de inscritos com o userId == currentUser.userId
-                            let userRegistration;
-                            if (currentUser) {
-                                userRegistration = registrationModules.find(
-                                    (registration) => registration.userId === currentUser.userId
-                                );
-                            }
+                        <RightContent>
+                            {/* Right content */}
+                        </RightContent>
+                    </Content>
+                }
+            </Container>
 
 
-                            // Verifica se o usuário concluiu o módulo
-                            const userHasConcluded = userRegistration && userRegistration.status === 'concluido';
 
-                            {/** --------------------------------------------- */ }
-
-
-                            return (
-                                <div key={indexC} style={{ backgroundColor: '#d0d0d0', margin: '10px', padding: '5px', border: userHasConcluded ? '2px solid green' : 'none' }}>
-                                    <h3 style={{ color: 'green' }}>{module.nameModule}</h3>
-                                    <p>{module.description}</p>
-
-                                    {module.lessons.map((lesson, index) => (
-                                        <div key={index} style={{ backgroundColor: '#b0b0b0', margin: '5px', padding: '2px' }}>
-                                            <h4 style={{ color: 'red' }}>{lesson.nameLesson}</h4>
-                                        </div>
-                                    ))}
-
-                                    {/** --------------------------------------------- */}
-
-                                    {userLogged && userSubscribed && userPermission.permissionModule >= modulePermission && (
-                                        <button style={{ padding: '5px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%' }} onClick={() => redirectToModuleDescription(module.idModule)}>Ver modulo</button>
-                                    )}
-
-                                    {/** --------------------------------------------- */}
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                </div>
-            ))}
-        </div>
+        </>
     );
 };
 

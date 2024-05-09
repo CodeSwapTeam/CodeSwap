@@ -8,7 +8,7 @@ export async function GET(request){
     const type = searchParams.get('type');
 
     if(id && type) console.log('GET request Server..............:', id, type);
-    if(type && id === null) console.log('GET request Server..............:', type);
+   // if(type && id === null) console.log('GET request Server..............:', type);
 
     switch (type) {
         case 'categories': {//Buscar todas as categorias
