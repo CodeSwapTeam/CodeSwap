@@ -1,12 +1,12 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { useInteractionLogger } from '../app/contexts/InteractionContext';
-import interactionsType from './contexts/interactionsType';
+import { useInteractionLogger } from './services/InteractionContext';
+import interactionsType from './services/interactionsType';
 import styled from 'styled-components';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link'
 import Typewriter from 'typewriter-effect';
-import { ContextDataCache } from '../app/contexts/ContextDataCache';
+import { ContextDataCache } from './Providers/ContextDataCache';
 
 
 const PageContainer = styled.div`

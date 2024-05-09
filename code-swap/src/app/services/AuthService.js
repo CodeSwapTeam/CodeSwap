@@ -1,69 +1,17 @@
-'use server'; 
-import jwt from 'jsonwebtoken';
-import { cookies } from 'next/headers';
+import { jwtVerify } from "jose";
 
-const secret = 'mysecret';
+export const TokenVerify = async (token) =>{
 
-const AuthService = async () => {
-    
-    const cookieStore = cookies();
+    const secret = new TextEncoder().encode(
+        'cc7e0d44fd473002f1c42167459001140ec6389b7353f8088f4d9a95f2f596f2',
+      );
 
-    const saveToken = (token) => {
-        //Salvar nos cookies o token de acesso
+    try {
+        const decoded = await jwtVerify(token, secret);
+        return decoded.payload;
+    } catch (error) {
+        throw new Error('Token expirado ou inválido');
+    }
 
-        //criptografar o token com a chave secreta
-        const tokenEncrypted = jwt.sign(token, secret);
-        cookieStore.set('user', tokenEncrypted);
-    };
+}
 
-    const getToken = () => {
-        const token = cookieStore.get('user')?.value;
-
-        if (!token) {
-            return null;
-        }
-
-        return jwt.verify(token, secret);
-        
-    };
-
-    const removeToken = () => {
-        cookieStore.delete('user');
-    };
-
-    const login = async (email, password) => {
-        const response = await fetch('/api/auth', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
-
-        if (!response.ok) {
-            throw new Error('Erro ao efetuar login');
-        }
-
-        const { token } = await response.json();
-
-        saveToken(token);
-
-        return jwt.decode(token);
-    };
-
-    const logout = () => {
-        removeToken();
-    };
-
-    const isAuthenticated = () => {
-        return getToken() !== null;
-    };
-
-    return {
-        login,
-        logout,
-        isAuthenticated,
-    };
-};
-
-export default AuthService;

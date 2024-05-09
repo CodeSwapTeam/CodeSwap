@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ContextDataCache } from "@/app/contexts/ContextDataCache";
+import { ContextDataCache } from "@/app/Providers/ContextDataCache";
 import AddModuleModal from "../../Modals/modalAddModule";
 import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
 import Controller from '@/Controller/controller';

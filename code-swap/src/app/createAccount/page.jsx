@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../database/firebase";
-import { ContextDataCache, useAuthContext } from "../contexts/ContextDataCache";
+import { ContextDataCache, useAuthContext } from "../Providers/ContextDataCache";
 import { useRouter } from "next/navigation";
 import Link from 'next/link'
 import styled from 'styled-components';
@@ -99,13 +99,13 @@ export default function CreateAccount() {
 
     const controller = Controller();
 
-    const [ currentUser, setCurrentUser ] = ContextDataCache();
+    const  {currentUser, setCurrentUser}  = ContextDataCache();
 
     const router = useRouter();
 
     useEffect(() => {
         if (currentUser) {
-            router.push('/Dashboard');
+            router.push('/MyCourses');
         }
     }, [currentUser])
 
@@ -138,9 +138,17 @@ export default function CreateAccount() {
                 phone: phoneNumber,
                 whatsapp: isWhatsApp
             }
+
+          
            
             //criar o local de armazenamento de dados do usuário no banco de dados
             controller.manageUsers.CreateUser(userData);
+
+            //buscar objeto User que tem o userId == user. uid
+            const userDecrypted = await controller.manageUsers.GetUserDataBase(user.uid); 
+        
+            setCurrentUser(userDecrypted);// altera o Context
+
             alert(`Conta criada com sucesso! ${displayName}`);
 
 
@@ -149,18 +157,7 @@ export default function CreateAccount() {
             setDisplayName('');
             setError(null);
 
-            //pegar os dados do usuario e salvar no context
-            //const userData = await controller.manageUsers.getUserData(user.uid);
-            /*
-            try {
-                const userDataEncrypt = controller.encryptionAlgorithm.encryptObjectData(userData);
-                controller.services.manageCookies.setCookies(userDataEncrypt);
-            } catch (error) {
-                console.log('Error setting cookies:', error);
-            }
-            */
-            setCurrentUser(userData);// altera o Context
-            router.push('/Dashboard');
+            router.push('/MyCourses');
 
         } catch (error) {
             console.log('Error creating new user:', error);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link'
 import { useRouter } from 'next/navigation';
-import { ContextDataCache} from '../../contexts/ContextDataCache';
+import { ContextDataCache} from '../../Providers/ContextDataCache';
 import Controller from '@/Controller/controller';
 
 
@@ -104,7 +104,6 @@ const NavBarPrivate = (props) => {
     <nav style={navbarStyle}>
       <div style={flexContainer}>
         <div style={navBarLeft}>
-          <Link href='/' style={navButtonStyle}>Home</Link>
           <Link href='/MyCourses' style={navButtonStyle}>Meus Cursos</Link>
           <Link href='/' style={navButtonStyle}>Comunidade</Link>
         </div>

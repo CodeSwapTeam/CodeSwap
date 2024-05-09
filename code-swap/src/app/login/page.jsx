@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
-import { ContextDataCache } from "../contexts/ContextDataCache";
+import { ContextDataCache } from "../Providers/ContextDataCache";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../database/firebase";
@@ -235,11 +235,9 @@ export default function Login() {
 
             setCurrentUser(userData); //ATUALIZA O USUÁRIO NO CONTEXTO
             
-            //salvar nos cookies o token de acesso
-            controller.services.manageCookies.setCookiesAcessToken(user.uid);
-            //salvar no localstorage os dados do usuário
-            controller.services.manageLocalCache.saveUserCache(userData);
-            router.push('/Dashboard');
+            //salvar nos cookies o token de acesso       
+            //controller.services.manageCookies.setCookiesAcessToken(userData);   
+            router.push('/MyCourses');
 
         } catch (error) {
             setError(error.message);
