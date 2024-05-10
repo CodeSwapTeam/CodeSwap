@@ -146,7 +146,7 @@ export default function Home() {
 
   useEffect(() => {
     if (currentUser) {
-      router.push('/Dashboard');
+      router.push('/MyCourses');
     }
 
     setIsMounted(true);
