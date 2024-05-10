@@ -70,6 +70,11 @@ const MyCoursesPage = () => {
             courseSelected = await controller.manageCourses.GetCourseById(course.id);
             queryClient.setQueryData(['courses-Cached'], [...coursesCached, courseSelected]);
         }
+
+        //adicionar no cache a categoria selecionada buscando dentro de ['All-Categories-MyCourses'] a categoria que contém o curso selecionado
+        const categoriesCached = queryClient.getQueryData(['All-Categories-MyCourses']) || [];
+        const categorySelected = categoriesCached.find(c => c.courses.find(c => c.id === course.id));
+        queryClient.setQueryData(['category-Selected-Mycourses'], categorySelected);
     
         queryClient.setQueryData(['courseSelected'], courseSelected);
         Router.push(`/MyCourses/${course.id}`);

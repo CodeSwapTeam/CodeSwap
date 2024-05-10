@@ -18,7 +18,8 @@ const LayoutComponents = ({ children }) => {
             const token = await controller.services.manageCookies.getCookiesAcessToken(); 
             if(!token) return 
             const userDecrypted = await TokenVerify(token.value);
-         
+            if(!userDecrypted) return;
+            
             const userCached = await controller.manageUsers.GetUserDataBase(userDecrypted.userId);
             setCurrentUser(userCached);
         } 

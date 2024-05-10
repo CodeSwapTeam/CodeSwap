@@ -20,7 +20,6 @@ const BackgroundImage = styled.div`
     z-index: -1; 
 `;
 
-
 const Container = styled.div`
     
     display: flex;
@@ -40,7 +39,8 @@ const Content = styled.div`
 `;
 
 const LeftContent = styled.div`
-
+    position: absolute;
+    left: 0;
 
     margin-top: 50px;
     width: 60%;
@@ -52,13 +52,7 @@ const LeftContent = styled.div`
     }
 `;
 
-const RightContent = styled.div`
 
-    width: 40%;
-    @media (max-width: 768px) {
-        width: 100%;
-    }
-`;
 
 const ModuleList = styled.div`
     
@@ -66,7 +60,7 @@ padding-left: 60px;
     margin-top: 20px;
 `;
 
-const ModuleItem = styled.p`
+const ModuleItem = styled.div`
     
 
 
@@ -150,6 +144,36 @@ const ButtonSubscribe = styled.button`
 `;
 
 
+const RightContent = styled.div`
+    //conteudo da div absoluto
+    position: absolute;
+    //alinhamento do conteudo a direita
+    right: 0;
+    
+    margin-left: 30px;  
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+
+    width: 40%;
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+`;
+
+const CourseCard = styled.div`
+    border-radius: 10px;
+
+    
+    
+    margin-top: 20px;
+    border: 1px solid white;
+    display: flex;
+    width: 100%;
+    height: 100px;
+`;
 
 const Page = () => {
 
@@ -166,7 +190,7 @@ const Page = () => {
 
 
     const [course, setCourse] = useState([]); // Estado para armazenar os cursos
-
+    const [coursesCategory, setCoursesCategory] = useState([]); // Estado para armazenar os cursos relacionados a categoria
 
     // Função para buscar o curso pelo ID
     const fetchCourseById = async (id) => {
@@ -196,7 +220,21 @@ const Page = () => {
         setModules(modules);
     };
 
+    //Buscar cursos relacionados a categoria
+    const fetchCoursesByCategory = async () => {
+        const coursesCategory = queryClient.getQueryData(['category-Selected-Mycourses']) || null;
+
+        if (!coursesCategory) return
+
+        setCoursesCategory(coursesCategory.courses);
+        
+        console.log('coursesCategory', coursesCategory);
+
+    }
+
+
     useEffect(() => {
+        fetchCoursesByCategory();
         fetchCourse();
     }, [courseId, currentUser]);
 
@@ -306,7 +344,19 @@ const Page = () => {
                         </LeftContent>
 
                         <RightContent>
-                            {/* Right content */}
+                            <div>
+                                <img src={course.imgUrlCover} alt="Capa Curso" />
+                            </div>
+
+                            <div>
+                                {coursesCategory && coursesCategory.map((course, index) => (
+                                    <CourseCard key={index}>
+                                        <img src={course.imgUrlThumbnail} alt="Capa Curso" style={{borderRadius: '10px'}} />
+                                        <p style={{color:'white'}}>{course.title}</p>
+                                        
+                                    </CourseCard>
+                                ))}
+                            </div>
                         </RightContent>
                     </Content>
                 }
