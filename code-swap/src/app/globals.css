@@ -5,8 +5,10 @@
 
 body {
   background-color: black;
-  min-width: 100vw;
-  min-height: 100vh;
+  box-sizing: border-box;
+}
+* {
+    box-sizing: border-box;
 }
 
 .play-regular {
@@ -19,4 +21,10 @@ body {
   font-family: "Play", sans-serif;
   font-weight: 700;
   font-style: normal;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Hairline', sans-serif;
+    font-weight: bold;
 }

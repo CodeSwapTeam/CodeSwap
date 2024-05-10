@@ -56,5 +56,5 @@ export default async function middleware( NextRequest ){
 
 // Configuração de rotas que utilizarão este middleware
 export const config = {
-        matcher: ['/', '/ManageCourses','/Cursos/:id/modulo/:moduleId*', '/MyCourses']
+        matcher: ['/', '/ManageCourses','/Cursos/:id/modulo/:moduleId*', '/MyCourses/:id*']
 }

@@ -1,6 +1,7 @@
 'use client';
 import Controller from "@/Controller/controller";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { query } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import styled from "styled-components";
 //página que exibe os cursos do aluno
@@ -41,9 +42,12 @@ const StyledCourse = styled.div`
 
 const MyCoursesPage = () => {
 
+    const queryClient = useQueryClient();
+
     const Router = useRouter();
 
     const controller = Controller();
+
     // Função para buscar as categorias no cache local ou no banco de dados
     const { data: categoriesData } = useQuery({
         queryKey: ['All-Categories-MyCourses'],
@@ -56,9 +60,19 @@ const MyCoursesPage = () => {
     });
 
 
-    const handleCourseClick = (course) => {
-        console.log(course);
-        Router.push(`/Cursos/${course.id}`);
+
+
+    const handleCourseClick = async (course) => {
+        const coursesCached = queryClient.getQueryData(['courses-Cached']) || [];
+        let courseSelected = coursesCached.find(c => c.id === course.id);
+    
+        if (!courseSelected) {
+            courseSelected = await controller.manageCourses.GetCourseById(course.id);
+            queryClient.setQueryData(['courses-Cached'], [...coursesCached, courseSelected]);
+        }
+    
+        queryClient.setQueryData(['courseSelected'], courseSelected);
+        Router.push(`/MyCourses/${course.id}`);
     }
 
     return (

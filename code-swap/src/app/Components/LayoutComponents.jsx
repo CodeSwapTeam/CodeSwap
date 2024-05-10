@@ -29,10 +29,10 @@ const LayoutComponents = ({ children }) => {
     }, [currentUser]);
 
     return (
-        <>
+        <div >
             {currentUser ? <NavBarPrivate userData={currentUser} /> : <NavBarPublic />}
             {children}
-        </>
+        </div>
     );
 }
 
