@@ -6,6 +6,7 @@ import { query } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 
 const Container = styled.div`
+    
     width: 100vw;
     display: flex;
     padding: 10px;

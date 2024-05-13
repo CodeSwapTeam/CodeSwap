@@ -8,7 +8,7 @@ export async function POST(NextRequest) {
     const type = searchParams.get('type');
     const data = await NextRequest.json();
     
-    console.log('POST request Server..............:', data, type);
+    //console.log('POST request Server..............:', data, type);
     
 
     switch (type) {
@@ -40,7 +40,7 @@ export async function POST(NextRequest) {
                 //adicionar no database em'categories' dentro de courses que é um array de objetos com o id do curso, o titulo e a descrição
                 await updateDoc(doc(db, 'Categories', courseData.category), {
                     //adicionar o id do curso no array de cursos da categoria
-                    courses: arrayUnion({ id: docRef.id, title: courseData.title, description: courseData.description, imgUrlThumbnail: courseData.imgUrlThumbnail, status: courseData.status })
+                    courses: arrayUnion({ id: docRef.id, title: courseData.title, description: courseData.description, imgUrlThumbnail: courseData.imgUrlThumbnail, status: courseData.status, owner: courseData.owner, difficulty: courseData.difficulty })
                 });
 
                 return NextResponse.json({ message: 'Curso criado com sucesso!' });
@@ -99,6 +99,7 @@ export async function POST(NextRequest) {
         }
         case 'UpdateCourseConfigs': {//Atualizar configurações do curso
             try {
+                console.log('data.courseData:', data.courseData);
                 // Atualizar configurações do curso
                 await updateDoc(doc(db, 'Courses', data.courseId), data.courseData);
 
@@ -107,9 +108,11 @@ export async function POST(NextRequest) {
                 const categorySnap = await getDoc(categoryDoc);
                 const category = categorySnap.data();
                 const course = category.courses.find(course => course.id === data.courseId);
-
+                
                 course.status = data.courseData.status;
                 course.imgUrlThumbnail = data.courseData.imgUrlThumbnail;
+                course.difficulty = data.courseData.difficulty;
+                course.owner = data.courseData.owner;
 
 
                 //atualizar a categoria no banco de dados

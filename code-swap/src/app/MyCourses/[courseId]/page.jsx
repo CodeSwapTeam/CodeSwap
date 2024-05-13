@@ -4,6 +4,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { ContextDataCache } from '@/app/Providers/ContextDataCache';
 import Controller from '@/Controller/controller';
 import styled from 'styled-components';
+import { MdOutlineSignalCellularAlt, MdOutlineSignalCellularAlt2Bar,MdOutlineSignalCellularAlt1Bar } from "react-icons/md";
+
+
+
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -44,16 +48,21 @@ const Content = styled.div`
 const LeftContent = styled.div`
 
     left: 0;
-    margin-left: 50px;
+
     margin-top: 50px;
     width: 60%;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    
     @media (max-width: 768px) {
         width: 100%;
-        margin-left: 20px;
+        margin-left: 50px;
         
+    }
+    //se a tela for maior que 836px adicione uma margin-left de 50px
+    @media (min-width: 836px) {
+        margin-left: 50px;
     }
 `;
 
@@ -86,14 +95,11 @@ const ModuleItem = styled.div`
 const ModuleTitle = styled.h2`
     color: #45ff45;
     font-size: 1.5rem;
-    
-
     margin-top: 5px;
     cursor: pointer;
     padding: 10px;
 
     transition: all 0.3s ease;
-
     background: linear-gradient(to right, rgba(249, 249, 249, 0) 40%, rgba(249, 249, 249, 0.1) 90%);
     border-radius: 10px;
 
@@ -150,8 +156,9 @@ const ButtonSubscribe = styled.button`
 
 const RightContent = styled.div`
 
-    right: 0;
+    
 
+    right: 0;
     padding: 20px;
     margin-top: 50px;
     display: flex;
@@ -169,9 +176,10 @@ const RightContent = styled.div`
 `;
 
 const CourseContainer = styled.div`
-margin-top: 40px;
-//centraliza o texto
-text-align: center;
+
+    margin-top: 40px;
+    //centraliza o texto
+    text-align: center;
    
 `;
 
@@ -203,11 +211,7 @@ const CourseCard = styled.div`
         @media (max-width: 768px) {
             font-size: 2vw;
         }
-    }
-
-    
-
-    
+    }  
 `;
 
 const Page = () => {
@@ -219,58 +223,73 @@ const Page = () => {
     const router = useRouter(); // Roteador para navegação
     const { courseId } = useParams(); // Parâmetro de courseId da URL
     const [modules, setModules] = useState([]); // Estado para armazenar os módulos do curso
-    const [userLogged, setUserLogged] = useState(); // Estado para verificar se o usuário está logado
-    const [userPermission, setUserPermission] = useState(); // Estado para armazenar as permissões do usuário
-    const [userSubscribed, setUserSubscribed] = useState(false); // Estado para verificar se o usuário está inscrito
-
 
     const [course, setCourse] = useState([]); // Estado para armazenar os cursos
     const [coursesCategory, setCoursesCategory] = useState([]); // Estado para armazenar os cursos relacionados a categoria
 
-    // Função para buscar o curso pelo ID
-    const fetchCourseById = async (id) => {
-        const course = await controller.manageCourses.GetCourseById(id);
-        queryClient.setQueryData(['courseSelected'], course);
-        return course;
-    };
+    const [openIndex, setOpenIndex] = useState(null);
 
-    // Função para buscar os módulos do curso pelo ID do curso
-    const fetchModulesByCourseId = async (id) => {
-        return await controller.manageModules.GetModulesCourseID(id);
+    const toggleOpen = (index) => {
+        if (openIndex !== index) {
+            setOpenIndex(index);
+        } else {
+            setOpenIndex(null);
+        }
     };
 
     const fetchCourse = async () => {
-        let course = queryClient.getQueryData(['courseSelected']) || null;
+        const coursesCached = queryClient.getQueryData(['courses-Cached']) || [];
+        let course = coursesCached.find(course => course.id === courseId);
 
-        // Se o curso não estiver no cache, buscar pelo ID
         if (!course) {
-            course = await fetchCourseById(courseId);
+            course = await controller.manageCourses.GetCourseById(courseId);
+            
+            queryClient.setQueryData(['courseSelected'], course);
+            //adicionar nos ['courses-Cached']
+            queryClient.setQueryData(['courses-Cached'], [...coursesCached, course]);
+        } else {
+            queryClient.setQueryData(['courseSelected'], course);
         }
-
-        // Buscar os módulos do curso
-        const modules = await fetchModulesByCourseId(course.id);
-
-        // Atualizar o estado do componente
+    
         setCourse(course);
-        setModules(modules);
+        //const modules = await controller.manageModules.GetModulesCourseID(courseId);
+        setModules(course.modules);
     };
+       
 
     //Buscar cursos relacionados a categoria
     const fetchCoursesByCategory = async () => {
         const coursesCategory = queryClient.getQueryData(['category-Selected-Mycourses']) || null;
 
         if (!coursesCategory) return
+        setCoursesCategory(coursesCategory.courses);   
+        //console.log('coursesCategory', coursesCategory);
+    }
 
-        setCoursesCategory(coursesCategory.courses);
+    const handleClickCourseRecommended = async (course) => {
         
-        console.log('coursesCategory', coursesCategory);
+        //verificar se nos ["courses-Cached"] tem o curso clicado
+        const coursesCached = queryClient.getQueryData(['courses-Cached']) || null;
+        //buscar o curso com o id clicado
+        const courseSelected = coursesCached.filter(courseCached => courseCached.id === course.id);
 
+        //se não tiver o curso clicado no cache, buscar no banco de dados
+        if (!courseSelected) {
+            const course = await controller.manageCourses.GetCourseById(id);
+            queryClient.setQueryData(['courseSelected'], course);
+        }
+
+        //setar o curso clicado no cache
+        queryClient.setQueryData(['courseSelected'], courseSelected[0]);
+
+        //queryClient.setQueryData(['courseSelected'], course);
+        router.push(`/MyCourses/${course.id}`);
     }
 
 
     useEffect(() => {
-        fetchCoursesByCategory();
         fetchCourse();
+        fetchCoursesByCategory();
     }, [courseId, currentUser]);
 
     /*  //função para redirecionar para a página de descrição do modulo
@@ -321,18 +340,10 @@ const Page = () => {
  
      } */
 
-    const [openIndex, setOpenIndex] = useState(null);
-
-    const toggleOpen = (index) => {
-        if (openIndex !== index) {
-            setOpenIndex(index);
-        } else {
-            setOpenIndex(null);
-        }
-    };
+    
 
     return (
-        <div style={{ width: '100%' }}>
+        <div >
             <BackgroundImage />
 
             <Container>
@@ -386,13 +397,18 @@ const Page = () => {
                             <CourseContainer >
                                 <h1 style={{ margin: 'auto', color: '#45ff45', fontSize: '2vw' }}>Cursos recomendados</h1>
                                 {coursesCategory && coursesCategory.filter(course => course.id !== courseId).map((course, index) => (
-                                    <CourseCard key={index}>
+                                    <CourseCard key={index} onClick={()=>handleClickCourseRecommended(course)} >
                                         <img src={course.imgUrlThumbnail} alt="Capa Curso" style={{ borderRadius: '10px' }} />
-                                        <div style={{ display:'flex', flexDirection:'column', padding:"5px" }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', padding: "5px" }}>
                                             <p >{course.title}</p>
-                                            <div style={{ display:'flex' }}>
-                                                <p>Nível:</p>
-                                                <p>Instrutor:</p>
+                                            <div style={{ display: 'flex', gap: '10px', justifyContent: 'space-around' }}>
+                                                <p style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                                    {course.difficulty === 'iniciante' && <MdOutlineSignalCellularAlt1Bar color="#45ff45" />}
+                                                    {course.difficulty === 'intermediário' && <MdOutlineSignalCellularAlt2Bar color="#45ff45" />}
+                                                    {course.difficulty === 'avançado' && <MdOutlineSignalCellularAlt color="#45ff45" />}
+                                                    <span> {course.difficulty}</span>
+                                                </p>
+                                                <p style={{ flex: 1 }}>Prof: {course.owner} </p>
                                             </div>
                                         </div>
                                     </CourseCard>

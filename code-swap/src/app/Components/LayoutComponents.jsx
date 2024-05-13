@@ -30,7 +30,7 @@ const LayoutComponents = ({ children }) => {
     }, [currentUser]);
 
     return (
-        <div >
+        <div style={{display:'flex', flexDirection:'column'}} >
             {currentUser ? <NavBarPrivate userData={currentUser} /> : <NavBarPublic />}
             {children}
         </div>
