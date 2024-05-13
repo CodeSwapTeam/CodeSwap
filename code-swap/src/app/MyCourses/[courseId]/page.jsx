@@ -32,16 +32,19 @@ const Content = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+    
     width: 100%;
     @media (max-width: 768px) {
         flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 `;
 
 const LeftContent = styled.div`
-    position: absolute;
-    left: 0;
 
+    left: 0;
+    margin-left: 50px;
     margin-top: 50px;
     width: 60%;
     display: flex;
@@ -49,6 +52,8 @@ const LeftContent = styled.div`
     justify-content: space-around;
     @media (max-width: 768px) {
         width: 100%;
+        margin-left: 20px;
+        
     }
 `;
 
@@ -56,16 +61,15 @@ const LeftContent = styled.div`
 
 const ModuleList = styled.div`
     
-padding-left: 60px;
+    width: 95%;
     margin-top: 20px;
 `;
 
 const ModuleItem = styled.div`
     
+    box-sizing: border-box;
 
-
-    padding-left: 60px;
-    padding-right: 100px;
+    
     color: white;  
     display: flex;
     flex-direction: column;
@@ -105,7 +109,7 @@ const ModuleTitle = styled.h2`
 `;
 
 const TitleDescription = styled.div`
-
+    box-sizing: border-box;
     margin-top: 50px;
     padding-left: 100px;
     padding-right: 100px;
@@ -145,17 +149,18 @@ const ButtonSubscribe = styled.button`
 
 
 const RightContent = styled.div`
-    //conteudo da div absoluto
-    position: absolute;
-    //alinhamento do conteudo a direita
+
     right: 0;
-    
-    margin-left: 30px;  
+
+    padding: 20px;
     margin-top: 50px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    //alinhar verticalmente
+
     align-items: center;
+    height: 100%;
 
     width: 40%;
     @media (max-width: 768px) {
@@ -163,16 +168,46 @@ const RightContent = styled.div`
     }
 `;
 
+const CourseContainer = styled.div`
+margin-top: 40px;
+//centraliza o texto
+text-align: center;
+   
+`;
+
 const CourseCard = styled.div`
     border-radius: 10px;
+    margin: auto;
+    text-align: center;
+    cursor: pointer;
+    margin-top: 20px;
+    display: flex;
+    
+    height: 100px;
+    transition: all 0.3s ease;
+    background-color: #00000063;
+    
+
+    &:hover {
+        background: none;
+        background-color: #00000063;
+        transform: scale(1.02);
+        box-shadow: 10px 0px 15px rgba(4, 255, 2, 0.2);
+    }
+
+    p {
+        color: white;
+        font-size: 1vw;
+        margin: auto;
+
+        @media (max-width: 768px) {
+            font-size: 2vw;
+        }
+    }
 
     
+
     
-    margin-top: 20px;
-    border: 1px solid white;
-    display: flex;
-    width: 100%;
-    height: 100px;
 `;
 
 const Page = () => {
@@ -345,18 +380,24 @@ const Page = () => {
 
                         <RightContent>
                             <div>
-                                <img src={course.imgUrlCover} alt="Capa Curso" />
+                                <img src={course.imgUrlCover} alt="Capa Curso" style={{ marginTop: '50px' }} />
                             </div>
 
-                            <div>
-                                {coursesCategory && coursesCategory.map((course, index) => (
+                            <CourseContainer >
+                                <h1 style={{ margin: 'auto', color: '#45ff45', fontSize: '2vw' }}>Cursos recomendados</h1>
+                                {coursesCategory && coursesCategory.filter(course => course.id !== courseId).map((course, index) => (
                                     <CourseCard key={index}>
-                                        <img src={course.imgUrlThumbnail} alt="Capa Curso" style={{borderRadius: '10px'}} />
-                                        <p style={{color:'white'}}>{course.title}</p>
-                                        
+                                        <img src={course.imgUrlThumbnail} alt="Capa Curso" style={{ borderRadius: '10px' }} />
+                                        <div style={{ display:'flex', flexDirection:'column', padding:"5px" }}>
+                                            <p >{course.title}</p>
+                                            <div style={{ display:'flex' }}>
+                                                <p>Nível:</p>
+                                                <p>Instrutor:</p>
+                                            </div>
+                                        </div>
                                     </CourseCard>
                                 ))}
-                            </div>
+                            </CourseContainer>
                         </RightContent>
                     </Content>
                 }
