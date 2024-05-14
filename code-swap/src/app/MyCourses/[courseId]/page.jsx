@@ -252,19 +252,35 @@ const Page = () => {
         }
     
         setCourse(course);
-        //const modules = await controller.manageModules.GetModulesCourseID(courseId);
-        setModules(course.modules);
+        const modules = await controller.manageModules.GetModulesCourseID(courseId);
+        //organizar a sequencia dos modulos com base no campo permission do modulo
+        modules.sort((a, b) => a.permission - b.permission);
+        setModules(modules);
     };
        
 
     //Buscar cursos relacionados a categoria
     const fetchCoursesByCategory = async () => {
-        const coursesCategory = queryClient.getQueryData(['category-Selected-Mycourses']) || null;
-
-        if (!coursesCategory) return
-        setCoursesCategory(coursesCategory.courses);   
-        //console.log('coursesCategory', coursesCategory);
-    }
+        let coursesCategory = queryClient.getQueryData(['category-Selected-Mycourses']);
+    
+        if (!coursesCategory) {
+            const categories = await controller.manageCategories.GetAllCategories();
+            const categorySelected = categories.find(c => c.courses.find(c => c.id === courseId));
+    
+            if (categorySelected && categorySelected.courses) {
+                setCoursesCategory(categorySelected.courses);
+                queryClient.setQueryData(['category-Selected-Mycourses'], categorySelected);
+            } else {
+                console.log('Nenhum curso encontrado para a categoria selecionada');
+            }
+        } else {
+            if (coursesCategory.courses) {
+                setCoursesCategory(coursesCategory.courses);
+            } else {
+                console.log('Nenhum curso encontrado no cache para a categoria selecionada');
+            }
+        }
+    };
 
     const handleClickCourseRecommended = async (course) => {
         
