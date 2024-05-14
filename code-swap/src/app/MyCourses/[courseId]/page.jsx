@@ -219,7 +219,7 @@ const Page = () => {
     const controller = Controller();
     const queryClient = useQueryClient();
 
-    const { currentUser } = ContextDataCache(); // Contexto de autenticação e dados do usuário
+    const { currentUser, setCurrentUser } = ContextDataCache(); // Contexto de autenticação e dados do usuário
     const router = useRouter(); // Roteador para navegação
     const { courseId } = useParams(); // Parâmetro de courseId da URL
     const [modules, setModules] = useState([]); // Estado para armazenar os módulos do curso
@@ -229,6 +229,7 @@ const Page = () => {
 
     const [openIndex, setOpenIndex] = useState(null);
 
+    //função para abrir e fechar o modulo
     const toggleOpen = (index) => {
         if (openIndex !== index) {
             setOpenIndex(index);
@@ -237,6 +238,7 @@ const Page = () => {
         }
     };
 
+    //função para buscar o curso pelo id
     const fetchCourse = async () => {
         const coursesCached = queryClient.getQueryData(['courses-Cached']) || [];
         let course = coursesCached.find(course => course.id === courseId);
@@ -253,28 +255,37 @@ const Page = () => {
     
         setCourse(course);
 
-        const modules = queryClient.getQueryData(['modules-CourseID-Cached']) || [];
-
-        if (modules.length === 0) {
+        const getAndSortModules = async (courseId) => {
             const modules = await controller.manageModules.GetModulesCourseID(courseId);
-            //organizar a sequencia dos modulos com base no campo permission do modulo
             modules.sort((a, b) => a.permission - b.permission);
-            //salvar o modulos em cache
+            return modules;
+        }
+        
+        const modulesCached = queryClient.getQueryData(['modules-CourseID-Cached']) || [];
+        
+        if (modulesCached.length === 0) {
+            const modules = await getAndSortModules(courseId);
             queryClient.setQueryData(['modules-CourseID-Cached'], [{
                 courseId: courseId,
                 modules: modules
             }]);
             setModules(modules);
-        }
-        else {
-            const modules = queryClient.getQueryData(['modules-CourseID-Cached']).find(m => m.courseId === courseId);
-            if(!modules) return;
-            setModules(modules.modules);
+        } else {
+            const modulesCache = modulesCached.find(m => m.courseId === courseId);
+            if(!modulesCache) {
+                const modules = await getAndSortModules(courseId);
+                queryClient.setQueryData(['modules-CourseID-Cached'], [...modulesCached, {
+                    courseId: courseId,
+                    modules: modules
+                }]);
+                setModules(modules);
+            } else {
+                setModules(modulesCache.modules);
+            }
         }
     };
-       
-
-    //Buscar cursos relacionados a categoria
+    
+    //função para buscar os cursos pela categoria para recomendar
     const fetchCoursesByCategory = async () => {
         let coursesCategory = queryClient.getQueryData(['category-Selected-Mycourses']);
     
@@ -297,6 +308,7 @@ const Page = () => {
         }
     };
 
+    //função para redirecionar para a página do curso clicado
     const handleClickCourseRecommended = async (course) => {
         
         //verificar se nos ["courses-Cached"] tem o curso clicado
@@ -315,6 +327,43 @@ const Page = () => {
 
         //queryClient.setQueryData(['courseSelected'], course);
         router.push(`/MyCourses/${course.id}`);
+    }
+
+    //função para inscrever o usuário no curso
+    const subscribeUser = async (course) => {
+        //verifica se o curso é premium e o usuário não é premium
+        if (course.coursePremium === true && currentUser.premium === false) {
+            //se for premium, redireciona para a página de pagamento
+            router.push(`/SwapPro`);
+            return;
+        } else {
+            try {
+                //inscrever o usuário no curso
+                const response = await fetch(`/api/posts?type=EnrollCourse`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        userId: currentUser.id,
+                        courseId: course.id,
+                        status: 'cursando',
+                        progress: 0,
+                        modulePermission: 1
+                     }),
+                });
+
+                if (!response.ok) throw new Error('Erro ao inscrever o usuário no curso');
+                
+                //buscar os dados do usuário novamente no banco de dados e atualizar os cookies
+                const novosDados = await controller.manageUsers.GetUserDataBase(currentUser.userCredential);
+                setCurrentUser(novosDados);
+                
+                
+            } catch (error) {
+                console.error('Erro ao inscrever o usuário no curso:', error);
+            }
+        }
     }
 
 
@@ -385,7 +434,30 @@ const Page = () => {
                             <TitleDescription>
                                 <h1 style={{ color: '#45ff45', fontSize: '2rem', marginTop: '20px' }}>{course.title}</h1>
                                 <p style={{ color: 'white', fontSize: '1rem', margin: '20px' }}>{course.description}</p>
-                                <ButtonSubscribe>INSCREVA-SE</ButtonSubscribe>
+                                {
+                                    // Se currentUser e CoursesEnrolled existirem e o curso com o id do curso estiver em CoursesEnrolled, mostrar o botão CURSANDO, senão mostrar o botão INSCREVA-SE
+                                    currentUser && currentUser.CoursesEnrolled && currentUser.CoursesEnrolled.find(c => c.courseId === course.id) ?
+                                        ((courseEnrolled) => (
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <p style={{ color: 'white', fontSize: '1rem', marginRight: '10px' }}>CURSANDO</p>
+                                                <div style={{ marginLeft: '10px', height: '20px', width: '200px', backgroundColor: '#45ff45', borderRadius: '10px' }}>
+                                                    <div style={{
+                                                        display: 'flex',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                        height: '100%',
+                                                        width: `${courseEnrolled.progress}%`,
+                                                        backgroundColor: '#0532ff',
+                                                        borderRadius: '10px',
+                                                        color: '#45ff45',
+                                                        fontSize: '1rem'
+                                                    }}> {courseEnrolled.progress > 0 ? `${courseEnrolled.progress}%` : null}</div>    
+                                                </div>
+                                            </div>
+                                        ))(currentUser.CoursesEnrolled.find(c => c.courseId === course.id))
+                                        :
+                                        <ButtonSubscribe onClick={() => subscribeUser(course)}>INSCREVA-SE</ButtonSubscribe>
+                                }
                             </TitleDescription>
 
                             <ModuleList>
@@ -403,9 +475,9 @@ const Page = () => {
                                         style={{ 
                                             backgroundColor: openIndex === index ? '#00000058' : 'transparent',
                                             padding: openIndex === index ? '10px' : '0'
-                                        }}>
+                                            }}>
                                             {module.description}
-                                            
+
                                             <LessonsModule>
                                                 {module.lessons && module.lessons.map((lesson, index) => (
                                                     <div key={index}>
@@ -413,7 +485,19 @@ const Page = () => {
                                                     </div>
                                                 ))}
                                             </LessonsModule>
-                                                <ButtonSubscribe>CLIQUE PARA ACESSAR O MÓDULO</ButtonSubscribe>
+                                            {
+                                                // Se currentUser e CoursesEnrolled existirem e o curso com o id do curso estiver em CoursesEnrolled, verificar modulePermission e renderizar o botão ou a mensagem apropriada
+                                                currentUser && currentUser.CoursesEnrolled && currentUser.CoursesEnrolled.find(c => c.courseId === course.id) ?
+                                                    ((courseEnrolled) => (
+                                                        courseEnrolled.modulePermission >= module.permission ?
+                                                            <ButtonSubscribe>CLIQUE PARA ACESSAR O MÓDULO</ButtonSubscribe>
+                                                            :
+                                                            <p>Complete os módulos anteriores para liberar o curso</p>
+                                                    ))(currentUser.CoursesEnrolled.find(c => c.courseId === course.id))
+                                                    :
+                                                    <p>Se inscreva no curso para visualizar o módulo</p>
+                                            }
+
                                         </ModuleItem>
                                     </div>
                                 ))}

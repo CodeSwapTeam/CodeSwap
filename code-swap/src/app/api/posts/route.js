@@ -217,6 +217,28 @@ export async function POST(NextRequest) {
                 return NextResponse.error('Erro ao criar a lição:', error);
             }
         }
+        
+
+        //Interações do usuário/////
+
+        //Inscrever um usuário em um curso
+        case 'EnrollCourse': {
+            try {
+                //buscar usuario no banco de dados
+                const userDoc = doc(db, 'Users', data.userId);
+                const userSnapshot = await getDoc(userDoc);
+
+                //adicionar dentro do usuario em 'CourseEnrolled' objeto data
+                await updateDoc(userDoc, {
+                    CoursesEnrolled: arrayUnion(data)
+                });
+                
+                return NextResponse.json({ message: 'Usuário inscrito com sucesso!' });
+            } catch (error) {
+                return NextResponse.error('Erro ao inscrever o usuário:', error);
+            }
+        }
+
         default:
             return NextResponse.error('Tipo de busca inválido', 500);
     }
