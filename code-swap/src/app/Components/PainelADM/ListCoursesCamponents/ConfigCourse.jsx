@@ -290,6 +290,7 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
         status: statusCourse,
         coursePremium: isPremium,
         SequentialModule: isSequential,
+        owner: courseSelected.owner,
         difficulty: difficulty,
         experience: experienceCourse,
         codes: codesCourse,
@@ -297,7 +298,7 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
         imgUrlThumbnail: imgUrlThumbnail,
         imgUrlCover: imgUrlCover
       };
-
+      console.log('courseData', courseData);
       ////////////ATUALIZAR AS INFORMAÇÕES DO CURSO NO BANCO DE DADOS////////////////
       await controller.manageCourses.UpdateConfigCourseData({ courseId: courseId, categoryId: courseSelected.category, courseData: courseData });
       
@@ -330,7 +331,7 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
 
     <>
       {!painelUpdateCourse ? (
-        <div >
+        <div  >
 
           <Container>
             <Button onClick={() => { setSelectedPainel('courses') }}>Voltar</Button>

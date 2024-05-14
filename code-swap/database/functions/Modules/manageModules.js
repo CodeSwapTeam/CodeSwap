@@ -1,5 +1,6 @@
-import { doc, getDoc, setDoc, updateDoc, collection, addDoc, arrayUnion, deleteDoc, arrayRemove } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, collection, addDoc, arrayUnion, deleteDoc, arrayRemove, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
+import Controller from "@/Controller/controller";
 
 
 
@@ -179,30 +180,10 @@ export async function GetLessonsModule(moduleId) {
     }
 };
 
+//>>>>ALTERADO PARA API ROUTER<<<<função para buscar todos os modulos de um curso
+export async function GetModulesCourseID(courseId) {
+    const response = await fetch(`/api/gets?type=modulesID&id=${courseId}`);
+    const data = await response.json();
 
-
-
-
-
-
-
-//>>>NÃO UTILIZADO AINDA<<<<<função para buscar todos os modulos de um curso
-export async function GetModules(courseId) {
-    const modules = [];
-    try {
-        const docRef = doc(db, 'Courses', courseId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-            const courseData = docSnap.data();
-            courseData.modules.forEach(module => {
-                modules.push(module);
-            });
-            //salvar os modulos no sessionStorage
-            sessionStorage.setItem('modules', JSON.stringify(modules));
-            return modules;
-        }
-    } catch (error) {
-        console.error('Erro ao buscar os módulos:', error);
-        throw error;
-    }
+    return data;
 };

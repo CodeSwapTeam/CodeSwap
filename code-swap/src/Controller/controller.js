@@ -5,7 +5,7 @@ import { CreateUser, GetUserById, GetUserDataBase, GetUserLocalData, RemoveUser,
 
 import { CreateCategory, DeleteCategory, GetAllCategories, SaveImgUrlThumbnail, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
 import { CreateCourse, DeleteCourse, GetCourseById, GetCoursesByCategory, UpdateConfigCourseData, UpdateCover, UpdateInfoCourse,  UpdateThumbnail } from "../../database/functions/Courses/manageCourses";
-import { GetLessonsModule, GetModuleById, GetModules, UpdateModuleConfigs, createModule, deleteModule, updateInfoModule } from "../../database/functions/Modules/manageModules";
+import { GetLessonsModule, GetModuleById, GetModules, GetModulesCourseID, UpdateModuleConfigs, createModule, deleteModule, updateInfoModule } from "../../database/functions/Modules/manageModules";
 import { handleUpdateThumbnail } from "@/app/services/UpdateThumbnail";
 import { handleUpdateCover } from "@/app/services/UpdateCover";
 import { createLesson, deleteLesson } from "../../database/functions/Lessons/manageLessons";
@@ -39,7 +39,7 @@ export default function Controller(){
          */
         manageModules:{
             CreateModule: createModule,
-            GetModules: GetModules,
+            GetModulesCourseID: GetModulesCourseID,
             DeleteModule: deleteModule,
             updateInfoModule: updateInfoModule,
             GetModuleById: GetModuleById,

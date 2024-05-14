@@ -1,4 +1,4 @@
-import { deleteDoc, doc, setDoc, updateDoc, addDoc, collection, arrayUnion, getDoc, where, getDocs } from "firebase/firestore";
+import { deleteDoc, doc, setDoc, updateDoc, addDoc, collection, arrayUnion, getDoc, where, getDocs, query } from "firebase/firestore";
 import { db } from "../../../../database/firebase";
 import { NextResponse } from "next/server";
 
@@ -8,7 +8,7 @@ export async function GET(request){
     const type = searchParams.get('type');
 
     if(id && type) console.log('GET request Server..............:', id, type);
-    if(type && id === null) console.log('GET request Server..............:', type);
+   // if(type && id === null) console.log('GET request Server..............:', type);
 
     switch (type) {
         case 'categories': {//Buscar todas as categorias
@@ -50,6 +50,19 @@ export async function GET(request){
                 });
 
                 return NextResponse.json(lessons);
+            }
+        }
+        case 'modulesID': { //Buscar todos os módulos de um curso pelo id
+            try {
+                const modules = [];
+                const querySnapshot = await getDocs(query(collection(db, "Modules"), where("courseId", "==", id)));
+                querySnapshot.forEach((doc) => {
+                    modules.push(doc.data());
+                });
+
+                return NextResponse.json(modules);
+            } catch (error) {
+                throw new Error('Erro no servidor ao buscar os módulos');
             }
         }
         default:

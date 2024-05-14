@@ -10,7 +10,7 @@ export const TokenVerify = async (token) =>{
         const decoded = await jwtVerify(token, secret);
         return decoded.payload;
     } catch (error) {
-        throw new Error('Token expirado ou inválido');
+        return
     }
 
 }

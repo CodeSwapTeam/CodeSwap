@@ -7,12 +7,14 @@ import Provider from "./Providers/ProviderQuery";
 const inter = Inter({ subsets: ["latin"] });
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
+
 export const metadata = {
   title: "Code Swap",
   description: "Plataforma de Cursos Online",
 };
 
 export default function RootLayout({ children }) {
+
   
   return (
 

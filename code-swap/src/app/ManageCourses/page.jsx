@@ -32,6 +32,7 @@ const StyledButtonNavBar = styled.button`
 `;
 
 const StyledButtons = styled.div`
+margin-top: 70px;
 display: flex;
 justify-content: space-around;
 color: white;
@@ -66,7 +67,7 @@ const PainelAdm = () => {
     }, [])
 
     return (
-        <div >
+        <div  >
             <StyledButtons>
                 <StyledButtonNavBar onClick={() => setSelectedPainel('createCourse')}>Criar Curso</StyledButtonNavBar>
                 <StyledButtonNavBar  onClick={() => setSelectedPainel('listCourses')}>Listar Cursos</StyledButtonNavBar>
