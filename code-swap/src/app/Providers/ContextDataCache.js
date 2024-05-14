@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (!currentUser) {
+      console.log('Buscando dados do usuário...');
       // pegar nos cookies o token de acesso nos cookies
       const token = document.cookie.split('user=')[1];
 

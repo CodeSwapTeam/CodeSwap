@@ -219,7 +219,7 @@ const Page = () => {
     const controller = Controller();
     const queryClient = useQueryClient();
 
-    const { currentUser, setCurrentUser } = ContextDataCache(); // Contexto de autenticação e dados do usuário
+    const { currentUser } = ContextDataCache(); // Contexto de autenticação e dados do usuário
     const router = useRouter(); // Roteador para navegação
     const { courseId } = useParams(); // Parâmetro de courseId da URL
     const [modules, setModules] = useState([]); // Estado para armazenar os módulos do curso
@@ -252,10 +252,25 @@ const Page = () => {
         }
     
         setCourse(course);
-        const modules = await controller.manageModules.GetModulesCourseID(courseId);
-        //organizar a sequencia dos modulos com base no campo permission do modulo
-        modules.sort((a, b) => a.permission - b.permission);
-        setModules(modules);
+
+        const modules = queryClient.getQueryData(['modules-CourseID-Cached']) || [];
+
+        if (modules.length === 0) {
+            const modules = await controller.manageModules.GetModulesCourseID(courseId);
+            //organizar a sequencia dos modulos com base no campo permission do modulo
+            modules.sort((a, b) => a.permission - b.permission);
+            //salvar o modulos em cache
+            queryClient.setQueryData(['modules-CourseID-Cached'], [{
+                courseId: courseId,
+                modules: modules
+            }]);
+            setModules(modules);
+        }
+        else {
+            const modules = queryClient.getQueryData(['modules-CourseID-Cached']).find(m => m.courseId === courseId);
+            if(!modules) return;
+            setModules(modules.modules);
+        }
     };
        
 
