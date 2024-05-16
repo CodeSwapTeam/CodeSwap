@@ -31,23 +31,11 @@ export default function RootLayout({ children }) {
         <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet" />
       </head>
           <body className={inter.className}>
-            <video
-            src="/assets/backgroundVideo.webm"
-            type="video/webm"
-            autoPlay
-            loop
-            muted
-            style={{
-              position: 'fixed',
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              zIndex: '-1',
-            }}
-            >
-            </video>
+            <img src="/assets/Code-fundo-oficial.webp" style={{position:"fixed", top:0, left:0, right:0, bottom:0, width:"100%", height:"100%", zIndex:"-1"}}/>
+            
             
             <LayoutComponents>
+              
               {children}
               <ReactQueryDevtools initialIsOpen={false} />
             </LayoutComponents>
