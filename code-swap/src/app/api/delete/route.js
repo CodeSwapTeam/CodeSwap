@@ -9,11 +9,9 @@ export async function DELETE(NextRequest){
     const type = searchParams.get('type');
     let data;
     if (NextRequest.body) {
-        try {
-            data = await NextRequest.json();
-        } catch (error) {
-            console.error('Erro ao analisar o corpo da solicitação:', error);
-        }
+        data = NextRequest.body;
+    } else {
+        console.log('Sem dados no corpo da solicitação');
     }
 
     console.log('DELETE request Server..............:', id, type);

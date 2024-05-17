@@ -97,8 +97,6 @@ export async function GetCourseById(Id) {
 //>>>>ALTERADO PARA API ROUTER<<<< função para deletar um curso
 export async function DeleteCourse(docId) {
 
-    console.log('relete course:', docId);
-
     try {
 
         const response = await fetch(`/api/delete?id=${docId}&type=course`, {
@@ -112,22 +110,6 @@ export async function DeleteCourse(docId) {
           const data = await response.json();
             alert(data.message);
 
-        ////////DELETE NO BANCO DE DADOS //////////////////////////////////////////
-
-        //deletar o curso da categoria no banco de dados
-      /*   const categoriesDB = await controller.manageCategories.GetAllCategories();
-        categoriesDB.forEach(category => {
-            category.courses = category.courses.filter(course => course.id !== docId);
-        });
-        categoriesDB.forEach(async category => {
-            await updateDoc(doc(db, 'Categories', category.id), {
-                courses: category.courses
-            });
-        }); */
-
-        ///////////////////////////////////////////////////////////////////////
-
-  
     }
     catch (error) {
         console.error('Erro ao deletar o curso:', error);
@@ -200,11 +182,6 @@ export async function UpdateThumbnail(courseId, imgUrlThumbnail) {
         await updateDoc(doc(db, 'Courses', courseId), {
             imgUrlThumbnail: imgUrlThumbnail
         });
-        //atualizar a thumbnail no cache local
-        const coursesLocal = JSON.parse(sessionStorage.getItem('courses'));
-        const course = coursesLocal.find(course => course.id === courseId);
-        course.imgUrlThumbnail = imgUrlThumbnail;
-        sessionStorage.setItem('courses', JSON.stringify(coursesLocal));
 
         alert('Thumbnail atualizada com sucesso');
     }
