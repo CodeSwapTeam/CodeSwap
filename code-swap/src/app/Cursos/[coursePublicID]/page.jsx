@@ -31,7 +31,7 @@ const Content = styled.div`
 
 const LeftContent = styled.div`
     left: 0;
-    
+    margin-top: 5%;
     width: 60%;
     display: flex;
     flex-direction: column;
