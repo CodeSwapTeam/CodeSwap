@@ -3,6 +3,9 @@ import Link from 'next/link'
 
 
 const navbarStyle = {
+  position: 'fixed',
+  top: '0',
+  width: '100%',
   backgroundColor: 'rgba(0, 0, 0, 0.5)',
   overflow: 'hidden',
   display: 'flex',
