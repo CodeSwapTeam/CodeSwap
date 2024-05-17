@@ -110,7 +110,7 @@ const DescriptionCourseCard = styled.div`
 
 
 function CarouselCoursesEnrolled(props){
-    const { courses, handleCourseClick } = props;
+    const { handleCourseRolledClick } = props;
 
     const { currentUser, setCurrentUser } = ContextDataCache();
 
@@ -138,9 +138,6 @@ function CarouselCoursesEnrolled(props){
     }, [currentCourse, hasScrolled]); // Add hasScrolled to dependencies
 
     useEffect(() => {
-
-        console.log('currentUser', currentUser)
-        
         if (currentCourse !== 0) {
             setHasScrolled(true); // Set hasScrolled to true when currentCourse changes
         }
@@ -153,13 +150,13 @@ function CarouselCoursesEnrolled(props){
             <h1 style={{ color: 'white', fontSize: '2rem', marginLeft: '40px' }}>Cursos Matriculados</h1>
             {currentUser && currentUser.CoursesEnrolled.length > 0 && <ArrowButton onClick={() => handleControlClick(true)}>◀</ArrowButton>}
             <StyledCourses>
-                {currentUser.CoursesEnrolled.map((course, index) => (
+                { currentUser && currentUser.CoursesEnrolled.map((course, index) => (
                     <StyledCourse
                         key={index}
                         ref={el => coursesRef.current[index] = el}
                         className={`course ${index === currentCourse ? "current-course" : ""}`}
 
-                        onClick={() => handleCourseClick(course)}
+                        onClick={() => handleCourseRolledClick(course)} 
                     >
                         <img src={course.imgUrlThumbnail} alt="Course" style={{ borderRadius: "10px" }} />
 
@@ -172,7 +169,7 @@ function CarouselCoursesEnrolled(props){
                     </StyledCourse>
                 ))}
             </StyledCourses>
-            {currentUser.CoursesEnrolled.length > 0 && <ArrowButtonRight onClick={() => handleControlClick(false)}>▶</ArrowButtonRight>}
+            {currentUser &&  currentUser.CoursesEnrolled.length > 0 && <ArrowButtonRight onClick={() => handleControlClick(false)}>▶</ArrowButtonRight>}
         </CarouselContainer>
     );
 };

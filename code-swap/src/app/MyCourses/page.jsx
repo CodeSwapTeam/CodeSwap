@@ -51,9 +51,29 @@ const MyCoursesPage = () => {
         Router.push(`/MyCourses/${course.id}`);
     }
 
+    const handleCourseRolledClick = async (course) => {
+        const coursesCached = queryClient.getQueryData(['courses-Cached']) || [];
+        let courseSelected = coursesCached.find(c => c.id === course.courseId);
+
+        if (!courseSelected) {
+            courseSelected = await controller.manageCourses.GetCourseById(course.courseId);
+            queryClient.setQueryData(['courses-Cached'], [...coursesCached, courseSelected]);
+        }
+
+        //adicionar no cache a categoria selecionada buscando dentro de ['All-Categories-MyCourses'] a categoria que contém o curso selecionado
+        const categoriesCached = queryClient.getQueryData(['All-Categories-MyCourses']) || [];
+        const categorySelected = categoriesCached.find(c => c.courses.find(c => c.id === course.courseId));
+        queryClient.setQueryData(['category-Selected-Mycourses'], categorySelected);
+
+        queryClient.setQueryData(['courseSelected'], courseSelected);
+        Router.push(`/MyCourses/${course.courseId}`);
+    }
+
     useEffect(() => {
         console.log('currentUser', currentUser);
     }, [currentUser]);
+
+    
 
     return (
         <>
@@ -62,20 +82,28 @@ const MyCoursesPage = () => {
 
             {currentUser && currentUser.CoursesEnrolled && currentUser.CoursesEnrolled.length > 0 && (
                 <>            
-                 <CarouselCoursesEnrolled/>
+                 <CarouselCoursesEnrolled handleCourseRolledClick={handleCourseRolledClick} />
                 </>
            )}
 
-            <div style={{ color: 'white', display: 'flex', flexDirection: 'column' }}>
-                {categoriesData && categoriesData.map((category, index) => (
-                    <div key={index} style={{  }}>
-                        <h2 style={{color: '#45ff45', fontSize: '2rem', marginLeft: '40px' }}>{category.name}</h2>
-                       
-                        {category.courses && <Carousel courses={category.courses} handleCourseClick={handleCourseClick} />}
-                        
-                    </div>
-                ))}
+<div style={{ color: 'white', display: 'flex', flexDirection: 'column' }}>
+    {categoriesData && categoriesData.map((category, index) => {
+        // Filtrar os cursos da categoria para remover os cursos em que o usuário já está matriculado
+        const filteredCourses = category.courses.filter(course => {
+            // Verificar se o usuário está matriculado no curso
+            const isEnrolled = currentUser?.CoursesEnrolled.some(enrolledCourse => enrolledCourse.courseId === course.id);
+            // Retornar true se o usuário não estiver matriculado no curso, false caso contrário
+            return !isEnrolled;
+        });
+
+        return (
+            <div key={index} style={{  }}>
+                <h2 style={{color: '#45ff45', fontSize: '2rem', marginLeft: '40px' }}>{category.name}</h2>
+                {filteredCourses.length > 0 && <Carousel courses={filteredCourses} handleCourseClick={handleCourseClick} />}
             </div>
+        );
+    })}
+</div>
         </div>
         
         </>
