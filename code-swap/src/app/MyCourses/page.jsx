@@ -5,6 +5,10 @@ import { query } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import styled from "styled-components";
 import Carousel from "@/app/MyCourses/UI/Caroucel";
+import { useEffect } from "react";
+import { ContextDataCache } from "../Providers/ContextDataCache";
+import CarouselCoursesEnrolled from "./UI/CaroucelCoursesEnrolled";
+
 
 
 
@@ -13,6 +17,8 @@ const MyCoursesPage = () => {
     const queryClient = useQueryClient();
 
     const Router = useRouter();
+
+    const { currentUser, setCurrentUser } = ContextDataCache();
 
     const controller = Controller();
 
@@ -45,11 +51,20 @@ const MyCoursesPage = () => {
         Router.push(`/MyCourses/${course.id}`);
     }
 
+    useEffect(() => {
+        console.log('currentUser', currentUser);
+    }, [currentUser]);
+
     return (
         <>
-      
+
         <div style={{  marginTop: '60px' }}>
 
+            {currentUser && currentUser.CoursesEnrolled && currentUser.CoursesEnrolled.length > 0 && (
+                <>            
+                 <CarouselCoursesEnrolled/>
+                </>
+           )}
 
             <div style={{ color: 'white', display: 'flex', flexDirection: 'column' }}>
                 {categoriesData && categoriesData.map((category, index) => (

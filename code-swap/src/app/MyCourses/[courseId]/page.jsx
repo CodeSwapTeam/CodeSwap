@@ -25,7 +25,7 @@ const BackgroundImage = styled.div`
 `;
 
 const Container = styled.div`
-    margin-top: 30px;
+    
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -45,8 +45,7 @@ const Content = styled.div`
 `;
 
 const LeftContent = styled.div`
-
-    left: 0;
+    padding-top: 5%;
 
     width: 60%;
     display: flex;
@@ -148,6 +147,7 @@ const ButtonSubscribe = styled.button`
 
 
 const RightContent = styled.div`
+ 
     right: 0;
     padding: 20px;
     display: flex;
@@ -318,6 +318,7 @@ const Page = () => {
 
     //função para inscrever o usuário no curso
     const subscribeUser = async (course) => {
+        console.log('Curso matriculado:', course);
         //verifica se o curso é premium e o usuário não é premium
         if (course.coursePremium === true && currentUser.premium === false) {
             //se for premium, redireciona para a página de pagamento
@@ -332,11 +333,14 @@ const Page = () => {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ 
-                        userId: currentUser.id,
                         courseId: course.id,
+                        userId: currentUser.id,
                         status: 'cursando',
                         progress: 0,
-                        modulePermission: 1
+                        modulePermission: 1,
+                        imgUrlThumbnail: course.imgUrlThumbnail,
+                        title: course.title,
+                        difficulty: course.difficulty,
                      }),
                 });
 
