@@ -27,9 +27,6 @@ const MyCoursesPage = () => {
         staleTime: 1000 * 60 * 5 // 5 minutos
     });
 
-
-
-
     const handleCourseClick = async (course) => {
         const coursesCached = queryClient.getQueryData(['courses-Cached']) || [];
         let courseSelected = coursesCached.find(c => c.id === course.id);
@@ -48,10 +45,6 @@ const MyCoursesPage = () => {
         Router.push(`/MyCourses/${course.id}`);
     }
 
-    const sayHello = () => {
-        alert('Olá, do componente pai!');
-    }
-
     return (
         <>
       
@@ -61,9 +54,9 @@ const MyCoursesPage = () => {
             <div style={{ color: 'white', display: 'flex', flexDirection: 'column' }}>
                 {categoriesData && categoriesData.map((category, index) => (
                     <div key={index} style={{  }}>
-                        <h2 style={{color: '#45ff45', fontSize: '2rem' }}>{category.name}</h2>
+                        <h2 style={{color: '#45ff45', fontSize: '2rem', marginLeft: '40px' }}>{category.name}</h2>
                        
-                        {category.courses && <Carousel courses={category.courses} sayHello={sayHello} />}
+                        {category.courses && <Carousel courses={category.courses} handleCourseClick={handleCourseClick} />}
                         
                     </div>
                 ))}

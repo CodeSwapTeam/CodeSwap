@@ -79,8 +79,34 @@ const StyledCourse = styled.div`
     
 `;
 
+
+const DescriptionCourseCard = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding-left: 10px;
+
+    h3 {
+        color: #45ff45;
+        font-size: 0.8rem;
+ 
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    p {
+        color: #00ffde;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+`;
+
+
+
 function Carousel(props){
-    const { courses, sayHello } = props;
+    const { courses, handleCourseClick } = props;
 
     
     const [currentCourse, setCurrentCourse] = useState(0);
@@ -122,16 +148,19 @@ function Carousel(props){
                         ref={el => coursesRef.current[index] = el}
                         className={`course ${index === currentCourse ? "current-course" : ""}`}
 
-                        onClick={sayHello}
+                        onClick={()=> handleCourseClick(course)}
                     >
                         <img src={course.imgUrlThumbnail} alt="Course" style={{ borderRadius: "10px" }} />
-                        <div>
-                            {course.difficulty === 'iniciante' && (<div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '5px', paddingLeft: '10px' }}><MdOutlineSignalCellularAlt1Bar color="#00ffde" /> <span style={{color:"#00ffde" }}>Iniciante</span></div> )}
-                            {course.difficulty === 'intermediário' && (<div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '5px', paddingLeft: '10px' }}><MdOutlineSignalCellularAlt2Bar color="#00ffde" /> <span style={{color:"#00ffde" }}>Intermediário</span></div>)}
-                            {course.difficulty === 'avançado' && (<div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '5px', paddingLeft: '10px' }}><MdOutlineSignalCellularAlt color="#00ffde" /> <span style={{color:"#00ffde" }}>Avançado</span></div>)}
-                        </div>
-                        <h3 style={{color: '#45ff45' , paddingLeft: '10px' }}>{course.title}</h3>
-                        <p style={{color:"#00ffde " , paddingLeft: '10px' }}>Instrutor: {course.owner} </p>
+                        
+                        <DescriptionCourseCard>
+                            <div>
+                                {course.difficulty === 'iniciante' && (<div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '5px', paddingLeft: '10px' }}><MdOutlineSignalCellularAlt1Bar color="#00ffde" /> <span style={{ color: "#00ffde" }}>Iniciante</span></div>)}
+                                {course.difficulty === 'intermediário' && (<div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '5px', paddingLeft: '10px' }}><MdOutlineSignalCellularAlt2Bar color="#00ffde" /> <span style={{ color: "#00ffde" }}>Intermediário</span></div>)}
+                                {course.difficulty === 'avançado' && (<div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '5px', paddingLeft: '10px' }}><MdOutlineSignalCellularAlt color="#00ffde" /> <span style={{ color: "#00ffde" }}>Avançado</span></div>)}
+                            </div>
+                            <h3 >{course.title}</h3>
+                            <p >Instrutor: {course.owner} </p>
+                        </DescriptionCourseCard>
                     </StyledCourse>
                 ))}
             </StyledCourses>
