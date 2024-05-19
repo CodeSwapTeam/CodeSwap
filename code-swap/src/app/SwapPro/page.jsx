@@ -1,44 +1,14 @@
-'use client';
 
-//Página de pagamento do plano swap pro
 
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 
-import { getCookies } from '@/app/services/cookies';
-import { decryptObjectData } from '@/app/services/persistenceData';
-import Controller from '@/Controller/controller';
-//import { getPlanById } from '../../../database/functions/getPlanById';
+const PageSwapPro = async ({ searchParams }) => {
+    const params = searchParams['course'];
 
-const PageSwapPro = () => {
+    let course = await fetch(`http://localhost:3000/api/gets?id=${params}&type=courseId`);
 
-    const controller = new Controller();
+    let courseData = await course.json();
 
-    const router = useRouter();
-    const [user, setUser] = useState(null);
-
-    //função que checa se o usuario está logado
-    const checkUser = async () => {
-        //verificar se o usuario esta logado checando se o token de acesso esta nos cookies
-        const cookies = await controller.services.manageCookies.getCookies();
-
-        let userDecrypted = null;
-        try {
-            //descriptografar o token de acesso se cookies não for undefined
-            if (cookies) {
-                //userDecrypted = decryptObjectData(cookies.value);
-                userDecrypted = controller.encryptionAlgorithm.decryptObjectData(cookies.value);
-                setUser(userDecrypted);
-            }
-        }
-        catch (e) {
-            console.error(e);
-        }
-    }
-
-    useEffect(() => {
-        checkUser();
-    }, []);
+    console.log(courseData);
 
     return (
         <div style={{color: 'white' }}>
@@ -46,6 +16,13 @@ const PageSwapPro = () => {
             <h2>Plano de assinatura</h2>
             <p>Assine o Swap Pro para ter acesso a todos os cursos e módulos disponíveis na plataforma.</p>
             <p>Valor: R$ 19,90/mês</p>
+
+            <h2>Imagem</h2>
+            <img src={courseData[0].imgUrlThumbnail} alt={courseData.title} width={300} height={200} />
+
+            <h2>Curso</h2>
+            <p>{courseData[0].title}</p>
+            <p>{courseData[0].description}</p>
         </div>
     );
 }
