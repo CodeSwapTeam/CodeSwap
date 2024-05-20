@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import useStateManagement from '../StoreData/StateManagement';
 import Loading from '../../Components/Loading/loading';
 import { useRouter } from 'next/navigation';
+import { ContextDataCache } from '@/app/Providers/ContextDataCache';
 
 const CarouselContainer = styled.div`
 
@@ -107,8 +108,8 @@ const DescriptionCourseCard = styled.div`
     }
 `;
 
-async function GetData(){
-    const response = await fetch('http://localhost:3000/api/RequestsUsers/GET/getAllCategories', {cache: 'force-cache', next: { tags: ['All-Categories']}});
+async function GetData() {
+    const response = await fetch('http://localhost:3000/api/RequestsUsers/GET/getAllCategories', { cache: 'force-cache', next: { tags: ['All-Categories'] } });
     const data = await response.json();
     const categories = data;
 
@@ -116,19 +117,19 @@ async function GetData(){
 
 }
 
-function Carousel(props){
+function Carousel(props) {
 
     const Router = useRouter();
 
     const { courses } = props;
-    
+
     const [data, setData] = useState(null);
 
     const { states: { categories: dados } } = useStateManagement.getState();
 
 
-    
-    
+    const { currentUser, setCurrentUser } = ContextDataCache();
+
     const [currentCourse, setCurrentCourse] = useState(0);
     const [hasScrolled, setHasScrolled] = useState(false); // New state
     const coursesRef = useRef([]);
@@ -142,8 +143,8 @@ function Carousel(props){
         });
     };
 
-    useEffect(() => {   
-        async function fetchData(){
+    useEffect(() => {
+        async function fetchData() {
             const categoriesData = await GetData();
             setData(categoriesData);
         }
@@ -174,30 +175,15 @@ function Carousel(props){
 
 
     const handleCourseClick = async (course) => {
- 
-        /* const coursesCached = queryClient.getQueryData(['courses-Cached']) || [];
-        let courseSelected = coursesCached.find(c => c.id === course.id);
-
-        if (!courseSelected) {
-            courseSelected = await controller.manageCourses.GetCourseById(course.id);
-            queryClient.setQueryData(['courses-Cached'], [...coursesCached, courseSelected]);
+        if (currentUser) {
+            Router.push(`/MyCourses/${course.id}`);
+        } else {
+            Router.push(`/Cursos/${course.id}`);
         }
-
-        //adicionar no cache a categoria selecionada buscando dentro de ['All-Categories-MyCourses'] a categoria que contém o curso selecionado
-        const categoriesCached = queryClient.getQueryData(['All-Categories-MyCourses']) || [];
-        const categorySelected = categoriesCached.find(c => c.courses.find(c => c.id === course.id));
-        queryClient.setQueryData(['category-Selected-Mycourses'], categorySelected);
-
-        queryClient.setQueryData(['courseSelected'], courseSelected);
-        */
-        Router.push(`/Cursos/${course.id}`); 
     }
 
-
-
-
     return (
-        
+
 
 
         <CarouselContainer>

@@ -192,15 +192,7 @@ export default function Home() {
         </CardsContainer>
 
         {/* Divisor Carreiras */}
-        <DivisorCarreiras>
-          <Link href={"/Carreiras"}>
-            <ButtonCarreiras id="Carreiras">
-              <CarreirasText>
-                Explore nossas Carreiras
-              </CarreirasText>
-            </ButtonCarreiras>
-          </Link>
-        </DivisorCarreiras>
+
       </PageContainer>
     </>
   );
