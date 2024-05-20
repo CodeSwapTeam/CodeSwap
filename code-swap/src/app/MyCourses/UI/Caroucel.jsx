@@ -1,7 +1,12 @@
 "use client";
+import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
 import { MdOutlineSignalCellularAlt, MdOutlineSignalCellularAlt1Bar, MdOutlineSignalCellularAlt2Bar } from 'react-icons/md';
 import styled from 'styled-components';
+import useStateManagement from '../StoreData/StateManagement';
+import Loading from '../../Components/Loading/loading';
+import { useRouter } from 'next/navigation';
+import { ContextDataCache } from '@/app/Providers/ContextDataCache';
 
 const CarouselContainer = styled.div`
 
@@ -103,12 +108,28 @@ const DescriptionCourseCard = styled.div`
     }
 `;
 
+async function GetData() {
+    const response = await fetch('http://localhost:3000/api/RequestsUsers/GET/getAllCategories', { cache: 'force-cache', next: { tags: ['All-Categories'] } });
+    const data = await response.json();
+    const categories = data;
+
+    return categories;
+
+}
+
+function Carousel(props) {
+
+    const Router = useRouter();
+
+    const { courses } = props;
+
+    const [data, setData] = useState(null);
+
+    const { states: { categories: dados } } = useStateManagement.getState();
 
 
-function Carousel(props){
-    const { courses, handleCourseClick } = props;
+    const { currentUser, setCurrentUser } = ContextDataCache();
 
-    
     const [currentCourse, setCurrentCourse] = useState(0);
     const [hasScrolled, setHasScrolled] = useState(false); // New state
     const coursesRef = useRef([]);
@@ -121,6 +142,14 @@ function Carousel(props){
             return newCourse;
         });
     };
+
+    useEffect(() => {
+        async function fetchData() {
+            const categoriesData = await GetData();
+            setData(categoriesData);
+        }
+        fetchData();
+    }, []);
 
     useEffect(() => {
         if (coursesRef.current[currentCourse] && hasScrolled) { // Check hasScrolled
@@ -138,7 +167,25 @@ function Carousel(props){
         }
     }, [currentCourse]);
 
+
+
+    if (!data) return (
+        <Loading />
+    );
+
+
+    const handleCourseClick = async (course) => {
+        if (currentUser) {
+            Router.push(`/MyCourses/${course.id}`);
+        } else {
+            Router.push(`/Cursos/${course.id}`);
+        }
+    }
+
     return (
+
+
+
         <CarouselContainer>
             {courses.length > 0 && <ArrowButton onClick={() => handleControlClick(true)}>◀</ArrowButton>}
             <StyledCourses>
@@ -148,10 +195,9 @@ function Carousel(props){
                         ref={el => coursesRef.current[index] = el}
                         className={`course ${index === currentCourse ? "current-course" : ""}`}
 
-                        onClick={()=> handleCourseClick(course)}
+                        onClick={() => handleCourseClick(course)}
                     >
-                        <img src={course.imgUrlThumbnail} alt="Course" style={{ borderRadius: "10px" }} />
-                        
+                        <Image src={course.imgUrlThumbnail} alt="Course" style={{ borderRadius: "10px" }} width={250} height={250} loading='lazy' />
                         <DescriptionCourseCard>
                             <div>
                                 {course.difficulty === 'iniciante' && (<div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '5px', paddingLeft: '10px' }}><MdOutlineSignalCellularAlt1Bar color="#00ffde" /> <span style={{ color: "#00ffde" }}>Iniciante</span></div>)}

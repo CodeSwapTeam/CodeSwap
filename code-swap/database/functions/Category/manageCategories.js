@@ -37,6 +37,7 @@ export const CreateCategory = async (data) => {
 
 // >>>>FUNÇÃO ALTERNADA PARA API<<<< Função para retornar todas as categorias do banco de dados
 export const GetAllCategories = async () => {
+    console.log('GetAllCategories');
 
     try {
         const response = await fetch('/api/gets?type=categories');
