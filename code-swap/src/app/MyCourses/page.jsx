@@ -11,6 +11,29 @@ import CarouselCoursesEnrolled from "./UI/CaroucelCoursesEnrolled";
 
 
 
+const Title = styled.h1`
+    width: 100%;
+    color: white;
+    font-size: 2rem;
+    margin: auto;
+    text-align: center; // Centraliza o texto
+
+    @media (max-width: 768px) {
+        font-size: 1rem;
+    }
+`;
+
+const CategoryTitle = styled.h2`
+    color: #45ff45;
+    font-size: 2rem;
+    margin-left: 40px;
+
+    @media (max-width: 768px) {
+        font-size: 1rem;
+    }
+`;
+
+
 
 const MyCoursesPage = () => {
 
@@ -73,41 +96,41 @@ const MyCoursesPage = () => {
         console.log('currentUser', currentUser);
     }, [currentUser]);
 
-    
+
 
     return (
         <>
 
-        <div style={{  marginTop: '60px' }}>
+            <div style={{ marginTop: '60px' }}>
 
-            {currentUser && currentUser.CoursesEnrolled && currentUser.CoursesEnrolled.length > 0 && (
-                <>            
-                 <CarouselCoursesEnrolled handleCourseRolledClick={handleCourseRolledClick} />
-                </>
-           )}
+                {currentUser && currentUser.CoursesEnrolled && currentUser.CoursesEnrolled.length > 0 && (
+                    <>
+                        <CarouselCoursesEnrolled handleCourseRolledClick={handleCourseRolledClick} />
+                    </>
+                )}
+                        <Title>Explore mais</Title>
+                <div style={{ color: 'white', display: 'flex', flexDirection: 'column' }}>
+                    {categoriesData && categoriesData.map((category, index) => {
+                        // Filtrar os cursos da categoria para remover os cursos em que o usuário já está matriculado
+                        const filteredCourses = category.courses.filter(course => {
+                            // Verificar se o usuário está matriculado no curso
+                            const isEnrolled = currentUser?.CoursesEnrolled.some(enrolledCourse => enrolledCourse.courseId === course.id);
+                            // Retornar true se o usuário não estiver matriculado no curso, false caso contrário
+                            return !isEnrolled;
+                        });
 
-<div style={{ color: 'white', display: 'flex', flexDirection: 'column' }}>
-    {categoriesData && categoriesData.map((category, index) => {
-        // Filtrar os cursos da categoria para remover os cursos em que o usuário já está matriculado
-        const filteredCourses = category.courses.filter(course => {
-            // Verificar se o usuário está matriculado no curso
-            const isEnrolled = currentUser?.CoursesEnrolled.some(enrolledCourse => enrolledCourse.courseId === course.id);
-            // Retornar true se o usuário não estiver matriculado no curso, false caso contrário
-            return !isEnrolled;
-        });
-
-        return (
-            <div key={index} style={{  }}>
-                <h2 style={{color: '#45ff45', fontSize: '2rem', marginLeft: '40px' }}>{category.name}</h2>
-                {filteredCourses.length > 0 && <Carousel courses={filteredCourses} handleCourseClick={handleCourseClick} />}
+                        return (
+                            <div key={index} style={{}}>
+                                <CategoryTitle>{category.name}</CategoryTitle>
+                                {filteredCourses.length > 0 && <Carousel courses={filteredCourses} handleCourseClick={handleCourseClick} />}
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
-        );
-    })}
-</div>
-        </div>
-        
+
         </>
-        
+
     )
 }
 

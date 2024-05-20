@@ -80,6 +80,12 @@ const StyledCourse = styled.div`
                     0 0 10px rgba(4, 255, 2, 1);
     }
 
+
+    @media (max-width: 600px) {
+        width: 170px;
+        height: 170px;
+    }
+
     
 `;
 
@@ -90,6 +96,9 @@ const DescriptionCourseCard = styled.div`
     align-items: flex-start;
     justify-content: center;
     padding-left: 10px;
+
+  margin-top: 20px;
+
 
     h3 {
         color: #45ff45;
@@ -104,6 +113,17 @@ const DescriptionCourseCard = styled.div`
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    //ajustar tamanho do texto em telas menores
+    @media (max-width: 600px) {
+        h3 {
+            font-size: 0.6rem;
+        }
+
+        p {
+            font-size: 0.5rem;
+        }
     }
 `;
 
@@ -161,8 +181,6 @@ function CarouselCoursesEnrolled(props){
                         <img src={course.imgUrlThumbnail} alt="Course" style={{ borderRadius: "10px" }} />
 
                         <DescriptionCourseCard>
-                            
-                            <p>{course.difficulty}</p>
                             <h3>{course.title}</h3>
                             <p>{course.status}</p>
                         </DescriptionCourseCard>
