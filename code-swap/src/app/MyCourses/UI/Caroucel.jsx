@@ -1,7 +1,11 @@
 "use client";
+import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
 import { MdOutlineSignalCellularAlt, MdOutlineSignalCellularAlt1Bar, MdOutlineSignalCellularAlt2Bar } from 'react-icons/md';
 import styled from 'styled-components';
+import useStateManagement from '../StoreData/StateManagement';
+import Loading from '../../Components/Loading/loading';
+import { useRouter } from 'next/navigation';
 
 const CarouselContainer = styled.div`
 
@@ -103,11 +107,27 @@ const DescriptionCourseCard = styled.div`
     }
 `;
 
+async function GetData(){
+    const response = await fetch('http://localhost:3000/api/RequestsUsers/GET/getAllCategories', {cache: 'force-cache', next: { tags: ['All-Categories']}});
+    const data = await response.json();
+    const categories = data;
 
+    return categories;
+
+}
 
 function Carousel(props){
-    const { courses, handleCourseClick } = props;
 
+    const Router = useRouter();
+
+    const { courses } = props;
+    
+    const [data, setData] = useState(null);
+
+    const { states: { categories: dados } } = useStateManagement.getState();
+
+
+    
     
     const [currentCourse, setCurrentCourse] = useState(0);
     const [hasScrolled, setHasScrolled] = useState(false); // New state
@@ -121,6 +141,14 @@ function Carousel(props){
             return newCourse;
         });
     };
+
+    useEffect(() => {   
+        async function fetchData(){
+            const categoriesData = await GetData();
+            setData(categoriesData);
+        }
+        fetchData();
+    }, []);
 
     useEffect(() => {
         if (coursesRef.current[currentCourse] && hasScrolled) { // Check hasScrolled
@@ -138,7 +166,40 @@ function Carousel(props){
         }
     }, [currentCourse]);
 
+
+
+    if (!data) return (
+        <Loading />
+    );
+
+
+    const handleCourseClick = async (course) => {
+ 
+        /* const coursesCached = queryClient.getQueryData(['courses-Cached']) || [];
+        let courseSelected = coursesCached.find(c => c.id === course.id);
+
+        if (!courseSelected) {
+            courseSelected = await controller.manageCourses.GetCourseById(course.id);
+            queryClient.setQueryData(['courses-Cached'], [...coursesCached, courseSelected]);
+        }
+
+        //adicionar no cache a categoria selecionada buscando dentro de ['All-Categories-MyCourses'] a categoria que contém o curso selecionado
+        const categoriesCached = queryClient.getQueryData(['All-Categories-MyCourses']) || [];
+        const categorySelected = categoriesCached.find(c => c.courses.find(c => c.id === course.id));
+        queryClient.setQueryData(['category-Selected-Mycourses'], categorySelected);
+
+        queryClient.setQueryData(['courseSelected'], courseSelected);
+        */
+        Router.push(`/Cursos/${course.id}`); 
+    }
+
+
+
+
     return (
+        
+
+
         <CarouselContainer>
             {courses.length > 0 && <ArrowButton onClick={() => handleControlClick(true)}>◀</ArrowButton>}
             <StyledCourses>
@@ -148,10 +209,9 @@ function Carousel(props){
                         ref={el => coursesRef.current[index] = el}
                         className={`course ${index === currentCourse ? "current-course" : ""}`}
 
-                        onClick={()=> handleCourseClick(course)}
+                        onClick={() => handleCourseClick(course)}
                     >
-                        <img src={course.imgUrlThumbnail} alt="Course" style={{ borderRadius: "10px" }} />
-                        
+                        <Image src={course.imgUrlThumbnail} alt="Course" style={{ borderRadius: "10px" }} width={250} height={250} loading='lazy' />
                         <DescriptionCourseCard>
                             <div>
                                 {course.difficulty === 'iniciante' && (<div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '5px', paddingLeft: '10px' }}><MdOutlineSignalCellularAlt1Bar color="#00ffde" /> <span style={{ color: "#00ffde" }}>Iniciante</span></div>)}

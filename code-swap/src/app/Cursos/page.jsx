@@ -1,13 +1,37 @@
-"use client";
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Controller from '@/Controller/controller';
+
+import React from 'react';
+//import { useRouter } from 'next/navigation';
+//import Controller from '@/Controller/controller';
 import Carousel from '../MyCourses/UI/Caroucel';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import useStateManagement from '../MyCourses/StoreData/StateManagement';
+import InitializerData from '../MyCourses/StoreData/InitializerData';
+import Loading from '../Components/Loading/loading';
 
-const Page = () => {
+//import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-    const queryClient = useQueryClient();
+
+async function GetData(){
+    const response = await fetch('http://localhost:3000/api/RequestsUsers/GET/getAllCategories', {cache: 'force-cache', next: { tags: ['All-Categories']}});
+    const data = await response.json();
+    const categories = data;
+
+    return categories;
+
+}
+
+async function Page(){
+
+    
+
+    const categoriesData = await GetData();
+
+    
+  
+    useStateManagement.setState({states: {categories: categoriesData}});
+
+    
+
+   /*  const queryClient = useQueryClient();
 
     const Router = useRouter();
 
@@ -22,10 +46,11 @@ const Page = () => {
             return categories;
         },
         staleTime: 1000 * 60 * 5 // 5 minutos
-    });
+    }); */
 
     const handleCourseClick = async (course) => {
-        const coursesCached = queryClient.getQueryData(['courses-Cached']) || [];
+        "use server"
+        /* const coursesCached = queryClient.getQueryData(['courses-Cached']) || [];
         let courseSelected = coursesCached.find(c => c.id === course.id);
 
         if (!courseSelected) {
@@ -39,14 +64,19 @@ const Page = () => {
         queryClient.setQueryData(['category-Selected-Mycourses'], categorySelected);
 
         queryClient.setQueryData(['courseSelected'], courseSelected);
-        Router.push(`/Cursos/${course.id}`);
+        */
+  
     }
+
+    if(!categoriesData) return <Loading />;
+
 
     return (
         <>
 
             <div style={{ marginTop: '60px' }}>
-
+                 {categoriesData && <InitializerData categories={categoriesData} />} 
+                
 
                 <div style={{ color: 'white', display: 'flex', flexDirection: 'column' }}>
                     {categoriesData && categoriesData.map((category, index) => (
