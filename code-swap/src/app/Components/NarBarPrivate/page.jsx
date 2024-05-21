@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link'
 import { FiXSquare } from "react-icons/fi";
@@ -175,19 +176,21 @@ const NavBarPrivate = (props) => {
   }
 
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isMobile, setIsMobile] = useState();
+
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
+    if (typeof window !== 'undefined') {
+      const handleResize = () => {
+        setIsMobile(window.innerWidth <= 768);
+      };
 
-    window.addEventListener('resize', handleResize);
+      window.addEventListener('resize', handleResize);
 
-    // Limpar o evento ao desmontar o componente
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    }
   }, []);
 
   return (
@@ -244,14 +247,14 @@ const NavBarPrivate = (props) => {
           </div>
 
           <UserProfileMenu>
-            <p style={{fontSize:'1.2rem', color:'#45ff45'}}> {currentUser.userName} </p>
+            <p style={{fontSize:'1.2rem', color:'#45ff45'}}> {currentUser?.userName} </p>
             <Link href='/' style={{border:'1px solid #45ff45', padding:'5px', borderRadius:'10px', margin:'5px'}}> Meu Perfil </Link>
-            <p style={{marginTop:'15px'}}>Level: {currentUser.lvl} </p>
+            <p style={{marginTop:'15px'}}>Level: {currentUser?.lvl} </p>
         
-            <ProgressBar width={`${currentUser.xp}%`} />
+            <ProgressBar width={`${currentUser?.xp}%`} />
 
             <div style={{ marginTop: '10px', marginBottom: '30px', display: 'flex', alignItems: 'center' }}>
-              <p>Codes: {currentUser.codes} </p>
+              <p>Codes: {currentUser?.codes} </p>
               <span style={{marginLeft:'5px'}}>
                 <Image src="/assets/logo4k.png" alt="Logo" width={15} height={15} />
               </span>
@@ -292,18 +295,18 @@ const NavBarPrivate = (props) => {
 
           
           <div style={{display:'flex', width:'100%',borderRadius:'20px', border:'1px solid #45ff45',boxShadow:'0 0 5px #45ff45', justifyContent:'space-around', alignItems:'center', gap:'10px', marginTop:'10px'	}}>
-            <p style={{fontSize:'1.2rem', color:'#45ff45'}}> {currentUser.userName} </p>
+            <p style={{fontSize:'1.2rem', color:'#45ff45'}}> {currentUser?.userName} </p>
             
             <div style={{  display: 'flex', alignItems: 'center' }}>
-              <p>Codes: {currentUser.codes} </p>
+              <p>Codes: {currentUser?.codes} </p>
               <span style={{marginLeft:'5px'}}>
                 <Image src="/assets/logo4k.png" alt="Logo" width={15} height={15} />
               </span>
             </div>
           </div>
 
-            <p style={{marginTop:'15px', width:'100%', textAlign:'center'}}>Level: {currentUser.lvl} </p>
-            <ProgressBar width={`${currentUser.xp}%`} />
+            <p style={{marginTop:'15px', width:'100%', textAlign:'center'}}>Level: {currentUser?.lvl} </p>
+            <ProgressBar width={`${currentUser?.xp}%`} />
 
             
 
