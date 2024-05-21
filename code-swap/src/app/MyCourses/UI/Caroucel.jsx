@@ -68,6 +68,8 @@ const StyledCourse = styled.div`
     height: 250px;
     flex-shrink: 0;
     transition: all 300ms ease-in-out;
+
+    margin-top: 10px;
     
     box-sizing: border-box;
     cursor: pointer;
@@ -81,6 +83,21 @@ const StyledCourse = styled.div`
                     0 0 10px rgba(4, 255, 2, 1);
     }
 
+    @media (max-width: 600px) {
+        width: 170px;
+        height: 170px;
+    }
+
+    @media (max-width: 600px) {
+        h3 {
+            font-size: 0.6rem;
+        }
+
+        p {
+            font-size: 0.5rem;
+        }
+    }
+
     
 `;
 
@@ -91,6 +108,8 @@ const DescriptionCourseCard = styled.div`
     align-items: flex-start;
     justify-content: center;
     padding-left: 10px;
+
+    margin-top: 10px;
 
     h3 {
         color: #45ff45;
@@ -105,6 +124,29 @@ const DescriptionCourseCard = styled.div`
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        font-size: 0.7rem;
+    }
+
+    div {
+        font-size: 0.8rem;
+    }
+
+
+    @media (max-width: 600px) {
+
+        margin-top: 0px;
+
+        h3 {
+            font-size: 0.6rem;
+        }
+
+        p {
+            font-size: 0.5rem;
+        }
+
+        div {
+            font-size: 0.6rem;
+        }
     }
 `;
 

@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { MdOutlineSignalCellularAlt, MdOutlineSignalCellularAlt2Bar, MdOutlineSignalCellularAlt1Bar } from "react-icons/md";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import Image from 'next/image';
 
 
 const Container = styled.div`   
@@ -22,10 +23,11 @@ const Content = styled.div`
     flex-direction: row;
     
     width: 100%;
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
         flex-direction: column;
         align-items: center;
         justify-content: center;
+       
     }
 `;
 
@@ -37,14 +39,17 @@ const LeftContent = styled.div`
     flex-direction: column;
     
     
-    @media (max-width: 768px) {
-        width: 100%;
-        margin-left: 50px;
+    
+    @media (max-width: 1024px) {
+        width: 100%;     
+        margin-top: 10%;
+        align-items: center;
+        justify-content: center;
         
     }
     //se a tela for maior que 836px adicione uma margin-left de 50px
     @media (min-width: 836px) {
-        margin-left: 50px;
+        
     }
 `;
 
@@ -66,6 +71,12 @@ const ModuleItem = styled.div`
     overflow: hidden;
     transition: max-height 1s ease-in-out;
     max-height: ${props => props.open ? '1000px' : '0'};
+
+    font-size: 1rem;
+
+    @media (max-width: 768px) {
+        font-size: 0.8rem;
+    }
     
 `;
 
@@ -74,6 +85,7 @@ const ModuleTitle = styled.h2`
     font-size: 1.5rem;
     cursor: pointer;
     padding: 10px;
+    margin-left: 10px;
 
     transition: all 0.3s ease;
     background: linear-gradient(to right, rgba(249, 249, 249, 0) 40%, rgba(249, 249, 249, 0.1) 90%);
@@ -85,6 +97,10 @@ const ModuleTitle = styled.h2`
         background-color: #00000063;
         transform: scale(1.02);
         box-shadow: 10px 0px 15px rgba(4, 255, 2, 0.2); // Adicionado box-shadow verde suave
+    }
+
+    @media (max-width: 768px) {
+        font-size: 1.1rem;
     }
 
     
@@ -99,6 +115,19 @@ const TitleDescription = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    
+    @media (max-width: 1170px) {
+        padding-left: 50px;
+        padding-right: 50px;
+    }
+
+    @media (max-width: 1024px) {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+
 `;
 
 const LessonsModule = styled.div`
@@ -109,6 +138,10 @@ const LessonsModule = styled.div`
     justify-content: left;
     align-items: left;
     margin-bottom: 20px;
+
+    @media (max-width: 768px) {
+        font-size: 0.8rem;
+    }
 `;
 
 const ButtonSubscribe = styled.button`
@@ -126,6 +159,10 @@ const ButtonSubscribe = styled.button`
         transform: scale(1.02);
         box-shadow: 10px 0px 15px rgba(4, 255, 2, 0.2); // Adicionado box-shadow verde suave
     }
+
+    @media (max-width: 768px) {
+        font-size: 0.8rem;
+    }
 `;
 
 
@@ -140,7 +177,7 @@ const RightContent = styled.div`
     height: 100%;
 
     width: 40%;
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
         width: 100%;
     }
 `;
@@ -148,6 +185,7 @@ const RightContent = styled.div`
 const CourseContainer = styled.div`
     margin-top: 40px;
     text-align: center;  
+    width: 100%;
 `;
 
 const CourseCard = styled.div`
@@ -157,11 +195,9 @@ const CourseCard = styled.div`
     cursor: pointer;
     margin-top: 20px;
     display: flex;
-    
     height: 100px;
     transition: all 0.3s ease;
     background-color: #00000063;
-    
 
     &:hover {
         background: none;
@@ -172,14 +208,55 @@ const CourseCard = styled.div`
 
     p {
         color: white;
-        font-size: 1vw;
+        font-size: 1rem;
         margin: auto;
 
-        @media (max-width: 768px) {
-            font-size: 2vw;
+        @media (max-width: 470px) {
+            font-size: 0.8rem;           
+        }       
+    } 
+    
+    @media (max-width: 470px) {
+            height: 120px;            
         }
-    }  
 `;
+
+
+const Title = styled.h1`
+  color: #45ff45;
+  margin-top: 20px;
+  font-size: 2rem;
+
+  @media (max-width: 1024px) {
+    font-size: 1.5rem;
+  }
+
+  
+`;
+
+const Description = styled.p`
+  color: white;
+  margin: 20px;
+  font-size: 1rem;
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
+`;
+
+const CourseTitle = styled.h1`
+    margin: auto;
+    color: #45ff45;
+    font-size: 1.5rem;
+    word-wrap: break-word; // Quebra de linha para palavras longas
+    overflow-wrap: break-word; // Quebra de linha para palavras longas
+    hyphens: auto; // Adiciona hífens automaticamente quando a palavra quebra
+
+    @media (max-width: 768px) {
+        font-size: 1rem;
+    }
+`;
+
 
 const Page = () => {
 
@@ -318,8 +395,8 @@ const Page = () => {
                         <LeftContent>
 
                             <TitleDescription>
-                                <h1 style={{ color: '#45ff45', fontSize: '2rem', marginTop: '20px' }}>{course.title}</h1>
-                                <p style={{ color: 'white', fontSize: '1rem', margin: '20px' }}>{course.description}</p>
+                                <Title >{course.title}</Title>
+                                <Description >{course.description}</Description>
                                 
                                 <ButtonSubscribe onClick={()=>handleLogin()}>FAÇA LOGIN ACESSAR O MÓDULO</ButtonSubscribe>
                                 
@@ -366,16 +443,16 @@ const Page = () => {
 
                         <RightContent>
                             <div>
-                                <img src={course.imgUrlCover} alt="Capa Curso" style={{ marginTop: '50px' }} />
+                                <Image src={course.imgUrlCover} alt="Capa Curso" style={{ marginTop: '50px' }} width={1000} height={800} />
                             </div>
 
                             <CourseContainer >
-                                <h1 style={{ margin: 'auto', color: '#45ff45', fontSize: '2vw' }}>Cursos recomendados</h1>
+                                <CourseTitle>Cursos recomendados</CourseTitle>
                                 {coursesCategory && coursesCategory.filter(course => course.id !== coursePublicID).map((course, index) => (
                                     <CourseCard key={index} onClick={() => handleClickCourseRecommended(course)} >
-                                        <img src={course.imgUrlThumbnail} alt="Capa Curso" style={{ borderRadius: '10px' }} />
-                                        <div style={{ display: 'flex', flexDirection: 'column', padding: "5px" }}>
-                                            <p >{course.title}</p>
+                                        <Image src={course.imgUrlThumbnail} alt="Capa Curso" style={{ borderRadius: '10px'  }} width={200} height={100}/>
+                                        <div style={{ display: 'flex', flexDirection: 'column', padding: "5px", width:'100%'}}>
+                                            <p style={{width:'100%', margin:'auto'}} >{course.title}</p>
                                             <div style={{ display: 'flex', gap: '10px', justifyContent: 'space-around' }}>
                                                 <p style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '5px' }}>
                                                     {course.difficulty === 'iniciante' && <MdOutlineSignalCellularAlt1Bar color="#45ff45" />}
@@ -383,7 +460,7 @@ const Page = () => {
                                                     {course.difficulty === 'avançado' && <MdOutlineSignalCellularAlt color="#45ff45" />}
                                                     <span> {course.difficulty}</span>
                                                 </p>
-                                                <p style={{ flex: 1 }}>Prof: {course.owner} </p>
+                                                <p style={{ flex: 1  }}>Prof: {course.owner} </p>
                                             </div>
                                         </div>
                                     </CourseCard>
