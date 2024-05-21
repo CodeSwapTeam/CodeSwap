@@ -26,7 +26,7 @@ const BackgroundImage = styled.div`
 `;
 
 const Container = styled.div`
-    
+    margin-top: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -38,7 +38,7 @@ const Content = styled.div`
     flex-direction: row;
     
     width: 100%;
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
         flex-direction: column;
         align-items: center;
         justify-content: center;
@@ -46,20 +46,24 @@ const Content = styled.div`
 `;
 
 const LeftContent = styled.div`
-    padding-top: 5%;
-
+    left: 0;
+    margin-top: 5%;
     width: 60%;
     display: flex;
     flex-direction: column;
     
-    @media (max-width: 768px) {
-        width: 100%;
-        margin-left: 50px;
+    
+    
+    @media (max-width: 1024px) {
+        width: 100%;     
+        margin-top: 10%;
+        align-items: center;
+        justify-content: center;
         
     }
     //se a tela for maior que 836px adicione uma margin-left de 50px
     @media (min-width: 836px) {
-        margin-left: 50px;
+        
     }
 `;
 
@@ -126,16 +130,18 @@ const TitleDescription = styled.div`
     justify-content: center;
     align-items: center;
 
-    @media (max-width: 768px) {
-        padding-left: 20px;
-        padding-right: 20px;
+    
+    @media (max-width: 1170px) {
+        padding-left: 50px;
+        padding-right: 50px;
     }
 
-    //ajustar tambem em 1170px
-    @media (max-width: 1170px) {
-        padding-left: 20px;
-        padding-right: 20px;
+    @media (max-width: 1024px) {
+        padding-left: 10px;
+        padding-right: 10px;
     }
+
+
 `;
 
 const LessonsModule = styled.div`
@@ -167,6 +173,10 @@ const ButtonSubscribe = styled.button`
         transform: scale(1.02);
         box-shadow: 10px 0px 15px rgba(4, 255, 2, 0.2); // Adicionado box-shadow verde suave
     }
+
+    @media (max-width: 768px) {
+        font-size: 0.8rem;
+    }
 `;
 
 
@@ -182,7 +192,7 @@ const RightContent = styled.div`
     height: 100%;
 
     width: 40%;
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
         width: 100%;
     }
 `;
@@ -190,6 +200,7 @@ const RightContent = styled.div`
 const CourseContainer = styled.div`
     margin-top: 40px;
     text-align: center;
+    width: 100%;
 `;
 
 const CourseCard = styled.div`
@@ -198,12 +209,10 @@ const CourseCard = styled.div`
     text-align: center;
     cursor: pointer;
     margin-top: 20px;
-    display: flex;
-    
+    display: flex;  
     height: 100px;
     transition: all 0.3s ease;
     background-color: #00000063;
-    
 
     &:hover {
         background: none;
@@ -214,13 +223,17 @@ const CourseCard = styled.div`
 
     p {
         color: white;
-        font-size: 1vw;
+        font-size: 1rem;
         margin: auto;
 
-        @media (max-width: 768px) {
-            font-size: 2vw;
+        @media (max-width: 470px) {
+            font-size: 0.8rem;         
+        }     
+    } 
+    
+    @media (max-width: 470px) {
+            height: 120px;           
         }
-    }  
 `;
 
 const Title = styled.h1`
@@ -228,8 +241,18 @@ const Title = styled.h1`
   margin-top: 70px;
   font-size: 2rem;
 
+  @media (max-width: 1024px) {
+    font-size: 1.5rem;
+  }
+`;
+
+const Description = styled.p`
+  color: white;
+  margin: 20px;
+  font-size: 1rem;
+
   @media (max-width: 768px) {
-    font-size: 1rem;
+    font-size: 0.8rem;
   }
 `;
 
@@ -421,7 +444,7 @@ const Page = () => {
 
                             <TitleDescription>
                                 <Title >{course.title}</Title>
-                                <p style={{ color: 'white', fontSize: '1rem', margin: '20px' }}>{course.description}</p>
+                                <Description >{course.description}</Description>
                                 {
                                     // Se currentUser e CoursesEnrolled existirem e o curso com o id do curso estiver em CoursesEnrolled, mostrar o botão CURSANDO, senão mostrar o botão INSCREVA-SE
                                     currentUser && currentUser.CoursesEnrolled && currentUser.CoursesEnrolled.find(c => c.courseId === course.id) ?

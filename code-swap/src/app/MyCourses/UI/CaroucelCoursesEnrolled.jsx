@@ -127,6 +127,19 @@ const DescriptionCourseCard = styled.div`
     }
 `;
 
+const CourseEnrolledTittle = styled.h1`
+    color: white;
+    font-size: 2rem;
+    margin-left: 40px;
+    width: 100%;
+    margin: auto;
+    text-align: center;
+
+    @media (max-width: 600px) {
+        font-size: 1rem;
+    }
+`;
+
 
 
 function CarouselCoursesEnrolled(props){
@@ -167,7 +180,7 @@ function CarouselCoursesEnrolled(props){
 
     return (
         <CarouselContainer>
-            <h1 style={{ color: 'white', fontSize: '2rem', marginLeft: '40px' }}>Cursos Matriculados</h1>
+            <CourseEnrolledTittle >Cursos Matriculados</CourseEnrolledTittle>
             {currentUser && currentUser.CoursesEnrolled.length > 0 && <ArrowButton onClick={() => handleControlClick(true)}>◀</ArrowButton>}
             <StyledCourses>
                 { currentUser && currentUser.CoursesEnrolled.map((course, index) => (
