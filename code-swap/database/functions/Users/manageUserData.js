@@ -62,8 +62,9 @@ export const CreateUser = async (data) => {
         whatsapp: data.whatsapp,
         permissionAcess: 1,
         codes: 100,
-        xp: 100,
-        lvl: 1
+        xp: 20,
+        lvl: 1,
+        xpToNextLvl: 100,
     }
 
     try {

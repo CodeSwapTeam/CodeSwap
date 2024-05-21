@@ -15,6 +15,7 @@ const CarouselContainer = styled.div`
     padding-right: 70px;
     max-width: 90%;
     margin: 0 auto;
+    z-index: 1;
 `;
 
 const ArrowButton = styled.button`
