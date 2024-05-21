@@ -108,13 +108,13 @@ const MyCoursesPage = () => {
                         <CarouselCoursesEnrolled handleCourseRolledClick={handleCourseRolledClick} />
                     </>
                 )}
-                        <Title>Explore mais</Title>
+                <Title>Explore mais</Title>
                 <div style={{ color: 'white', display: 'flex', flexDirection: 'column' }}>
                     {categoriesData && categoriesData.map((category, index) => {
                         // Filtrar os cursos da categoria para remover os cursos em que o usuário já está matriculado
                         const filteredCourses = category.courses.filter(course => {
                             // Verificar se o usuário está matriculado no curso
-                            const isEnrolled = currentUser?.CoursesEnrolled.some(enrolledCourse => enrolledCourse.courseId === course.id);
+                            const isEnrolled = currentUser?.CoursesEnrolled?.some(enrolledCourse => enrolledCourse.courseId === course.id);
                             // Retornar true se o usuário não estiver matriculado no curso, false caso contrário
                             return !isEnrolled;
                         });

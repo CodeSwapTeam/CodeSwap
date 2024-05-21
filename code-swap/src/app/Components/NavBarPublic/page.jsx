@@ -52,7 +52,7 @@ const FlexContainer = styled.div`
   width: 100%;
 `;
 
-const NavBarLeft = styled.div`
+const NavBarLeftPUBLIC = styled.div`
   width: 40%;
 
   @media (max-width: 800px) {
@@ -91,6 +91,8 @@ const HamburgerButton = styled.button`
   
 `;
 
+
+
 const NavBarPublic = () => {
 
   const [isOpen, setIsOpen] = useState(false);
@@ -104,11 +106,11 @@ const NavBarPublic = () => {
     <>
     <NavBar>
       <FlexContainer>
-        <NavBarLeft>
+        <NavBarLeftPUBLIC>
           <NavButton href="/">Home</NavButton>
           <NavButton href="/Cursos">Cursos</NavButton>
           <NavButton href="/">Comunidade</NavButton>
-        </NavBarLeft>
+        </NavBarLeftPUBLIC>
 
         <NavBarMiddle>
           <Image src="/assets/logo4k.png" alt="Logo" width={50} height={50} />
@@ -148,49 +150,12 @@ const NavBarPublic = () => {
 
           <div style={{ display: "flex", flexDirection: 'column', height: '80%', justifyContent: 'space-around', alignItems: 'center' }}>
             <div style={{ display: "flex", flexDirection: 'column', gap: '10px' }}>
-              <Link href="/Cursos" style={{
-                border: '1px solid green',
-                padding: '5px',
-                borderRadius: '5px',
-                textAlign: 'center',
-                display: 'block',
-                lineHeight: '20px',
-                boxShadow: '0px 0px 5px 1px #00ff00',
-                fontSize: '0.8rem'
-              }}>Cursos</Link>
-              <Link href="/" style={{
-                border: '1px solid green',
-                padding: '5px',
-                borderRadius: '5px',
-                textAlign: 'center',
-                display: 'block',
-                lineHeight: '20px',
-                boxShadow: '0px 0px 5px 1px #00ff00',
-                fontSize: '0.8rem'
-              }}>Comunidade</Link>
+              <NavButton href="/Cursos" onClick={() => setIsOpen(false)}>Cursos</NavButton>
+              <NavButton href="/" onClick={() => setIsOpen(false)}>Comunidade</NavButton>
             </div>
             <div style={{ display: "flex", flexDirection: 'column', gap: '15px' }}>
-              <Link href="/login" style={{
-                border: '1px solid green',
-                padding: '10px',
-                borderRadius: '10px',
-                textAlign: 'center',
-                display: 'block',
-                lineHeight: '20px',
-                boxShadow: '0px 0px 5px 1px #00ff00',
-                fontSize: '0.8rem'
-              }}>Fazer Login</Link>
-              <Link href="./createAccount" style={{
-                border: '1px solid green',
-                padding: '10px',
-                borderRadius: '10px',
-                textAlign: 'center',
-                display: 'block',
-                lineHeight: '20px',
-                boxShadow: '0px 0px 5px 1px #00ff00',
-                fontSize: '0.8rem'
-
-              }}>Cadastre-se</Link>
+              <NavButton href="/login"  onClick={() => setIsOpen(false)}>Fazer Login</NavButton>
+              <NavButton href="./createAccount" onClick={() => setIsOpen(false)}>Cadastre-se</NavButton>
             </div>
           </div>
 
