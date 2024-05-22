@@ -150,6 +150,8 @@ const NavBarPrivate = (props) => {
   const { currentUser, setCurrentUser } = ContextDataCache();
   const [painelAdmpermissions, setPainelAdmPermissions] = useState(false);
 
+  const [isMounted, setIsMounted] = useState(false);
+
   const [isOpen, setIsOpen] = useState(false);
   const [painelInfo, setPainelInfo] = useState(false);
 
@@ -160,6 +162,11 @@ const NavBarPrivate = (props) => {
   const handlePainelInfoClick = () => {
     setPainelInfo(!painelInfo);
   }
+
+  useEffect(() => {
+    setIsMounted(true);
+    //return () => setIsMounted(false);
+  }, []);
 
   useEffect(() => {
     if (currentUser && currentUser.permissionAcess > 1) {
@@ -194,151 +201,159 @@ const NavBarPrivate = (props) => {
   }, []);
 
   return (
-    <NavBar>
-      <FlexContainer>
 
-        <NavBarLeftPRIVATE >
-          <Link href='/MyCourses'><NavButton>Meus Cursos</NavButton></Link>
-          <Link href='/'><NavButton>Comunidade</NavButton></Link>
-        </NavBarLeftPRIVATE>
+      <>
+      {isMounted && 
+        (
+        <NavBar>
+          <FlexContainer>
 
-        <NavBarSection width='20%' justifyContent='center'>
-          <Image src="/assets/logo4k.png" alt="Logo" width={50} height={50}/>
-        </NavBarSection>
+            <NavBarLeftPRIVATE >
+              <Link href='/MyCourses'><NavButton>Meus Cursos</NavButton></Link>
+              <Link href='/'><NavButton>Comunidade</NavButton></Link>
+            </NavBarLeftPRIVATE>
 
-        <NavBarRightPRIVATE ></NavBarRightPRIVATE>
+            <NavBarSection width='20%' justifyContent='center'>
+              <Image src="/assets/logo4k.png" alt="Logo" width={50} height={50}/>
+            </NavBarSection>
 
-      {isMobile ? (
-        
-          <UserProfileImgMobile onClick={()=>handleMenuMobileClick()} >
-            <img src="http://github.com/Shepardy22.png" alt="Logo" width={45} height={45} style={{borderRadius:'50px'}}/>
-          </UserProfileImgMobile>
-        
-      ) : (
-        
-          <UserProfileImg onClick={()=>handlePainelInfoClick()} >
-            <img src="http://github.com/Shepardy22.png" alt="Logo" width={45} height={45} style={{borderRadius:'50px'}}/>
-          </UserProfileImg>
-       
-      )}
+            <NavBarRightPRIVATE ></NavBarRightPRIVATE>
 
-        
-
-      </FlexContainer>
-
-      <div style={{
-        display: isOpen ? 'block' : 'none',
-        position: 'fixed',
-        width: '45%',
-        height: '40%',
-        zIndex: 9999,
-        top: 0,
-        right: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.9)', // preto transparente
-        color: 'white',
-        borderRadius: '10px',
-
-      }}>
-        <div style={{ zIndex: '9999', padding: '10px', height: '100%' }}>
-
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems:'center' }}>
-            <p style={{  display: 'flex', marginLeft:'30px'}}>Minhas Informações</p>
-            <FiXSquare size={40} onClick={handleMenuMobileClick} style={{ cursor: 'pointer', color: "#45ff45" }} />
-          </div>
-
-          <UserProfileMenu>
-            <p style={{fontSize:'1.2rem', color:'#45ff45'}}> {currentUser?.userName} </p>
-            <Link href='/' style={{border:'1px solid #45ff45', padding:'5px', borderRadius:'10px', margin:'5px'}}> Meu Perfil </Link>
-            <p style={{marginTop:'15px'}}>Level: {currentUser?.lvl} </p>
-        
-            <ProgressBar width={`${currentUser?.xp}%`} />
-
-            <div style={{ marginTop: '10px', marginBottom: '30px', display: 'flex', alignItems: 'center' }}>
-              <p>Codes: {currentUser?.codes} </p>
-              <span style={{marginLeft:'5px'}}>
-                <Image src="/assets/logo4k.png" alt="Logo" width={15} height={15} />
-              </span>
-            </div>
-
-            {painelAdmpermissions && (
-              <Link href='/ManageCourses'><AdminButton>Painel ADM</AdminButton></Link>
-            )}
-            <LogOutButton onClick={logout} style={{ border: '1px solid red', padding: '5px', borderRadius: '10px', margin: '5px' }}>Desconectar</LogOutButton>
-          </UserProfileMenu>
-          
-
-        </div>
-
-      </div>
-
-      <div style={{
-        display: painelInfo ? 'block' : 'none',
-        position: 'fixed',
-        width: '30%',
-        height: '60%',
-        zIndex: 9999,
-        top: 0,
-        right: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.9)', // preto transparente
-        color: 'white',
-        borderRadius: '10px',
-
-      }}>
-        <div style={{ zIndex: '9999', padding: '10px', height: '100%' }}>
-
-          
-
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems:'center' }}>
-            <p style={{  display: 'flex', marginLeft:'30px'}}>Minhas Informações</p>
-            <FiXSquare size={40} onClick={handlePainelInfoClick} style={{ cursor: 'pointer', color: "#45ff45" }} />
-          </div>
-
-          
-          <div style={{display:'flex', width:'100%',borderRadius:'20px', border:'1px solid #45ff45',boxShadow:'0 0 5px #45ff45', justifyContent:'space-around', alignItems:'center', gap:'10px', marginTop:'10px'	}}>
-            <p style={{fontSize:'1.2rem', color:'#45ff45'}}> {currentUser?.userName} </p>
+          {isMobile ? (
             
-            <div style={{  display: 'flex', alignItems: 'center' }}>
-              <p>Codes: {currentUser?.codes} </p>
-              <span style={{marginLeft:'5px'}}>
-                <Image src="/assets/logo4k.png" alt="Logo" width={15} height={15} />
-              </span>
-            </div>
-          </div>
-
-            <p style={{marginTop:'15px', width:'100%', textAlign:'center'}}>Level: {currentUser?.lvl} </p>
-            <ProgressBar width={`${currentUser?.xp}%`} />
+              <UserProfileImgMobile onClick={()=>handleMenuMobileClick()} >
+                <img src="http://github.com/Shepardy22.png" alt="Logo" width={45} height={45} style={{borderRadius:'50px'}}/>
+              </UserProfileImgMobile>
+            
+          ) : (
+            
+              <UserProfileImg onClick={()=>handlePainelInfoClick()} >
+                <img src="http://github.com/Shepardy22.png" alt="Logo" width={45} height={45} style={{borderRadius:'50px'}}/>
+              </UserProfileImg>
+          
+          )}
 
             
 
-            <div style={{width:'100%',height:'55%', marginTop:'20px', display:'flex', flexDirection:'column'}}>
-              <p style={{width:'100%', textAlign:'center', marginBottom:'20px'}}>Check List Diário</p>
+          </FlexContainer>
 
-              <p>Login do dia</p>
-              <p>Conclusão de curso</p>
-              <p>Conclusão de Módulo</p>
-              <p>Conclusão de Atividade</p>
-              <p>Comentário no Feed</p> 
-              <p>Bônus XP</p>
+          <div style={{
+            display: isOpen ? 'block' : 'none',
+            position: 'fixed',
+            width: '45%',
+            height: '40%',
+            zIndex: 9999,
+            top: 0,
+            right: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.9)', // preto transparente
+            color: 'white',
+            borderRadius: '10px',
+
+          }}>
+            <div style={{ zIndex: '9999', padding: '10px', height: '100%' }}>
+
+              <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems:'center' }}>
+                <p style={{  display: 'flex', marginLeft:'30px'}}>Minhas Informações</p>
+                <FiXSquare size={40} onClick={handleMenuMobileClick} style={{ cursor: 'pointer', color: "#45ff45" }} />
+              </div>
+
+              <UserProfileMenu>
+                <p style={{fontSize:'1.2rem', color:'#45ff45'}}> {currentUser?.userName} </p>
+                <Link href='/' style={{border:'1px solid #45ff45', padding:'5px', borderRadius:'10px', margin:'5px'}}> Meu Perfil </Link>
+                <p style={{marginTop:'15px'}}>Level: {currentUser?.lvl} </p>
+            
+                <ProgressBar width={`${currentUser?.xp}%`} />
+
+                <div style={{ marginTop: '10px', marginBottom: '30px', display: 'flex', alignItems: 'center' }}>
+                  <p>Codes: {currentUser?.codes} </p>
+                  <span style={{marginLeft:'5px'}}>
+                    <Image src="/assets/logo4k.png" alt="Logo" width={15} height={15} />
+                  </span>
+                </div>
+
+                {painelAdmpermissions && (
+                  <Link href='/ManageCourses'><AdminButton>Painel ADM</AdminButton></Link>
+                )}
+                <LogOutButton onClick={logout} style={{ border: '1px solid red', padding: '5px', borderRadius: '10px', margin: '5px' }}>Desconectar</LogOutButton>
+              </UserProfileMenu>
+              
 
             </div>
 
-
-
-            
-
-          <div style={{ display: 'flex', justifyContent: 'space-around', alignItems:'center' }}>
-            {painelAdmpermissions && (
-              <Link href='/ManageCourses'><AdminButton>Painel ADM</AdminButton></Link>
-            )}
-            <Link href='/' style={{ border: '1px solid #45ff45', padding: '5px', borderRadius: '10px', margin: '5px' }}> Meu Perfil </Link>
-            <LogOutButton onClick={logout} style={{ border: '1px solid red', padding: '5px', borderRadius: '10px', margin: '5px' }}>Desconectar</LogOutButton>
           </div>
 
-        </div>
+          <div style={{
+            display: painelInfo ? 'block' : 'none',
+            position: 'fixed',
+            width: '30%',
+            height: '60%',
+            zIndex: 9999,
+            top: 0,
+            right: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.9)', // preto transparente
+            color: 'white',
+            borderRadius: '10px',
 
-      </div>
-      
-    </NavBar>
+          }}>
+            <div style={{ zIndex: '9999', padding: '10px', height: '100%' }}>
+
+              
+
+              <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems:'center' }}>
+                <p style={{  display: 'flex', marginLeft:'30px'}}>Minhas Informações</p>
+                <FiXSquare size={40} onClick={handlePainelInfoClick} style={{ cursor: 'pointer', color: "#45ff45" }} />
+              </div>
+
+              
+              <div style={{display:'flex', width:'100%',borderRadius:'20px', border:'1px solid #45ff45',boxShadow:'0 0 5px #45ff45', justifyContent:'space-around', alignItems:'center', gap:'10px', marginTop:'10px'	}}>
+                <p style={{fontSize:'1.2rem', color:'#45ff45'}}> {currentUser?.userName} </p>
+                
+                <div style={{  display: 'flex', alignItems: 'center' }}>
+                  <p>Codes: {currentUser?.codes} </p>
+                  <span style={{marginLeft:'5px'}}>
+                    <Image src="/assets/logo4k.png" alt="Logo" width={15} height={15} />
+                  </span>
+                </div>
+              </div>
+
+                <p style={{marginTop:'15px', width:'100%', textAlign:'center'}}>Level: {currentUser?.lvl} </p>
+                <ProgressBar width={`${currentUser?.xp}%`} />
+
+                
+
+                <div style={{width:'100%',height:'55%', marginTop:'20px', display:'flex', flexDirection:'column'}}>
+                  <p style={{width:'100%', textAlign:'center', marginBottom:'20px'}}>Check List Diário</p>
+
+                  <p>Login do dia</p>
+                  <p>Conclusão de curso</p>
+                  <p>Conclusão de Módulo</p>
+                  <p>Conclusão de Atividade</p>
+                  <p>Comentário no Feed</p> 
+                  <p>Bônus XP</p>
+
+                </div>
+
+
+
+                
+
+              <div style={{ display: 'flex', justifyContent: 'space-around', alignItems:'center' }}>
+                {painelAdmpermissions && (
+                  <Link href='/ManageCourses'><AdminButton>Painel ADM</AdminButton></Link>
+                )}
+                <Link href='/' style={{ border: '1px solid #45ff45', padding: '5px', borderRadius: '10px', margin: '5px' }}> Meu Perfil </Link>
+                <LogOutButton onClick={logout} style={{ border: '1px solid red', padding: '5px', borderRadius: '10px', margin: '5px' }}>Desconectar</LogOutButton>
+              </div>
+
+            </div>
+
+          </div>
+          
+        </NavBar>
+        )
+      }
+      </>
+    
   );
 };
 
