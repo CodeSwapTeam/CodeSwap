@@ -1,12 +1,17 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+// Bibliotecas externas
+import React, { useEffect, useState, useContext } from 'react';
+import styled from 'styled-components';
+
+import Link from 'next/link';
+import Typewriter from 'typewriter-effect';
+
+// Módulos internos ou personalizados
 import { useInteractionLogger } from './services/InteractionContext';
 import interactionsType from './services/interactionsType';
-import styled from 'styled-components';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link'
-import Typewriter from 'typewriter-effect';
 import { ContextDataCache } from './Providers/ContextDataCache';
+import { useRouter } from 'next/navigation';
+
 
 
 const PageContainer = styled.div`
@@ -112,7 +117,7 @@ text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   font-size: 78px;
 }
 `
-const DivisorCarreiras = styled.div`
+/* const DivisorCarreiras = styled.div`
 display: flex;
 position: fixed;
 bottom: 0;
@@ -135,7 +140,7 @@ line-height: 1.75rem;
 font-weight: 600;
 color: #0099ff;
 `
-
+ */
 
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
@@ -145,12 +150,14 @@ export default function Home() {
   const { currentUser } = ContextDataCache();
 
   useEffect(() => {
-    if (currentUser) {
-      router.push('/MyCourses');
-    }
-
     setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (isMounted && currentUser) {
+      router.push('/MyCourses');
+    }
+  }, [isMounted, currentUser]);
 
 
   return (
@@ -191,7 +198,6 @@ export default function Home() {
           </TextoDireitaContainer>
         </CardsContainer>
 
-        {/* Divisor Carreiras */}
 
       </PageContainer>
     </>

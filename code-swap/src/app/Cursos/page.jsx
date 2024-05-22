@@ -18,13 +18,20 @@ const styles = `
     }
 `;
 
+
+
 async function GetData(){
-    const response = await fetch('http://localhost:3000/api/RequestsUsers/GET/getAllCategories', {cache: 'force-cache', next: { tags: ['All-Categories']}});
-    const data = await response.json();
-    const categories = data;
+    const API_URL = process.env.API_URL;
+    try {
+        console.log("API_URL", API_URL);
+        const response = await fetch(`${API_URL}/api/RequestsUsers/GET/getAllCategories`, {cache: 'force-cache', next: { tags: ['All-Categories']}});        const data = await response.json();
+        const categories = data;
 
-    return categories;
-
+        return categories;
+    } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+        return null;
+    }
 }
 
 async function Page(){

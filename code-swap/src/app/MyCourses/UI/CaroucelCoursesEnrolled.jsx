@@ -154,7 +154,7 @@ function CarouselCoursesEnrolled(props){
     const handleControlClick = (isLeft) => {
         setCurrentCourse(prevCourse => {
             let newCourse = isLeft ? prevCourse - 1 : prevCourse + 1;
-            if (newCourse >= courses.length) newCourse = 0;
+            if (newCourse >= currentUser.CoursesEnrolled.length) newCourse = 0;
             if (newCourse < 0) newCourse = courses.length - 1;
             return newCourse;
         });
