@@ -165,7 +165,7 @@ const NavBarPrivate = (props) => {
 
   useEffect(() => {
     setIsMounted(true);
-    //return () => setIsMounted(false);
+    return () => setIsMounted(false);
   }, []);
 
   useEffect(() => {
@@ -183,23 +183,19 @@ const NavBarPrivate = (props) => {
   }
 
 
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState();
+
 
   useEffect(() => {
-    // Verifique se window está definido (ou seja, se estamos no lado do cliente)
-    if (typeof window !== "undefined") {
-      // Defina o estado inicial com base na largura da janela
-      setIsMobile(window.innerWidth <= 768);
-
+    if (typeof window !== 'undefined') {
       const handleResize = () => {
         setIsMobile(window.innerWidth <= 768);
       };
 
-      window.addEventListener("resize", handleResize);
+      window.addEventListener('resize', handleResize);
 
-      // Limpe o evento ao desmontar
       return () => {
-        window.removeEventListener("resize", handleResize);
+        window.removeEventListener('resize', handleResize);
       };
     }
   }, []);
@@ -218,7 +214,9 @@ const NavBarPrivate = (props) => {
             </NavBarLeftPRIVATE>
 
             <NavBarSection width='20%' justifyContent='center'>
-              <Image src="/assets/logo4k.png" alt="Logo" width={50} height={50}/>
+              <Link href="/">
+                <Image src="/assets/logo4k.png" alt="Logo" width={50} height={50} />
+              </Link>
             </NavBarSection>
 
             <NavBarRightPRIVATE ></NavBarRightPRIVATE>

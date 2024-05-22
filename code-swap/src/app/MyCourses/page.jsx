@@ -50,7 +50,6 @@ const MyCoursesPage = () => {
         queryKey: ['All-Categories-MyCourses'],
         queryFn: async () => {
             const categories = await controller.manageCategories.GetAllCategories();
-            console.log(categories);
             return categories;
         },
         staleTime: 1000 * 60 * 5 // 5 minutos
@@ -93,7 +92,6 @@ const MyCoursesPage = () => {
     }
 
     useEffect(() => {
-        console.log('currentUser', currentUser);
     }, [currentUser]);
 
 

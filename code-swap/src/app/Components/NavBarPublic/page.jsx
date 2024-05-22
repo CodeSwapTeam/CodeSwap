@@ -118,13 +118,15 @@ const NavBarPublic = () => {
           <NavButton href="/">Home</NavButton>
           <NavButton href="/Cursos">Cursos</NavButton>
           <NavButton href="/">Comunidade</NavButton>
-        </NavBarLeftPUBLIC>
+            </NavBarLeftPUBLIC>
 
-        <NavBarMiddle>
-          <Image src="/assets/logo4k.png" alt="Logo" width={50} height={50} />
-        </NavBarMiddle>
+            <NavBarMiddle>
+              
+                <Image src="/assets/logo4k.png" alt="Logo" width={50} height={50} />
+              
+            </NavBarMiddle>
 
-        <NavBarRight>
+            <NavBarRight>
           <LoginButton href="/login">Fazer Login</LoginButton>
           <LoginButton href="./createAccount">Cadastre-se</LoginButton>
         </NavBarRight>
