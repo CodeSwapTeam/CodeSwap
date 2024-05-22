@@ -97,14 +97,21 @@ const HamburgerButton = styled.button`
 const NavBarPublic = () => {
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   const handleHamburgerClick = () => {
     setIsOpen(!isOpen);
   };
 
+  useEffect(() => {
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
+
 
   return (
     <>
+    { isMounted && (
     <NavBar>
       <FlexContainer>
         <NavBarLeftPUBLIC>
@@ -129,7 +136,7 @@ const NavBarPublic = () => {
           </HamburgerButton>
         </FlexContainer>
       </NavBar>
-
+    )}
       <div style={{
         display: isOpen ? 'block' : 'none',
         position: 'fixed',
