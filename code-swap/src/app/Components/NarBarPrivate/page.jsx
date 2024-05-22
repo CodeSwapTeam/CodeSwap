@@ -183,19 +183,23 @@ const NavBarPrivate = (props) => {
   }
 
 
-  const [isMobile, setIsMobile] = useState();
-
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    // Verifique se window está definido (ou seja, se estamos no lado do cliente)
+    if (typeof window !== "undefined") {
+      // Defina o estado inicial com base na largura da janela
+      setIsMobile(window.innerWidth <= 768);
+
       const handleResize = () => {
         setIsMobile(window.innerWidth <= 768);
       };
 
-      window.addEventListener('resize', handleResize);
+      window.addEventListener("resize", handleResize);
 
+      // Limpe o evento ao desmontar
       return () => {
-        window.removeEventListener('resize', handleResize);
+        window.removeEventListener("resize", handleResize);
       };
     }
   }, []);
