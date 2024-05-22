@@ -24,7 +24,8 @@ async function GetData(){
     const API_URL = process.env.API_URL;
     try {
         console.log("API_URL", API_URL);
-        const response = await fetch(`${API_URL}/api/RequestsUsers/GET/getAllCategories`, {cache: 'force-cache', next: { tags: ['All-Categories']}});        const data = await response.json();
+        const response = await fetch(`${API_URL}/api/RequestsUsers/GET/getAllCategories`, {cache: 'force-cache', next: { tags: ['All-Categories']}});        
+        const data = await response.json();
         const categories = data;
 
         return categories;

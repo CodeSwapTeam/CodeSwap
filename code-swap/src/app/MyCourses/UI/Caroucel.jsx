@@ -152,7 +152,8 @@ const DescriptionCourseCard = styled.div`
 `;
 
 async function GetData() {
-    const response = await fetch('http://localhost:3000/api/RequestsUsers/GET/getAllCategories', { cache: 'force-cache', next: { tags: ['All-Categories'] } });
+
+    const response = await fetch('/api/RequestsUsers/GET/getAllCategories', { cache: 'force-cache', next: { tags: ['All-Categories'] } });
     const data = await response.json();
     const categories = data;
 
