@@ -238,7 +238,8 @@ const NavBarPrivate = (props) => {
             
 
           </FlexContainer>
-
+            
+            {/** MENU DESKTOP */}
           <div style={{
             display: isOpen ? 'block' : 'none',
             position: 'fixed',
@@ -283,11 +284,11 @@ const NavBarPrivate = (props) => {
             </div>
 
           </div>
-
+            {/** MENU MOBILE */}
           <div style={{
             display: painelInfo ? 'block' : 'none',
             position: 'fixed',
-            width: '30%',
+            width: '45%',
             height: '60%',
             zIndex: 9999,
             top: 0,
@@ -297,9 +298,7 @@ const NavBarPrivate = (props) => {
             borderRadius: '10px',
 
           }}>
-            <div style={{ zIndex: '9999', padding: '10px', height: '100%' }}>
-
-              
+            <div style={{  padding: '10px', height: '100%' }}>
 
               <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems:'center' }}>
                 <p style={{  display: 'flex', marginLeft:'30px'}}>Minhas Informações</p>
@@ -318,26 +317,20 @@ const NavBarPrivate = (props) => {
                 </div>
               </div>
 
-                <p style={{marginTop:'15px', width:'100%', textAlign:'center'}}>Level: {currentUser?.lvl} </p>
-                <ProgressBar width={`${currentUser?.xp}%`} />
+              <p style={{ marginTop: '15px', width: '100%', textAlign: 'center' }}>Level: {currentUser?.lvl} </p>
+              <ProgressBar width={`${currentUser?.xp}%`} />
 
-                
+              <div style={{ width: '100%', height: '55%', marginTop: '10px', display: 'flex', flexDirection: 'column' }}>
+                <p style={{ width: '100%', textAlign: 'center', marginBottom: '10px' }}>Check List Diário</p>
 
-                <div style={{width:'100%',height:'55%', marginTop:'20px', display:'flex', flexDirection:'column'}}>
-                  <p style={{width:'100%', textAlign:'center', marginBottom:'20px'}}>Check List Diário</p>
+                <p>Login do dia</p>
+                <p>Conclusão de curso</p>
+                <p>Conclusão de Módulo</p>
+                <p>Conclusão de Atividade</p>
+                <p>Comentário no Feed</p>
+                <p>Bônus XP</p>
 
-                  <p>Login do dia</p>
-                  <p>Conclusão de curso</p>
-                  <p>Conclusão de Módulo</p>
-                  <p>Conclusão de Atividade</p>
-                  <p>Comentário no Feed</p> 
-                  <p>Bônus XP</p>
-
-                </div>
-
-
-
-                
+              </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-around', alignItems:'center' }}>
                 {painelAdmpermissions && (
