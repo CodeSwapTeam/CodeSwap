@@ -23,7 +23,7 @@ const NavButton = styled(Link)`
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-  font-size: 17px;
+  font-size: 1em;
   border: none;
   cursor: pointer;
 `;
@@ -142,7 +142,7 @@ const NavBarPublic = () => {
       <div style={{
         display: isOpen ? 'block' : 'none',
         position: 'fixed',
-        width: '40%',
+        width: '45%',
         height: '40%',
         zIndex: 9999,
         top: 0,
