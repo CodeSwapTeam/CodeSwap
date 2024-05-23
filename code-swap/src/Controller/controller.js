@@ -31,7 +31,7 @@ export default function Controller(){
             UpdateThumbnailCourse: UpdateThumbnail,
             UpdateCover: UpdateCover,
             UpdateConfigCourseData: UpdateConfigCourseData
-            
+
         },
         /**
          * Gerenciador de módulos,
@@ -77,7 +77,7 @@ export default function Controller(){
         manageCategories: {
             CreateCategory: CreateCategory, //ACESSO A API PARA CRIAR CATEGORIA
             GetAllCategories: GetAllCategories, //ACESSO A API PARA BUSCAR TODAS AS CATEGORIAS
-            
+
             UpdateCategoryData: UpdateCategoryData,
             DeleteCategory: DeleteCategory,
 
@@ -106,7 +106,7 @@ export default function Controller(){
             },
             phrases: {
 
-            
+
             }
         },
         /**
