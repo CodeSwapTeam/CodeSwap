@@ -49,11 +49,24 @@ const NavButton = styled.a`
 `;
 
 const LogOutButton = styled.button`
+  
+  padding: 5px;
+  border-radius: 10px;
+  font-weight: 600;
+  color: #912d2d;
 
-  color: white;
- margin-top: 10px;
   border: none;
   cursor: pointer;
+  border: 1px solid #912d2d;
+
+  //efeito hover pequeno aumento de tamanho e box shadow
+  transition: all 0.2s;
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 5px #912d2d;
+    color: white;
+  }
+  
 `;
 
 const AdminButton = styled.a`
@@ -63,6 +76,20 @@ const AdminButton = styled.a`
   border: none;
   cursor: pointer;
   font-weight: 800;
+`;
+
+const StyledLinkPerfil = styled.a`
+  border: 1px solid #45ff45;
+  padding: 5px;
+  border-radius: 10px;
+  margin: 5px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 5px #45ff45;
+    color: white;
+  }
 `;
 
 const NavBarLeftPRIVATE = styled.div`
@@ -75,6 +102,8 @@ const NavBarLeftPRIVATE = styled.div`
 `;
 
 const NavBarRightPRIVATE = styled.div`
+color: white;
+
   width: 40%;
   justify-content: flex-end;
 
@@ -105,7 +134,7 @@ const UserProfileImgMobile = styled.div`
 
 const UserProfileMenu = styled.div`
 
-  height: 90%;
+ 
   width: 100%;
 
   //centraliza o texto
@@ -114,7 +143,7 @@ const UserProfileMenu = styled.div`
   
   align-items: center;
   text-align: center;
-  cursor: pointer;
+
 
 `;
 
@@ -141,7 +170,25 @@ const ProgressBar = styled.div`
   }
 `;
 
+const ProgressBarNavBar = styled.div`
+  background-color: #f3f3f3;
+  border-radius: 13px;
+  height: 10px;
+  width: 30%;
+  position: relative;
 
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: ${props => props.width || '0%'};
+    height: 100%;
+    background-color: #4caf50;
+    border-radius: 13px;
+  }
+`;
 
 
 const NavBarPrivate = (props) => {
@@ -155,12 +202,18 @@ const NavBarPrivate = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [painelInfo, setPainelInfo] = useState(false);
 
+  const [painelInfoMobile, setPainelInfoMobile] = useState(false);
+
   const handleMenuMobileClick = () => {
     setIsOpen(!isOpen);
   };
 
   const handlePainelInfoClick = () => {
     setPainelInfo(!painelInfo);
+  }
+
+  const handlePainelInfoMobileClick = () => {
+    setPainelInfoMobile(!painelInfoMobile);
   }
 
   useEffect(() => {
@@ -219,7 +272,18 @@ const NavBarPrivate = (props) => {
               </Link>
             </NavBarSection>
 
-            <NavBarRightPRIVATE ></NavBarRightPRIVATE>
+            <NavBarRightPRIVATE >
+              {!isMobile && !painelInfo &&(
+              <div style={{display:'flex', alignItems:'center' }}>
+                  <div style={{display:'flex', gap:'5px', marginRight:'30px'}}>Level: {currentUser?.lvl}</div>
+
+                  EXP: <ProgressBarNavBar width={`${currentUser?.xp}%`} />
+              
+                 <div style={{display:'flex', gap:'5px', marginLeft:'30px'}}>CODES: {currentUser?.codes} </div>
+               
+              </div>
+              )}
+            </NavBarRightPRIVATE>
 
           {isMobile ? (
             
@@ -227,127 +291,173 @@ const NavBarPrivate = (props) => {
                 <img src="http://github.com/Shepardy22.png" alt="Logo" width={45} height={45} style={{borderRadius:'50px'}}/>
               </UserProfileImgMobile>
             
-          ) : (
-            
+          ) : (          
               <UserProfileImg onClick={()=>handlePainelInfoClick()} >
                 <img src="http://github.com/Shepardy22.png" alt="Logo" width={45} height={45} style={{borderRadius:'50px'}}/>
-              </UserProfileImg>
-          
-          )}
-
-            
-
+              </UserProfileImg>         
+            )}
           </FlexContainer>
-            
-            {/** MENU DESKTOP */}
-          <div style={{
-            display: isOpen ? 'block' : 'none',
-            position: 'fixed',
-            width: '45%',
-            height: '40%',
-            zIndex: 9999,
-            top: 0,
-            right: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.9)', // preto transparente
-            color: 'white',
-            borderRadius: '10px',
 
-          }}>
-            <div style={{ zIndex: '9999', padding: '10px', height: '100%' }}>
-
-              <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems:'center' }}>
-                <p style={{  display: 'flex', marginLeft:'30px'}}>Minhas Informações</p>
-                <FiXSquare size={40} onClick={handleMenuMobileClick} style={{ cursor: 'pointer', color: "#45ff45" }} />
-              </div>
-
-              <UserProfileMenu>
-                <p style={{fontSize:'1.2rem', color:'#45ff45'}}> {currentUser?.userName} </p>
-                <Link href='/' style={{border:'1px solid #45ff45', padding:'5px', borderRadius:'10px', margin:'5px'}}> Meu Perfil </Link>
-                <p style={{marginTop:'15px'}}>Level: {currentUser?.lvl} </p>
-            
-                <ProgressBar width={`${currentUser?.xp}%`} />
-
-                <div style={{ marginTop: '10px', marginBottom: '30px', display: 'flex', alignItems: 'center' }}>
-                  <p>Codes: {currentUser?.codes} </p>
-                  <span style={{marginLeft:'5px'}}>
-                    <Image src="/assets/logo4k.png" alt="Logo" width={15} height={15} />
-                  </span>
-                </div>
-
-                {painelAdmpermissions && (
-                  <Link href='/ManageCourses'><AdminButton>Painel ADM</AdminButton></Link>
-                )}
-                <LogOutButton onClick={logout} style={{ border: '1px solid red', padding: '5px', borderRadius: '10px', margin: '5px' }}>Desconectar</LogOutButton>
-              </UserProfileMenu>
-              
-
-            </div>
-
-          </div>
-            {/** MENU MOBILE */}
-          <div style={{
-            display: painelInfo ? 'block' : 'none',
-            position: 'fixed',
-            width: '45%',
-            height: '60%',
-            zIndex: 9999,
-            top: 0,
-            right: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.9)', // preto transparente
-            color: 'white',
-            borderRadius: '10px',
-
-          }}>
-            <div style={{  padding: '10px', height: '100%' }}>
-
-              <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems:'center' }}>
-                <p style={{  display: 'flex', marginLeft:'30px'}}>Minhas Informações</p>
-                <FiXSquare size={40} onClick={handlePainelInfoClick} style={{ cursor: 'pointer', color: "#45ff45" }} />
-              </div>
-
-              
-              <div style={{display:'flex', width:'100%',borderRadius:'20px', border:'1px solid #45ff45',boxShadow:'0 0 5px #45ff45', justifyContent:'space-around', alignItems:'center', gap:'10px', marginTop:'10px'	}}>
-                <p style={{fontSize:'1.2rem', color:'#45ff45'}}> {currentUser?.userName} </p>
+          {/** MENU MOBILE */}
+            <div
+              onClick={handleMenuMobileClick}
+              style={{
+                display: isOpen ? 'block' : 'none',
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
                 
-                <div style={{  display: 'flex', alignItems: 'center' }}>
-                  <p>Codes: {currentUser?.codes} </p>
-                  <span style={{marginLeft:'5px'}}>
-                    <Image src="/assets/logo4k.png" alt="Logo" width={15} height={15} />
-                  </span>
+              }}
+            >
+              <div
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  border: '1px solid blue',
+                  padding: '10px',
+                  height: '400px',
+                  zIndex: 9999,
+                  width: '50%',
+                  position: 'fixed',
+                  top: 0,
+                  right: 0,
+                  color: 'white',
+                  borderRadius: '10px',
+                  backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                }}
+              >
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <p style={{ display: 'flex', fontSize: '0.8rem' }}>Minhas Informações</p>
+                  <FiXSquare size={40} onClick={handleMenuMobileClick} style={{ cursor: 'pointer', color: "#45ff45" }} />
+                </div>
+
+
+                <UserProfileMenu>
+                  <p style={{ fontSize: '1.2rem', color: '#45ff45' }}> {currentUser?.userName} </p>
+
+                  {!painelInfoMobile ? (
+                    <>
+                      <Link href='/' style={{ border: '1px solid #45ff45', padding: '5px', borderRadius: '10px', margin: '5px' }}> Meu Perfil </Link>
+                      <button onClick={handlePainelInfoMobileClick} style={{ border: '1px solid #45ff45', padding: '5px', borderRadius: '10px', margin: '5px' }}>Check List Diário</button>
+
+                      <div style={{ width: '100%' }}>
+                        <p style={{ marginTop: '15px' }}>Level: {currentUser?.lvl} </p>
+                        <ProgressBar width={`${currentUser?.xp}%`} />
+                      </div>
+
+                      <div style={{ marginTop: '10px', marginBottom: '30px', display: 'flex', alignItems: 'center' }}>
+                        <p>Codes: {currentUser?.codes} </p>
+                        <span style={{ marginLeft: '5px' }}>
+                          <Image src="/assets/logo4k.png" alt="Logo" width={15} height={15} />
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{display:'flex' , flexDirection:'column'}}>
+                      
+                      <button onClick={handlePainelInfoMobileClick} style={{ border: '1px solid #45ff45', padding: '5px', borderRadius: '10px', margin: '5px' }}>Status</button>
+                      
+                      <div style={{marginTop:'20px',marginBottom:'20px',display:"flex", flexDirection:'column', textAlign:'left', fontSize:'0.8rem'}}>
+                        <ul >
+                          <li><input type="checkbox" /> Login do dia <span></span></li>
+                          <li><input type="checkbox" /> Conclusão de curso</li>
+                          <li><input type="checkbox" /> Conclusão de Módulo</li>
+                          <li><input type="checkbox" /> Conclusão de Atividade</li>
+                          <li><input type="checkbox" /> Comentário no Feed</li>
+                          <li><input type="checkbox" /> Bônus XP: </li>
+                        </ul>
+                      </div>
+                    </div>)}
+
+                    {painelAdmpermissions && (
+                      <Link href='/ManageCourses'><AdminButton>Painel ADM</AdminButton></Link>
+                    )}
+                    <LogOutButton onClick={logout} style={{ border: '1px solid red', padding: '5px', borderRadius: '10px', margin: '5px' }}>Desconectar</LogOutButton>
+                  </UserProfileMenu>
+            
+              </div>
+            </div>
+          {/** MENU DESKTOP */}
+            <div
+              onClick={handlePainelInfoClick} // fecha o menu quando clica fora
+              style={{
+                  display: painelInfo ? 'block' : 'none',
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                }}
+              >
+                <div
+                  onClick={(e) => e.stopPropagation()} // impede que o menu feche quando clica dentro
+                  style={{
+                    border: '1px solid blue',
+                    position: 'fixed',
+                    width: '30%',
+                    height: '450px',
+                    zIndex: 9999,
+                    top: 0,
+                    right: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.9)', // preto transparente
+                    color: 'white',
+                    borderRadius: '10px',
+                  }}
+                >
+                  <div style={{ padding: '10px', height: '100%' }}>
+                    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <p style={{ display: 'flex', marginLeft: '30px' }}>Minhas Informações</p>
+                      <FiXSquare size={40} onClick={handlePainelInfoClick} style={{ cursor: 'pointer', color: "#45ff45" }} />
+                    </div>
+
+                    <div style={{ display: 'flex', width: '100%', borderRadius: '20px', border: '1px solid #45ff45', boxShadow: '0 0 5px #45ff45', justifyContent: 'space-around', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+                      <p style={{ fontSize: '1.2rem', color: '#45ff45' }}> {currentUser?.userName} </p>
+
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <p>Codes: {currentUser?.codes} </p>
+                        <span style={{ marginLeft: '5px' }}>
+                          <Image src="/assets/logo4k.png" alt="Logo" width={15} height={15} />
+                        </span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <p style={{ marginTop: '15px', width: '100%', textAlign: 'center' }}>Level: {currentUser?.lvl} </p>
+                      <ProgressBar width={`${currentUser?.xp}%`} />
+                    </div>
+
+                    <div style={{ padding: '10px', width: '100%', height: '50%', marginTop: '10px', display: 'flex', flexDirection: 'column' }}>
+                      <p style={{ width: '100%', textAlign: 'center', marginBottom: '10px' }}>Check List Diário</p>
+
+                      <ul>
+                        <li><input type="checkbox" /> Login do dia <span></span></li>
+                        <li><input type="checkbox" /> Conclusão de curso</li>
+                        <li><input type="checkbox" /> Conclusão de Módulo</li>
+                        <li><input type="checkbox" /> Conclusão de Atividade</li>
+                        <li><input type="checkbox" /> Comentário no Feed</li>
+                        <li><input type="checkbox" /> Bônus XP: </li>
+                      </ul>
+                    </div>
+
+                    <div style={{ height: '20%', display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+                    {painelAdmpermissions && (
+                      <Link href='/ManageCourses'><AdminButton>Painel ADM</AdminButton></Link>
+                    )}
+                      <StyledLinkPerfil>
+                        <Link href='/' >Meu Perfil</Link>  
+                      </StyledLinkPerfil>
+                                      
+                    <LogOutButton onClick={logout} >Desconectar</LogOutButton>
+                  </div>
                 </div>
               </div>
-
-              <p style={{ marginTop: '15px', width: '100%', textAlign: 'center' }}>Level: {currentUser?.lvl} </p>
-              <ProgressBar width={`${currentUser?.xp}%`} />
-
-              <div style={{ width: '100%', height: '55%', marginTop: '10px', display: 'flex', flexDirection: 'column' }}>
-                <p style={{ width: '100%', textAlign: 'center', marginBottom: '10px' }}>Check List Diário</p>
-
-                <p>Login do dia</p>
-                <p>Conclusão de curso</p>
-                <p>Conclusão de Módulo</p>
-                <p>Conclusão de Atividade</p>
-                <p>Comentário no Feed</p>
-                <p>Bônus XP</p>
-
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-around', alignItems:'center' }}>
-                {painelAdmpermissions && (
-                  <Link href='/ManageCourses'><AdminButton>Painel ADM</AdminButton></Link>
-                )}
-                <Link href='/' style={{ border: '1px solid #45ff45', padding: '5px', borderRadius: '10px', margin: '5px' }}> Meu Perfil </Link>
-                <LogOutButton onClick={logout} style={{ border: '1px solid red', padding: '5px', borderRadius: '10px', margin: '5px' }}>Desconectar</LogOutButton>
-              </div>
-
             </div>
 
-          </div>
-          
         </NavBar>
-        )
+      )
       }
-      </>
+    </>
     
   );
 };
