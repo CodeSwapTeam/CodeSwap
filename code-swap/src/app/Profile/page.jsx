@@ -5,13 +5,18 @@ import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 import Image from 'next/image';
 
+//Estilização da página
+
 const PageContainer = styled.div`
 display: flex;
 flex-direction: row;
 width: 100%;
 height: 100%;
 margin-top: 8vh;
+color: #f5f5f5;
 `
+
+//Estilização da parte esquerda
 const ProfileResume = styled.div`
 display: flex;
 flex-direction: column;
@@ -21,16 +26,6 @@ width: 30%;
 height: 100%;
 margin: 1rem;
 //background-color: #f5f5f5;
-`
-const ProfileDetails = styled.div`
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-width: 100%;
-height: 100%;
-margin: 1rem;
-background-color: #f5f;
 `
 
 const ProfileImage = styled.img`
@@ -92,6 +87,7 @@ const ProgressBar = styled.div`
     width: 80%;
     position: relative;
     margin: auto;
+    color: black;
 
 
 &::after {
@@ -106,7 +102,80 @@ const ProgressBar = styled.div`
 }
 `;
 
-function ProfilePage() {
+//Estilização da parte direita
+
+const ProfileDetails = styled.div`
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+width: 100%;
+height: 100%;
+margin: 1rem;
+`
+
+const DetailsHeader = styled.div`
+display: flex;
+flex-direction: row;
+align-items: center;
+justify-content: space-evenly;
+width: 100%;
+height: 100%;
+margin-top: 1rem;
+color: white;
+`
+
+const DetailHeaderButton = styled.button`
+color: #f5f5f5;
+border: none;
+border-radius: 5px;
+padding: 0.5rem;
+border-radius: 10px 10px 0 0;
+background-color: rgba(0, 0, 0, 0.75);
+font-size: 1.5rem;
+`
+
+const DetailContent = styled.div`
+display: flex;
+box-sizing: border-box;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.75);
+color: white;
+padding: 1rem;
+`
+
+const Curriculo = styled.div`
+display: flex;
+flex-direction: column;
+justify-content: justify;
+width: 80%;
+height: 80%;
+background-color: white;
+font-family: 'Roboto', sans-serif;
+color: black;
+padding: 1rem;
+`
+
+const HabilidadesContainer = styled.div`
+display: flex;
+box-sizing: border-box;
+flex-direction: column;
+align-items: stretch;
+justify-content: flex-start;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.75);
+color: white;
+padding: 1rem;
+flex-wrap: nowrap;
+`
+
+function ProfilePage(props) {
+    //Função para redirecionar o usuário para a página de login caso não esteja logado
     const { currentUser } = ContextDataCache();
     const router = useRouter();
     const [isMounted, setIsMounted] = useState(false);
@@ -120,12 +189,17 @@ function ProfilePage() {
             }
         }, [isMounted, currentUser]);*/
 
+        //tabs
+        const [selectedTab, setSelectedTab] = useState('Habilidades');
+
         return (
             <>
             <PageContainer>
                 <ProfileResume>
                     <ResumeSection>
-                        <ProfileImageEffect><ProfileImage src={currentUser?.imgUrlProfile} /></ProfileImageEffect>
+                        <ProfileImageEffect>
+                            <ProfileImage src={currentUser?.imgUrlProfile} />
+                        </ProfileImageEffect>
                         <ProfileName>{currentUser?.userName}</ProfileName>
                     </ResumeSection>
                     <ResumeSection>
@@ -148,14 +222,75 @@ function ProfilePage() {
                         </div>
                     </ResumeSection>
                 </ProfileResume>
+
                 <ProfileDetails>
-                    <h1>Profile Details</h1>
+                    <DetailsHeader>
+                        <div style={{backgroundColor:'black', borderRadius:'50% 50% 0 0'}}>
+                            <DetailHeaderButton onClick={() => setSelectedTab('Habilidades')}>Habilidades</DetailHeaderButton>
+                            <DetailHeaderButton onClick={() => setSelectedTab('Curriculo')}>Currículo</DetailHeaderButton>
+                            <DetailHeaderButton onClick={() => setSelectedTab('Projetos')}>Projetos</DetailHeaderButton>
+                            <DetailHeaderButton onClick={() => setSelectedTab('Configuracoes')}>Configurações</DetailHeaderButton>
+                        </div>
+                    </DetailsHeader>
+                    {selectedTab === 'Habilidades' && <DetailContent>
+                        {currentUser && currentUser.CoursesEnrolled.map((CoursesEnrolled, index) => (
+                            <HabilidadesContainer key={index} style={{fontWeight:'bold', margin:'0.5rem', border:'solid 1px white'}}>
+                                <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', marginBottom:'1rem'}}>
+                                    <p>{CoursesEnrolled.title}</p>
+                                    <p>{CoursesEnrolled.progress}%</p>
+                                </div>
+                                <div>
+                                    <ProgressBar width={`${CoursesEnrolled.progress}%`}/>
+                                </div>
+                            </HabilidadesContainer>
+                                ))}
+                    </DetailContent>}
+                    {selectedTab === 'Curriculo' && <DetailContent>
+                        <ProfileName>Seu Currículo em PDF</ProfileName>
+                        <Curriculo>
+                            <h1 style={{display:'flex', justifyContent:'center', width:'100%'}}>{currentUser?.userName}</h1>
+
+                            <p>Email: {currentUser?.email}</p>
+                            <p>Telefone: {currentUser?.phone}</p>
+
+                            <hr style={{marginTop:'0.5rem', marginBottom:'0.5rem'}} />
+
+                            <h2 style={{margin:'1rem'}}>Histórico Profissional</h2>
+
+                                <p style={{borderBottomColor:'black', borderBottomStyle:'solid', borderBottomWidth:'1px'}}><input type="text" placeholder="Empresa" /> - <input type="text" placeholder="X Anos"></input></p>
+                                <input type="text" placeholder='Cargo' />
+                                <input type="text" placeholder='Descrição' />
+                                <p style={{borderBottomColor:'black', borderBottomStyle:'solid', borderBottomWidth:'1px'}}><input type="text" placeholder="Empresa" /> - <input type="text" placeholder="X Anos"></input></p>
+                                <input type="text" placeholder='Cargo' />
+                                <input type="text" placeholder='Descrição' />
+                                <p style={{borderBottomColor:'black', borderBottomStyle:'solid', borderBottomWidth:'1px'}}><input type="text" placeholder="Empresa" /> - <input type="text" placeholder="X Anos"></input></p>
+                                <input type="text" placeholder='Cargo' />
+                                <input type="text" placeholder='Descrição' />
+
+
+                            <h2 style={{margin:'1rem'}}>Formação & Cursos</h2>
+
+                                <p style={{borderBottomColor:'black', borderBottomStyle:'solid', borderBottomWidth:'1px'}}><input type="text" placeholder="Instituição" /> - <input type="text" placeholder="X Anos"></input></p>
+                                {currentUser && currentUser.CoursesEnrolled.map((CoursesEnrolled, index) => (
+                                    <p key={index} style={{fontWeight:'bold', margin:'0.5rem'}}>{CoursesEnrolled.difficulty} em {CoursesEnrolled.title} - Code Academy<br/> {CoursesEnrolled.progress}% Aproveitamento</p>
+                                ))}
+
+                            <h2 style={{margin:'1rem'}}>Projetos</h2>
+
+                                <h3>Github: {currentUser?.email}</h3>
+                        </Curriculo>
+                        <button>Download</button>
+                    </DetailContent>}
+                    {selectedTab === 'Projetos' && <DetailContent>
+                        Content for Tab 2
+                    </DetailContent>}
+                    {selectedTab === 'Configuracoes' && <DetailContent>
+                        Content for Tab 3
+                    </DetailContent>}
                 </ProfileDetails>
-                <h1>Profile</h1>
             </PageContainer>
             </>
         )
     }
-
 
 export default ProfilePage;
