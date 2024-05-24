@@ -65,6 +65,17 @@ export async function GET(request){
                 throw new Error('Erro no servidor ao buscar os módulos');
             }
         }
+
+
+        case 'GetPosts': { //Buscar todas as publicações
+            const querySnapshot = await getDocs(collection(db, 'FeedPosts'));
+            const posts = [];
+            querySnapshot.forEach((doc) => {
+                posts.push(doc.data());
+            });
+            if (!posts) throw new Error('Erro no servidor ao buscar as publicações');
+            return NextResponse.json(posts);
+        }
         default:
             return NextResponse.error('Tipo de busca inválido', 400);
     }   

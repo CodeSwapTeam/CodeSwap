@@ -30,13 +30,13 @@ const FlexContainer = styled.div`
 const NavBarSection = styled.div`
   width: ${props => props.width};
   display: flex;
-  justify-content: ${props => props.justifyContent};
+  justify-content: center;
 
  
 
   `;
 
-const NavButton = styled.a`
+const NavButton = styled.div`
   float: left;
   display: block;
   color: white;
@@ -69,16 +69,9 @@ const LogOutButton = styled.button`
   
 `;
 
-const AdminButton = styled.a`
 
-  color: #912d2d;
 
-  border: none;
-  cursor: pointer;
-  font-weight: 800;
-`;
-
-const StyledLinkPerfil = styled.a`
+const StyledLinkPerfil = styled.div`
   border: 1px solid #45ff45;
   padding: 5px;
   border-radius: 10px;
@@ -263,10 +256,10 @@ const NavBarPrivate = (props) => {
 
             <NavBarLeftPRIVATE >
               <Link href='/MyCourses'><NavButton>Meus Cursos</NavButton></Link>
-              <Link href='/'><NavButton>Comunidade</NavButton></Link>
+              <Link href='/FeedCommunity'><NavButton>Comunidade</NavButton></Link>
             </NavBarLeftPRIVATE>
 
-            <NavBarSection width='20%' justifyContent='center'>
+            <NavBarSection width='20%' >
               <Link href="/">
                 <Image src="/assets/logo4k.png" alt="Logo" width={50} height={50} />
               </Link>
@@ -371,7 +364,7 @@ const NavBarPrivate = (props) => {
                     </div>)}
 
                     {painelAdmpermissions && (
-                      <Link href='/ManageCourses'><AdminButton>Painel ADM</AdminButton></Link>
+                      <Link href='/ManageCourses' style={{color:'#912d2d', cursor:'pointer', fontWeight:'800'}}>Painel ADM</Link>
                     )}
                     <LogOutButton onClick={logout} style={{ border: '1px solid red', padding: '5px', borderRadius: '10px', margin: '5px' }}>Desconectar</LogOutButton>
                   </UserProfileMenu>
@@ -442,7 +435,7 @@ const NavBarPrivate = (props) => {
 
                     <div style={{ height: '20%', display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
                     {painelAdmpermissions && (
-                      <Link href='/ManageCourses'><AdminButton>Painel ADM</AdminButton></Link>
+                      <Link href='/ManageCourses' style={{color:'#912d2d', cursor:'pointer', fontWeight:'800'}}>Painel ADM</Link>
                     )}
                       <StyledLinkPerfil>
                         <Link href='/' >Meu Perfil</Link>  

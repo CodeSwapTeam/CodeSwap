@@ -239,6 +239,24 @@ export async function POST(NextRequest) {
             }
         }
 
+        //Postar um feed 
+        case 'CreatePost': {
+            console.log('data:;;;;;;;;;;;;;;', data);
+            try {
+                const postData = {
+                    userId: data.userId,
+                    content: data.content,
+                    date: data.date,
+                    likes: data.likes,
+                    comments: data.comments
+                }
+                const docRef = await addDoc(collection(db, 'FeedPosts'), postData);
+                return NextResponse.json({ message: 'Post criado com sucesso!', postId: docRef.id });
+            } catch (error) {
+                return NextResponse.error('Erro ao criar o post:', error);
+            }
+        }
+
         default:
             return NextResponse.error('Tipo de busca inválido', 500);
     }
