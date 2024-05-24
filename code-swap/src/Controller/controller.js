@@ -9,6 +9,7 @@ import { GetLessonsModule, GetModuleById, GetModules, GetModulesCourseID, Update
 import { handleUpdateThumbnail } from "@/app/services/UpdateThumbnail";
 import { handleUpdateCover } from "@/app/services/UpdateCover";
 import { createLesson, deleteLesson } from "../../database/functions/Lessons/manageLessons";
+import { GetPhrases } from "@/app/services/phrases";
 
 
 
@@ -106,7 +107,7 @@ export default function Controller(){
             },
             phrases: {
 
-            
+                GetPhrases: GetPhrases,
             }
         },
         /**

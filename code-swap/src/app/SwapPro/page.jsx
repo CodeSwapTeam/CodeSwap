@@ -1,28 +1,18 @@
 
 
 
-const PageSwapPro = async ({ searchParams }) => {
-    const params = searchParams['course'];
+const PageSwapPro = async () => {
+    
 
-    let course = await fetch(`http://localhost:3000/api/gets?id=${params}&type=courseId`);
 
-    let courseData = await course.json();
 
-    console.log(courseData);
 
     return (
         <div style={{color: 'white' }}>
-            <h1>Swap Pro</h1>
-            <h2>Plano de assinatura</h2>
-            <p>Assine o Swap Pro para ter acesso a todos os cursos e módulos disponíveis na plataforma.</p>
-            <p>Valor: R$ 19,90/mês</p>
+            
+            <h1 style={{marginTop:'80px',fontWeight: 600, fontStyle: 'normal', fontSize: '2rem', color: '#04449c', textShadow: '0 0 1.5px #fff, 0 0 2.5px #fff, 0 0 5px #fff, 0 0 10px #0fa, 0 0 20px #0fa, 0 0 23px #0fa'}}>Swap Pro</h1>
 
-            <h2>Imagem</h2>
-            <img src={courseData[0].imgUrlThumbnail} alt={courseData.title} width={300} height={200} />
-
-            <h2>Curso</h2>
-            <p>{courseData[0].title}</p>
-            <p>{courseData[0].description}</p>
+            
         </div>
     );
 }
