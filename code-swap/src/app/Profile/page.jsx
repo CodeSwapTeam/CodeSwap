@@ -162,11 +162,17 @@ function ProfilePage(props) {
         setIsMounted(true);
     }, []);
 
-    /*useEffect(() => {
+    useEffect(() => {
         if (isMounted && !currentUser) {
                 router.push('/login');
+            } else {
+                return (
+                    <div>
+                        <h1>Carregando...</h1>
+                    </div>
+                )
             }
-        }, [isMounted, currentUser]);*/
+        }, [isMounted, currentUser]);
 
         //tabs
         const [selectedTab, setSelectedTab] = useState('Habilidades');

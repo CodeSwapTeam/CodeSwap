@@ -3,11 +3,13 @@ import Controller from "@/Controller/controller";
 import { getDatabase, ref, set, update } from "firebase/database";
 import { ContextDataCache } from "@/app/Providers/ContextDataCache";
 import { arrayUnion } from "firebase/firestore";
+import { useParams, useRouter } from 'next/navigation';
 
 
 
 export default function ProfileConfig() {
     const { currentUser } = ContextDataCache();
+    const router = useRouter();
     //Perfil
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
@@ -27,7 +29,7 @@ export default function ProfileConfig() {
     const db = getDatabase();
 
 
-const handleNameSubmit = async (event) => {
+/*const handleNameSubmit = async (event) => {
     event.preventDefault();
     const updatedUserData = {
         userName: name,
@@ -42,10 +44,36 @@ const handleNameSubmit = async (event) => {
     try {
         await controller.manageUsers.UpdateUserData(currentUser.id,  updatedUserData );
         console.log(`Informações atualizadas com sucesso! Recarregue a página para ver as alterações!`);
+        router.refresh();
+    } catch (error) {
+        console.error('Failed to update name', error);
+    }
+};*/
+
+////////////////////////////////////////////////////////////////////////
+
+const handleNameSubmit = async (event) => {
+    event.preventDefault();
+    let updatedUserData = {};
+        if(name) updatedUserData.userName = name;
+        if(phone) updatedUserData.phone = phone;
+        if(github) updatedUserData.Github = github;
+        if(whatsapp) updatedUserData.whatsapp = whatsapp;
+        if(linkedin) updatedUserData.linkedin = linkedin;
+        if(education) updatedUserData.education = education;
+        if(educationSituation) updatedUserData.educationSituation = educationSituation;
+
+    try {
+        await controller.manageUsers.UpdateUserData(currentUser.id,  updatedUserData );
+        alert(`Informações atualizadas com sucesso! Recarregue a página para ver as alterações!`);
+        router.refresh();
     } catch (error) {
         console.error('Failed to update name', error);
     }
 };
+
+
+////////////////////////////////////////////////////////////////////////
 
 const handleProjectsSubmit = async (event) => {
     event.preventDefault();
@@ -60,6 +88,7 @@ const handleProjectsSubmit = async (event) => {
         await controller.manageUsers.UpdateUserData(currentUser.id,  {Projects: arrayUnion(updatedProjectsData )});
         console.log(`Projetos atualizados: ${projectTitle}`);
         alert('Projetos atualizados com sucesso! Você pode verificar seus projetos na aba de Projetos do seu perfil!');
+        router.refresh();
     } catch (error) {
         console.error('Failed to update name', error);
     }
@@ -67,6 +96,8 @@ const handleProjectsSubmit = async (event) => {
     setProjectDescription('');
     setProjectLink('');
 };
+
+
 
     return (
         <div>
@@ -78,6 +109,7 @@ const handleProjectsSubmit = async (event) => {
                     style={{color:'black'}}
                     type="text"
                     value={name}
+                    placeholder={currentUser.userName}
                     onChange={e => setName(e.target.value)} />
                 </label>
                 <br></br>
@@ -88,7 +120,7 @@ const handleProjectsSubmit = async (event) => {
                     type="number"
                     maxLength={11}
                     minLength={11}
-                    placeholder="(00) 00000-0000"
+                    placeholder={currentUser.phone === '' ? 'Digite seu telefone' : currentUser.phone}
                     value={phone}
                     onChange={e => setPhone(e.target.value)} />
                     <br />
@@ -105,6 +137,7 @@ const handleProjectsSubmit = async (event) => {
                     style={{color:'black'}}
                     type="text"
                     value={github}
+                    placeholder={currentUser.Github === '' ? 'Digite seu Github' : currentUser.Github}
                     onChange={e => setGithub(e.target.value)} />
                 </label>
                 <br></br>
@@ -114,6 +147,7 @@ const handleProjectsSubmit = async (event) => {
                     style={{color:'black'}}
                     type="text"
                     value={linkedin}
+                    placeholder={currentUser.linkedin === '' ? 'Digite seu Linkedin' : currentUser.linkedin}
                     onChange={e => setLinkedin(e.target.value)} />
                 </label>
                 <br></br>
@@ -171,6 +205,7 @@ const handleProjectsSubmit = async (event) => {
                     <input
                     style={{color:'black'}}
                     type="text" value={projectTitle}
+                    placeholder="Título do projeto"
                     onChange={e => setProjectTitle(e.target.value)} />
                     <br/>
                     <p>Descrição:</p>
@@ -178,6 +213,7 @@ const handleProjectsSubmit = async (event) => {
                     <input
                     style={{color:'black'}}
                     type="text" value={projectDescription}
+                    placeholder="Uma breve descrição do projeto"
                     onChange={e => setProjectDescription(e.target.value)} />
                     <br/>
                     <p>Link:</p>
@@ -185,6 +221,7 @@ const handleProjectsSubmit = async (event) => {
                     <input
                     style={{color:'black'}}
                     type="text" value={projectLink}
+                    placeholder="Link do projeto"
                     onChange={e => setProjectLink(e.target.value)} />
                 </label><br/>
                 <input style={{color:'pink'}} type="submit" value="Salvar Projetos" />
