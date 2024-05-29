@@ -247,6 +247,7 @@ export async function POST(NextRequest) {
                     userId: data.userId,
                     content: data.content,
                     date: data.date,
+                    dateFormat: data.dateFormat,
                     likes: data.likes,
                     comments: data.comments
                 }

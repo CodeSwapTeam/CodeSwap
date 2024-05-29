@@ -1,24 +1,23 @@
-
+'use client';
 import { revalidateTag } from 'next/cache';
 import React from 'react';
 import ButtonSubmit from './button-submit';
 
-export default async function CreatePost() {
+export default function CreatePost() {
 
-    async function handlePostSubmit(formData) {
-        'use server'
+    async function handlePostSubmit(event) {
+        event.preventDefault();
 
-        
+        const formData = new FormData(event.target);
         
         const postContentData = {
             userId: '1',
             content: formData.get('content'),
-            date: new Date().toLocaleString("pt-BR", {timeZone: "America/Sao_Paulo"}),
+            date: new Date(), // Armazenar a data como um objeto Date
+            dateFormat: new Date().toLocaleString("pt-BR", {timeZone: "America/Sao_Paulo"}),
             likes: 0,
             comments: []     
         }
-
-        
 
         const response = await fetch('http://localhost:3000/api/posts?type=CreatePost', {
             method: 'POST',
@@ -32,16 +31,14 @@ export default async function CreatePost() {
             console.error(response);
         }
 
-        formData.set('content', ' test');
-        revalidateTag('feed-posts');
-
-         
+        //limpar o campo de texto
+        event.target.content.value = '';
     }
 
     return (
         <div style={ {marginTop:'20px', width:'100%', display:"flex", flexDirection:"column",  justifyContent:"center", alignItems:'center',}}>
             <h2>Criar publicação</h2>
-            <form action={handlePostSubmit} 
+            <form onSubmit={handlePostSubmit} 
                 style={{display:'flex', flexDirection:'column', width:"30%"}}>
                 <textarea style={{color:'black', border:'1px solid green', borderRadius:'10px', margin:'10px', width:'100%', height:'100px'}}
                     name="content"
