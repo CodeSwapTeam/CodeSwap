@@ -32,14 +32,6 @@ margin: 1rem;
 //background-color: #f5f5f5;
 `
 
-const ProfileImage = styled.img`
-width: 150px;
-height: 150px;
-border-radius: 50%;
-border: 1px solid #000;
-padding: 2%;
-`
-
 const ProfileName = styled.h1`
 font-size: 2rem;
 color: #f5f5f5;
@@ -47,6 +39,10 @@ color: #f5f5f5;
 
 const ProfileImageEffect = styled.div`
 
+display: flex;
+flex-direction: row;
+align-items: center;
+justify-content: center;
 animation: animateLogoCodeSwap 2.5s alternate infinite;
 border-radius: 100px;
 width: 150px;
@@ -162,28 +158,17 @@ function ProfilePage(props) {
         setIsMounted(true);
     }, []);
 
-    useEffect(() => {
-        if (isMounted && !currentUser) {
-                router.push('/login');
-            } else {
-                return (
-                    <div>
-                        <h1>Carregando...</h1>
-                    </div>
-                )
-            }
-        }, [isMounted, currentUser]);
-
         //tabs
         const [selectedTab, setSelectedTab] = useState('Habilidades');
 
         return (
             <>
-            <PageContainer>
+            {isMounted && (
+                <PageContainer>
                 <ProfileResume>
                     <ResumeSection>
                         <ProfileImageEffect>
-                            <ProfileImage src={currentUser?.imgUrlProfile} />
+                            <Image src={currentUser?.imgUrlProfile} width={150} height={150} style={{borderRadius: '50%', padding: '5%'}}/>
                         </ProfileImageEffect>
                         <ProfileName>{currentUser?.userName}</ProfileName>
                     </ResumeSection>
@@ -231,6 +216,7 @@ function ProfilePage(props) {
                     </DetailContent>}
                 </ProfileDetails>
             </PageContainer>
+            )}
             </>
         )
     }
