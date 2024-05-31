@@ -1,4 +1,4 @@
-import { deleteDoc, doc, setDoc, updateDoc, addDoc, collection, arrayUnion, getDoc, where, getDocs, query, orderBy, limit, startAfter, startAt } from "firebase/firestore";
+import { deleteDoc, doc, setDoc, updateDoc, addDoc, collection,endAt, arrayUnion, getDoc, where, getDocs, query, orderBy, limit, startAfter, startAt } from "firebase/firestore";
 import { db } from "../../../../database/firebase";
 import { NextResponse } from "next/server";
 
@@ -6,7 +6,6 @@ export async function GET(request){
     const { searchParams } =  new URL(request.url);
     const id = searchParams.get('id') || null;
     const type = searchParams.get('type');
-    const page = searchParams.get('page') || 1;
     const lastPostId = searchParams.get('lastPostId') || null;
 
     if(id && type) console.log('GET request Server..............:', id, type);
@@ -71,19 +70,23 @@ export async function GET(request){
 
         case 'GetPosts': { //Buscar todas as publicações
             //pegar o body da requisição
-            console.log('page:', page);
-            const postsPerPage = 3;
+            console.log('lastPostId:', lastPostId);
+            const postsPerPage = 5;
         
             const posts = [];
-            let querySnapshot;
-            if(lastPostId !== undefined && lastPostId !== null){
-                querySnapshot = await getDocs(query(collection(db, "FeedPosts"), orderBy('date', 'desc'), startAfter(lastPostId), limit(postsPerPage)));
-            } else {
-                querySnapshot = await getDocs(query(collection(db, "FeedPosts"), orderBy('date', 'desc'), limit(postsPerPage)));
+            const postsRef = collection(db, 'FeedPosts');
+            let queryRef = query(postsRef, orderBy('date', 'desc'), limit(postsPerPage));
+            if(lastPostId) {
+                const lastPostDocRef = doc(db, 'FeedPosts', lastPostId);
+                const lastPostSnapshot = await getDoc(lastPostDocRef);
+                if (lastPostSnapshot.exists()) {
+                    queryRef = query(postsRef, orderBy('date', 'desc'), startAfter(lastPostSnapshot), limit(postsPerPage));
+                }
             }
+            const querySnapshot = await getDocs(queryRef);
             querySnapshot.forEach((doc) => {
                 const postData = doc.data();
-                postData.id = doc.id; // Adiciona o ID do documento ao objeto do post
+                postData.docId = doc.id; // Adiciona o ID do documento ao objeto do post
                 posts.push(postData);
             });
         
