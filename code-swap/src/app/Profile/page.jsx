@@ -35,6 +35,7 @@ margin: 1rem;
 const ProfileName = styled.h1`
 font-size: 2rem;
 color: #f5f5f5;
+margin-top: 2rem;
 `
 
 const ProfileImageEffect = styled.div`
@@ -48,15 +49,15 @@ border-radius: 100px;
 width: 150px;
 height: 150px;
 margin-bottom: 10%;
-
+/* COLOR GREEN
 @keyframes animateLogoCodeSwap {
     100%{
-box-shadow: 0 0 2px #fff,
-    0 0 4px #fff,
-    0 0 8px #fff,
-    0 0 15px #0fa,
-    0 0 22px #0fa,
-    0 0 25px #0fa;
+box-shadow: 0 0 6px #fff,
+    0 0 12px #fff,
+    0 0 24px #fff,
+    0 0 45px #0fa,
+    0 0 60px #0fa,
+    0 0 75px #0fa;
 } 0% {
     box-shadow: 0 0 1px #fff,
     0 0 2px #fff,
@@ -64,6 +65,24 @@ box-shadow: 0 0 2px #fff,
     0 0 8px #0fa,
     0 0 12px #0fa,
     0 0 15px #0fa;
+}
+}*/
+
+@keyframes animateLogoCodeSwap {
+    100%{
+box-shadow: 0 0 6px #fff,
+    0 0 12px #fff,
+    0 0 24px #fff,
+    0 0 45px #0247A7,
+    0 0 60px #0247A7,
+    0 0 75px #0247A7;
+} 0% {
+    box-shadow: 0 0 4px #fff,
+    0 0 8px #fff,
+    0 0 16px #fff,
+    0 0 32px #0247A7,
+    0 0 40px #0247A7,
+    0 0 50px #0247A7;
 }
 }
 `
@@ -74,11 +93,12 @@ flex-direction: column;
 align-items: center;
 justify-content: center;
 width: 100%;
-height: 100%;
+height: 200%;
 margin: 1rem;
 background-color: rgba(0, 0, 0, 0.75);
 border-radius: 10%;
 padding: 1rem;
+padding-top: 5rem;
 `
 const ProgressBar = styled.div`
     background-color: #f3f3f3;
@@ -169,8 +189,25 @@ function ProfilePage(props) {
                     <ResumeSection>
                         <ProfileImageEffect>
                             <Image src={currentUser?.imgUrlProfile} width={150} height={150} style={{borderRadius: '50%', padding: '5%'}}/>
+                            <Image src={'/assets/7.png'} width={280} height={280} style={{position:'absolute', paddingTop:'8px'}}/>
                         </ProfileImageEffect>
-                        <ProfileName>{currentUser?.userName}</ProfileName>
+
+                        <ProfileName>
+                            <div style={{
+                            backgroundImage: 'url(/assets/bckgrnd.jpeg)',
+                            borderRadius:'10%',
+                            backgroundPosition: 'center center',
+                            backgroundSize: 'cover',
+                            padding:'5%',
+                            width:'140%',
+                            display:'flex',
+                            justifyContent:'center'}}>
+                                <p style={{textShadow: '0 0 11px black'}}>
+                                    {currentUser?.userName}
+                                </p>
+                            </div>
+                        </ProfileName>
+
                     </ResumeSection>
                     <ResumeSection>
                             <ProfileName>Nível do Perfil</ProfileName>

@@ -154,7 +154,7 @@ const handleProjectsSubmit = async (event) => {
                 <label>
                     Educação:
                     <p>Está estudando ou já concluiu a faculdade? Registre aqui!</p><br/>
-                    <p>Instituição</p> <br/>
+                    <p>Curso & Instituição</p> <br/>
                     <input
                     style={{color:'black'}}
                     type="text"
