@@ -98,6 +98,31 @@ export default function FeedCommunity() {
         return () => intersectionObserver.disconnect();
     }, [endPageRef.current, isEndOfPosts]);
 
+
+    //função para deletar um post
+     function deletePost(postId){
+
+        //pegar os posts antigos e remover o post deletado
+        const oldPosts = queryClient.getQueryData(['All-Posts']);
+        const postsUpdated = oldPosts.filter(post => post.docId !== postId);
+        queryClient.setQueryData(['All-Posts'], postsUpdated);
+
+       fetch(`http://localhost:3000/api/delete?type=deletePost&id=${postId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        //queryClient.setQueryData(['endOfPosts'], {state: false ,lastPostId: null, newPost: true});
+        //queryClient.invalidateQueries(['All-Posts']);
+
+       
+            
+        
+
+        
+    }
+
     return (
         <div style={{ display: "flex", flexDirection: 'column', marginTop: "60px", color: 'white', width: '100%', border: "1px solid white", justifyContent: "center", alignItems: 'center', }}>
             <h1>Feed Community</h1>
@@ -105,11 +130,17 @@ export default function FeedCommunity() {
             <CreatePost />
             <>
                 {posts && posts.map((post, index) => (
-                    <ul key={index} style={{ border: '1px solid green', borderRadius: '10px', margin: '10px', padding: '10px', width: '30%' }}>
-                        <li>{post.content}</li>
-                        <li>{post.dateFormat}</li>
-                        <li>{post.likes} likes</li>
-                    </ul>
+                    <div key={index} style={{ border: '1px solid green', borderRadius: '10px', margin: '10px', padding: '10px', width: '30%' }}>
+
+                        <ul  >
+                            <li>{post.content}</li>
+                            <li>{post.dateFormat}</li>
+                            <li>{post.likes} likes</li>
+                        </ul>
+    
+                        
+                        <button  onClick={() => deletePost(post.docId)}>Deletar Post</button>
+                    </div>
                 ))}
             </>
             {isFetching && <p>Carregando...</p>}

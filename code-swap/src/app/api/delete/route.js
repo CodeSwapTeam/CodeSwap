@@ -108,6 +108,17 @@ export async function DELETE(NextRequest){
         return NextResponse.json({ message: 'Aula deletada com sucesso!' });
 
         }
+
+
+        //Interação com a comunidade
+        case 'deletePost': {//Deletar o post pelo ID
+            try {
+                await deleteDoc(doc(db, 'FeedPosts', id));
+                return NextResponse.json({ message: 'Post deletado com sucesso!' });
+            } catch (error) {
+                return NextResponse.error('Erro ao deletar o post');
+            }
+        }
         default:
             return NextResponse.error('Tipo de busca inválido', 400);
     }   
