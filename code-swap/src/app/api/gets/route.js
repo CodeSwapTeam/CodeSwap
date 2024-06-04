@@ -88,6 +88,7 @@ export async function GET(request){
                 const postData = doc.data();
                 postData.docId = doc.id; // Adiciona o ID do documento ao objeto do post
                 posts.push(postData);
+                //console.log('postData:', postData);
             });
         
             return NextResponse.json(posts);

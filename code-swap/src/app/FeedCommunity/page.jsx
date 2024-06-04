@@ -1,68 +1,102 @@
 'use client';
-import { useState, useEffect, useRef, useReducer } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import CreatePost from "./Components/createPost";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-const initialState = { posts: [], lastPostId: null, isEndOfPosts: false };
-
-function reducer(state, action) {
-    switch (action.type) {
-        case 'addPosts':
-            const newPosts = action.payload;
-            const lastPostId = newPosts[newPosts.length - 1]?.docId;
-            // Filtrar posts duplicados
-            const uniquePosts = [...state.posts, ...newPosts].filter((post, index, self) =>
-                index === self.findIndex((p) => p.docId === post.docId)
-            );
-            return { ...state, posts: uniquePosts, lastPostId };
-        case 'setEndOfPosts':
-            return { ...state, isEndOfPosts: true };
-        default:
-            throw new Error();
-    }
-}
 
 export default function FeedCommunity() {
-    const [state, dispatch] = useReducer(reducer, initialState);
-    const { posts, lastPostId, isEndOfPosts } = state;
-    const [currentPage, setCurrentPage] = useState(1);
+    const [lastPostId, setLastPostId] = useState(null);
+    const [isEndOfPosts, setIsEndOfPosts] = useState(false);
+    const endPageRef = useRef(null);
 
-    
-
+    const queryClient = useQueryClient();
 
     useEffect(() => {
-        const loadPosts = async () => {
-            if (isEndOfPosts) return;
+        const intervalId = setInterval(() => {
+            const lastPostIdQuery = queryClient.getQueryData(['endOfPosts'])
+            queryClient.setQueryData(['endOfPosts'], {state: false , lastPostId: lastPostIdQuery.lastPostId});
+           
+            
+            setIsEndOfPosts(false);
+            refetch();
+        }, 1000 * 60 * 5); // 5 minutos
+    
+        // Limpar intervalo quando o componente for desmontado
+        return () => clearInterval(intervalId);
+    }, []);
 
-            const response = await fetch(`http://localhost:3000/api/gets?type=GetPosts&lastPostId=${lastPostId}`, {
+    const { data: posts, isFetching, refetch } = useQuery({
+        queryKey: ['All-Posts'],
+        queryFn: async () => {
+            const EndOfPosts = queryClient.getQueryData(['endOfPosts']);
+
+            if(EndOfPosts && EndOfPosts.newPost === true){
+                queryClient.setQueryData(['endOfPosts'], {state: false ,lastPostId: null, newPost: false})
+                //limpar os posts 
+                queryClient.setQueryData(['All-Posts'], null);
+            }
+
+            if(!EndOfPosts){
+
+                queryClient.setQueryData(['endOfPosts'], {state: false ,lastPostId: null})
+            }
+
+            if(EndOfPosts.state === false){
+
+            const response = await fetch(`http://localhost:3000/api/gets?type=GetPosts&lastPostId=${EndOfPosts.lastPostId}`, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
+            
 
-            if (response.ok && response.status !== 204) {
+            if (response.ok) {
                 const newPosts = await response.json();
                 if (newPosts.length === 0) {
-                    dispatch({ type: 'setEndOfPosts' });
+                    setIsEndOfPosts(true);
+                    
+                    //salvar no ['endOfPosts'] o status de fim de posts
+                    queryClient.setQueryData(['endOfPosts'], {state: true, lastPostId: lastPostId});
                 } else {
-                    dispatch({ type: 'addPosts', payload: newPosts });
+                    setIsEndOfPosts(false);
+                    //salvar no ['endOfPosts'] o status de fim de posts
+                    queryClient.setQueryData(['endOfPosts'], {state:false, lastPostId:newPosts[newPosts.length - 1].docId});
+                    setLastPostId(newPosts[newPosts.length - 1].docId);
                 }
+                //pegar os posts antigos e adicionar os novos
+                const oldPosts = queryClient.getQueryData(['All-Posts']);
+                const postsUpdated = oldPosts ? [...oldPosts, ...newPosts] : newPosts;
+                queryClient.setQueryData(['All-Posts'], postsUpdated);
+
+                //FILTAR POSTS DUPLICADOS
+                const postsFiltered = postsUpdated.filter((post, index, self) => self.findIndex(t => t.docId === post.docId) === index);
+
+
+                return postsFiltered;
             } else {
                 console.log('Erro ao buscar posts:');
+                return [];
             }
-        };
+        }
+            return queryClient.getQueryData(['All-Posts']);
+        },
 
-        loadPosts();
-    }, [currentPage]);
+
+
+    });
 
     useEffect(() => {
         const intersectionObserver = new IntersectionObserver(entries => {
-            if (entries.some(entry => entry.isIntersecting)) {
-                setCurrentPage((currentPageInsideState) => currentPageInsideState + 1);
+            if (!isEndOfPosts && entries.some(entry => entry.isIntersecting)) {
+                refetch();
             }
         });
-        intersectionObserver.observe(document.getElementById('EndPage'));
+    
+        if (endPageRef.current) {
+            intersectionObserver.observe(endPageRef.current);
+        }
+    
         return () => intersectionObserver.disconnect();
-    }, []);
+    }, [endPageRef.current, isEndOfPosts]);
 
     return (
         <div style={{ display: "flex", flexDirection: 'column', marginTop: "60px", color: 'white', width: '100%', border: "1px solid white", justifyContent: "center", alignItems: 'center', }}>
@@ -70,7 +104,7 @@ export default function FeedCommunity() {
 
             <CreatePost />
             <>
-                {posts?.map((post, index) => (
+                {posts && posts.map((post, index) => (
                     <ul key={index} style={{ border: '1px solid green', borderRadius: '10px', margin: '10px', padding: '10px', width: '30%' }}>
                         <li>{post.content}</li>
                         <li>{post.dateFormat}</li>
@@ -78,8 +112,9 @@ export default function FeedCommunity() {
                     </ul>
                 ))}
             </>
+            {isFetching && <p>Carregando...</p>}
+            <div id='endPage' ref={endPageRef}></div>
             {isEndOfPosts && <p>Não existem mais posts</p>}
-            <div id='EndPage' style={{ height: "50px", backgroundColor: 'red' }}></div>
         </div>
     );
 }

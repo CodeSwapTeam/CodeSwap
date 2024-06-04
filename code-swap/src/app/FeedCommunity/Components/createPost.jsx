@@ -2,8 +2,11 @@
 import { revalidateTag } from 'next/cache';
 import React from 'react';
 import ButtonSubmit from './button-submit';
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function CreatePost() {
+
+    const queryClient = useQueryClient();
 
     async function handlePostSubmit(event) {
         event.preventDefault();
@@ -33,6 +36,11 @@ export default function CreatePost() {
 
         //limpar o campo de texto
         event.target.content.value = '';
+
+        // Atualizar a lista de posts
+        queryClient.setQueryData(['endOfPosts'], {state: false ,lastPostId: null, newPost: true});
+        queryClient.invalidateQueries(['All-Posts']);
+        
     }
 
     return (
