@@ -18,7 +18,7 @@ flex-wrap: nowrap;
 `
 
 const ProgressBar = styled.div`
-    background-color: #f3f3f3;
+    background-color: #001d46;
     border-radius: 13px;
     height: 15px;
     width: 80%;
@@ -44,7 +44,7 @@ export default function ProfileSkills(props) {
     return (
         <>
         {currentUser && currentUser.CoursesEnrolled.map((CoursesEnrolled, index) => (
-            <HabilidadesContainer key={index} style={{fontWeight:'bold', margin:'0.5rem', border:'solid 1px white'}}>
+            <HabilidadesContainer key={index} style={{fontWeight:'bold', margin:'0.5rem'}}>
                 <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', marginBottom:'1rem'}}>
                     <p>{CoursesEnrolled.title}</p>
                     <p>{CoursesEnrolled.progress}%</p>

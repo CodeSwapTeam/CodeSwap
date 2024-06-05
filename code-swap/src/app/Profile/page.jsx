@@ -29,7 +29,6 @@ justify-content: center;
 width: 30%;
 height: 100%;
 margin: 1rem;
-//background-color: #f5f5f5;
 `
 
 const ProfileName = styled.h1`
@@ -49,7 +48,7 @@ border-radius: 100px;
 width: 150px;
 height: 150px;
 margin-bottom: 10%;
-/* COLOR GREEN
+
 @keyframes animateLogoCodeSwap {
     100%{
 box-shadow: 0 0 6px #fff,
@@ -66,24 +65,6 @@ box-shadow: 0 0 6px #fff,
     0 0 12px #0fa,
     0 0 15px #0fa;
 }
-}*/
-
-@keyframes animateLogoCodeSwap {
-    100%{
-box-shadow: 0 0 6px #fff,
-    0 0 12px #fff,
-    0 0 24px #fff,
-    0 0 45px #0247A7,
-    0 0 60px #0247A7,
-    0 0 75px #0247A7;
-} 0% {
-    box-shadow: 0 0 4px #fff,
-    0 0 8px #fff,
-    0 0 16px #fff,
-    0 0 32px #0247A7,
-    0 0 40px #0247A7,
-    0 0 50px #0247A7;
-}
 }
 `
 
@@ -99,6 +80,8 @@ background-color: rgba(0, 0, 0, 0.75);
 border-radius: 10%;
 padding: 1rem;
 padding-top: 5rem;
+
+border: 1px solid #4caf50;
 `
 const ProgressBar = styled.div`
     background-color: #f3f3f3;
@@ -166,6 +149,7 @@ height: 100%;
 background-color: rgba(0, 0, 0, 0.75);
 color: white;
 padding: 1rem;
+border: 1px solid #4caf50;
 `
 
 
