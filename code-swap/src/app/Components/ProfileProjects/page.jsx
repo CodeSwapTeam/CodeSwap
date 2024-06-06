@@ -1,3 +1,4 @@
+'use client'
 import React from "react";
 import { ContextDataCache } from '@/app/Providers/ContextDataCache';
 import styled from "styled-components";

@@ -1,3 +1,4 @@
+'use client'
 import React, {useEffect, useState} from "react";
 import Controller from "@/Controller/controller";
 import { getDatabase, ref, set, update } from "firebase/database";
@@ -28,33 +29,19 @@ export default function ProfileConfig() {
     const controller = Controller();
     const db = getDatabase();
 
-
-/*const handleNameSubmit = async (event) => {
-    event.preventDefault();
-    const updatedUserData = {
-        userName: name,
-        phone: phone,
-        Github: github,
-        whatsapp: whatsapp,
-        linkedin: linkedin,
-        education: education,
-        educationSituation: educationSituation
-
-    };
-    try {
-        await controller.manageUsers.UpdateUserData(currentUser.id,  updatedUserData );
-        console.log(`Informações atualizadas com sucesso! Recarregue a página para ver as alterações!`);
-        router.refresh();
-    } catch (error) {
-        console.error('Failed to update name', error);
-    }
-};*/
-
-////////////////////////////////////////////////////////////////////////
-
 const handleNameSubmit = async (event) => {
     event.preventDefault();
-    let updatedUserData = {};
+    let updatedUserData = {
+        userName: currentUser?.userName,
+        phone: currentUser?.phone,
+        Github: currentUser?.Github,
+        whatsapp: currentUser?.whatsapp,
+        linkedin: currentUser?.linkedin,
+        education: currentUser?.education,
+        educationSituation: currentUser?.educationSituation
+
+
+    };
         if(name) updatedUserData.userName = name;
         if(phone) updatedUserData.phone = phone;
         if(github) updatedUserData.Github = github;
@@ -72,8 +59,6 @@ const handleNameSubmit = async (event) => {
     }
 };
 
-
-////////////////////////////////////////////////////////////////////////
 
 const handleProjectsSubmit = async (event) => {
     event.preventDefault();
