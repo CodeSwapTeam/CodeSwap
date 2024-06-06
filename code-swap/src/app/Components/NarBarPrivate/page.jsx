@@ -288,12 +288,12 @@ const NavBarPrivate = (props) => {
           {isMobile ? (
             
               <UserProfileImgMobile onClick={()=>handleMenuMobileClick()} >
-                <img src="http://github.com/Shepardy22.png" alt="Logo" width={45} height={45} style={{borderRadius:'50px'}}/>
+                <img src={currentUser?.imgUrlProfile} alt="Logo" width={45} height={45} style={{borderRadius:'50px'}}/>
               </UserProfileImgMobile>
             
           ) : (          
               <UserProfileImg onClick={()=>handlePainelInfoClick()} >
-                <img src="http://github.com/Shepardy22.png" alt="Logo" width={45} height={45} style={{borderRadius:'50px'}}/>
+                <img src={currentUser?.imgUrlProfile} alt="Logo" width={45} height={45} style={{borderRadius:'50px'}}/>
               </UserProfileImg>         
             )}
           </FlexContainer>
@@ -445,9 +445,9 @@ const NavBarPrivate = (props) => {
                       <Link href='/ManageCourses'><AdminButton>Painel ADM</AdminButton></Link>
                     )}
                       <StyledLinkPerfil>
-                        <Link href='/' >Meu Perfil</Link>  
+                        <Link href='/Profile' >Meu Perfil</Link>
                       </StyledLinkPerfil>
-                                      
+
                     <LogOutButton onClick={logout} >Desconectar</LogOutButton>
                   </div>
                 </div>
@@ -458,7 +458,7 @@ const NavBarPrivate = (props) => {
       )
       }
     </>
-    
+
   );
 };
 
