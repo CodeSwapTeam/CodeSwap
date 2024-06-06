@@ -63,7 +63,7 @@ box-shadow: 0 0 6px #fff,
     0 0 5px #fff,
     0 0 8px #0fa,
     0 0 12px #0fa,
-    0 0 15px #0fa;
+    0 0 14px #0fa;
 }
 }
 `
@@ -82,6 +82,26 @@ padding: 1rem;
 padding-top: 5rem;
 
 border: 1px solid #4caf50;
+
+animation: resumeEffect 2.5s alternate infinite;
+
+@keyframes resumeEffect {
+    100%{
+box-shadow: 0 0 1px #4caf50,
+    0 0 2px #4caf50,
+    0 0 3px #4caf50,
+    0 0 4px #4caf50,
+    0 0 5px #4caf50,
+    0 0 6px #4caf50;
+} 0% {
+    box-shadow: 0 0 1px #4caf50,
+    0 0 1px #4caf50,
+    0 0 2px #4caf50,
+    0 0 3px #4caf50,
+    0 0 4px #4caf50,
+    0 0 5px #4caf50;
+}
+}
 `
 const ProgressBar = styled.div`
     background-color: #f3f3f3;
@@ -136,6 +156,26 @@ padding: 0.5rem;
 border-radius: 10px 10px 0 0;
 background-color: rgba(0, 0, 0, 0.75);
 font-size: 1.5rem;
+animation: resumeEffect 2.5s alternate infinite;
+margin: 0 0.1rem 0 0.1rem;
+
+@keyframes resumeEffect {
+    100%{
+box-shadow: 0 0 1px #4caf50,
+    0 0 2px #4caf50,
+    0 0 3px #4caf50,
+    0 0 4px #4caf50,
+    0 0 5px #4caf50,
+    0 0 6px #4caf50;
+} 0% {
+    box-shadow: 0 0 1px #4caf50,
+    0 0 1px #4caf50,
+    0 0 2px #4caf50,
+    0 0 3px #4caf50,
+    0 0 4px #4caf50,
+    0 0 5px #4caf50;
+}
+}
 `
 
 const DetailContent = styled.div`
@@ -150,7 +190,28 @@ background-color: rgba(0, 0, 0, 0.75);
 color: white;
 padding: 1rem;
 border: 1px solid #4caf50;
+animation: resumeEffect 2.5s alternate infinite;
+border-radius: 10px;
+
+@keyframes resumeEffect {
+    100%{
+box-shadow: 0 0 1px #4caf50,
+    0 0 2px #4caf50,
+    0 0 3px #4caf50,
+    0 0 4px #4caf50,
+    0 0 5px #4caf50,
+    0 0 6px #4caf50;
+} 0% {
+    box-shadow: 0 0 1px #4caf50,
+    0 0 1px #4caf50,
+    0 0 2px #4caf50,
+    0 0 3px #4caf50,
+    0 0 4px #4caf50,
+    0 0 5px #4caf50;
+}
+}
 `
+
 
 
 function ProfilePage(props) {
@@ -216,7 +277,7 @@ function ProfilePage(props) {
 
                 <ProfileDetails>
                     <DetailsHeader>
-                        <div style={{backgroundColor:'black', borderRadius:'50% 50% 0 0'}}>
+                        <div style={{backgroundColor:'', borderRadius:'5% 5% 0 0'}}>
                             <DetailHeaderButton onClick={() => setSelectedTab('Habilidades')}>Habilidades</DetailHeaderButton>
                             <DetailHeaderButton onClick={() => setSelectedTab('Curriculo')}>Currículo</DetailHeaderButton>
                             <DetailHeaderButton onClick={() => setSelectedTab('Projetos')}>Projetos</DetailHeaderButton>

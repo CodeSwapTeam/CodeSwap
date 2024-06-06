@@ -36,8 +36,35 @@ const ProgressBar = styled.div`
     height: 100%;
     background-color: #4caf50;
     border-radius: 13px;
+    animation: progressBarEffect 2.5s alternate infinite;
+}
+
+@keyframes progressBarEffect {
+    100%{
+box-shadow: 0 0 1px #fff,
+    0 0 2px #fff,
+    0 0 4px #fff,
+    0 0 6px #0fa,
+    0 0 8px #0fa,
+    0 0 10px #0fa;
+} 0% {
+    box-shadow: 0 0 1px #fff,
+    0 0 1px #fff,
+    0 0 2px #fff,
+    0 0 4px #0fa,
+    0 0 6px #0fa,
+    0 0 8px #0fa;
+}
 }
 `;
+
+const NeonLine = styled.hr`
+    border: none;
+    border-radius: 5px;
+    padding: 0.01rem;
+    animation: resumeEffect 2.5s alternate infinite;
+    margin: 3rem 0 0 0;
+`
 
 export default function ProfileSkills(props) {
     const { currentUser } = ContextDataCache();
@@ -52,6 +79,7 @@ export default function ProfileSkills(props) {
                 <div>
                     <ProgressBar width={`${CoursesEnrolled.progress}%`}/>
                 </div>
+                <NeonLine/>
             </HabilidadesContainer>
                 ))}
         </>

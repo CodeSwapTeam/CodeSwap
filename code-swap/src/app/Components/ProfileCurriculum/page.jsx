@@ -35,7 +35,9 @@ export default function ProfileCurriculum() {
         doc.save('curriculum.pdf');
       },
       x: 10,
-      y: 10
+      y: 10,
+      width: 780,  // Adjust width to fit within the page
+      windowWidth: 1000
     });
   };
 
