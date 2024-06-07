@@ -309,6 +309,30 @@ export async function POST(NextRequest) {
             }
         }
 
+        //comentar um post
+        case 'commentPost': {
+            console.log('data:', data);
+            try {
+                const postDoc = doc(db, 'FeedPosts', data.postId);
+                const postSnap = await getDoc(postDoc);
+                const post = postSnap.data();
+                const comment = {
+                    userId: data.comment.userId,
+                    userName: data.comment.userName,
+                    content: data.comment.content,
+                    date: data.comment.date,
+                    dateFormat: data.comment.dateFormat
+                }
+                //adicionar o comentario no array de comentarios do post
+                await updateDoc(postDoc, {
+                    comments: arrayUnion(comment)
+                });
+                return NextResponse.json({ message: 'Comentário adicionado com sucesso!' });
+            } catch (error) {
+                return NextResponse.error('Erro ao comentar o post:', error);
+            }
+        }
+
         default:
             return NextResponse.error('Tipo de busca inválido', 500);
     }

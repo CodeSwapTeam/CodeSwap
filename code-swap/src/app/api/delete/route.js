@@ -119,6 +119,25 @@ export async function DELETE(NextRequest){
                 return NextResponse.error('Erro ao deletar o post');
             }
         }
+
+        //Deletar um comentário
+        case 'deleteComment': {//Deletar o comentário pelo ID
+            try {
+                const { postId, commentId } = data;
+                // Deletar o comentário no banco de dados com o CommentId
+                //pegar o post
+                const postRef = doc(db, 'FeedPosts', postId);
+                const postSnap = await getDoc(postRef);
+                const postData = postSnap.data();
+                const comments = postData.comments;
+                const commentIndex = comments.findIndex(comment => comment.id === commentId);
+                comments.splice(commentIndex, 1);
+                await updateDoc(postRef, { comments });
+                return NextResponse.json({ message: 'Comentário deletado com sucesso!' });
+            } catch (error) {
+                return NextResponse.error('Erro ao deletar o comentário');
+            }
+        }
         default:
             return NextResponse.error('Tipo de busca inválido', 400);
     }   
