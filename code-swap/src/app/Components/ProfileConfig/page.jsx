@@ -31,17 +31,7 @@ export default function ProfileConfig() {
 
 const handleNameSubmit = async (event) => {
     event.preventDefault();
-    let updatedUserData = {
-        userName: currentUser?.userName,
-        phone: currentUser?.phone,
-        Github: currentUser?.Github,
-        whatsapp: currentUser?.whatsapp,
-        linkedin: currentUser?.linkedin,
-        education: currentUser?.education,
-        educationSituation: currentUser?.educationSituation
-
-
-    };
+    let updatedUserData = {};
         if(name) updatedUserData.userName = name;
         if(phone) updatedUserData.phone = phone;
         if(github) updatedUserData.Github = github;
@@ -82,7 +72,9 @@ const handleProjectsSubmit = async (event) => {
     setProjectLink('');
 };
 
-
+if (!currentUser) {
+    return <div>Loading...</div>;
+}
 
     return (
         <div>
