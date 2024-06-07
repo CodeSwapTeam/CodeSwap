@@ -3,10 +3,13 @@ import { revalidateTag } from 'next/cache';
 import React from 'react';
 import ButtonSubmit from './button-submit';
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ContextDataCache } from '@/app/Providers/ContextDataCache';
 
 export default function CreatePost() {
 
     const queryClient = useQueryClient();
+
+    const { currentUser } = ContextDataCache();
 
     async function handlePostSubmit(event) {
         event.preventDefault();
@@ -14,11 +17,12 @@ export default function CreatePost() {
         const formData = new FormData(event.target);
         
         const postContentData = {
-            userId: '1',
+            userId: currentUser.id,
+            userName: currentUser.userName,
             content: formData.get('content'),
             date: new Date(), // Armazenar a data como um objeto Date
             dateFormat: new Date().toLocaleString("pt-BR", {timeZone: "America/Sao_Paulo"}),
-            likes: 0,
+            likes: [],
             comments: []     
         }
 
@@ -47,7 +51,7 @@ export default function CreatePost() {
         <div style={ {marginTop:'20px', width:'100%', display:"flex", flexDirection:"column",  justifyContent:"center", alignItems:'center',}}>
             <h2>Criar publicação</h2>
             <form onSubmit={handlePostSubmit} 
-                style={{display:'flex', flexDirection:'column', width:"30%"}}>
+                style={{display:'flex', flexDirection:'column', width:"60%"}}>
                 <textarea style={{color:'black', border:'1px solid green', borderRadius:'10px', margin:'10px', width:'100%', height:'100px'}}
                     name="content"
                     placeholder="Como você está se sentindo hoje?" 

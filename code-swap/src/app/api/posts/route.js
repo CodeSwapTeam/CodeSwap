@@ -1,4 +1,4 @@
-import { deleteDoc, doc, setDoc, updateDoc, addDoc, collection, arrayUnion, getDoc, where, getDocs } from "firebase/firestore";
+import { deleteDoc, doc, setDoc, updateDoc, addDoc, collection, arrayUnion, getDoc, where, getDocs, arrayRemove } from "firebase/firestore";
 import { db } from "../../../../database/firebase";
 import {NextResponse, NextRequest} from 'next/server';
 
@@ -245,6 +245,7 @@ export async function POST(NextRequest) {
             try {
                 const postData = {
                     userId: data.userId,
+                    userName: data.userName,
                     content: data.content,
                     date: data.date,
                     dateFormat: data.dateFormat,
@@ -255,6 +256,56 @@ export async function POST(NextRequest) {
                 return NextResponse.json({ message: 'Post criado com sucesso!', postId: docRef.id });
             } catch (error) {
                 return NextResponse.error('Erro ao criar o post:', error);
+            }
+        }
+        //Curtir um post
+        case 'likePost': {
+            
+            try {
+                const postDoc = doc(db, 'FeedPosts', data.postId);
+                const postSnap = await getDoc(postDoc);
+                const post = postSnap.data();
+                const userLiked = {
+                    userId: data.userId
+                }
+                //adicionar o id do usuario no array de likes do post
+                await updateDoc(postDoc, {
+                    likes: arrayUnion(userLiked)
+                });
+                return NextResponse.json({ message: 'Post curtido com sucesso!' });
+            } catch (error) {
+                return NextResponse.error('Erro ao curtir o post:', error);
+            }
+        }
+        //Dislike um post
+        case 'dislikePost': {
+            try {
+                const postDoc = doc(db, 'FeedPosts', data.postId);
+                const postSnap = await getDoc(postDoc);
+                const post = postSnap.data();
+                const userLiked = {
+                    userId: data.userId
+                }
+                //remover o id do usuario no array de likes do post
+                await updateDoc(postDoc, {
+                    likes: arrayRemove(userLiked)
+                });
+                return NextResponse.json({ message: 'Post descurtido com sucesso!' });
+            } catch (error) {
+                return NextResponse.error('Erro ao descurtir o post:', error);
+            }
+        }
+
+        //Editar um post
+        case 'editPost': {
+            try {
+                const postDoc = doc(db, 'FeedPosts', data.postId);
+                await updateDoc(postDoc, {
+                    content: data.content
+                });
+                return NextResponse.json({ message: 'Post editado com sucesso!' });
+            } catch (error) {
+                return NextResponse.error('Erro ao editar o post:', error);
             }
         }
 
