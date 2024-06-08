@@ -192,15 +192,22 @@ const NavBarPrivate = (props) => {
 
   const [isMounted, setIsMounted] = useState(false);
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [painelInfo, setPainelInfo] = useState(false);
-
+  
   const [painelInfoMobile, setPainelInfoMobile] = useState(false);
-
+  
+  
+  const [isOpen, setIsOpen] = useState(false);
   const handleMenuMobileClick = () => {
     setIsOpen(!isOpen);
   };
 
+  const handleProfileClick = (e) => {
+    e.preventDefault();
+    handlePainelInfoClick();
+    router.push('/Profile');
+  };
+  
+  const [painelInfo, setPainelInfo] = useState(false);
   const handlePainelInfoClick = () => {
     setPainelInfo(!painelInfo);
   }
@@ -245,6 +252,9 @@ const NavBarPrivate = (props) => {
       };
     }
   }, []);
+
+
+
 
   return (
 
@@ -331,7 +341,7 @@ const NavBarPrivate = (props) => {
 
                   {!painelInfoMobile ? (
                     <>
-                      <Link href='/' style={{ border: '1px solid #45ff45', padding: '5px', borderRadius: '10px', margin: '5px' }}> Meu Perfil </Link>
+                      <Link href='/' style={{ border: '1px solid #45ff45', padding: '5px', borderRadius: '10px', margin: '5px' }} > Meu Perfil </Link>
                       <button onClick={handlePainelInfoMobileClick} style={{ border: '1px solid #45ff45', padding: '5px', borderRadius: '10px', margin: '5px' }}>Check List Diário</button>
 
                       <div style={{ width: '100%' }}>
@@ -438,8 +448,10 @@ const NavBarPrivate = (props) => {
                       <Link href='/ManageCourses' style={{color:'#912d2d', cursor:'pointer', fontWeight:'800'}}>Painel ADM</Link>
                     )}
                       <StyledLinkPerfil>
-                        <Link href='/Profile' >Meu Perfil</Link>
-                      </StyledLinkPerfil>
+  
+    <a onClick={handleProfileClick}>Meu Perfil</a>
+  
+</StyledLinkPerfil>
 
                     <LogOutButton onClick={logout} >Desconectar</LogOutButton>
                   </div>
