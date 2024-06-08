@@ -8,6 +8,7 @@ import Controller from '@/Controller/controller';
 import styled from 'styled-components';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation'
 
 const NavBar = styled.nav`
   position: fixed;
@@ -191,11 +192,11 @@ const NavBarPrivate = (props) => {
   const [painelAdmpermissions, setPainelAdmPermissions] = useState(false);
 
   const [isMounted, setIsMounted] = useState(false);
+  const pathname = usePathname();
 
-  
   const [painelInfoMobile, setPainelInfoMobile] = useState(false);
-  
-  
+
+
   const [isOpen, setIsOpen] = useState(false);
   const handleMenuMobileClick = () => {
     setIsOpen(!isOpen);
@@ -206,7 +207,7 @@ const NavBarPrivate = (props) => {
     handlePainelInfoClick();
     router.push('/Profile');
   };
-  
+
   const [painelInfo, setPainelInfo] = useState(false);
   const handlePainelInfoClick = () => {
     setPainelInfo(!painelInfo);
@@ -254,54 +255,67 @@ const NavBarPrivate = (props) => {
   }, []);
 
 
+  useEffect(() => {
+    if (pathname === '/Profile') {
+      if (isOpen) {
+        handleMenuMobileClick();
+      }
+      if (painelInfo || painelInfoMobile) {
+        handlePainelInfoClick();
+        handlePainelInfoMobileClick();
+      }
+    }
+  }, [pathname]);
+
+
 
 
   return (
 
-      <>
-      {isMounted && 
+    <>
+      {isMounted &&
         (
-        <NavBar>
-          <FlexContainer>
+          <NavBar>
+            <FlexContainer>
 
-            <NavBarLeftPRIVATE >
-              <Link href='/MyCourses'><NavButton>Meus Cursos</NavButton></Link>
-              <Link href='/FeedCommunity'><NavButton>Comunidade</NavButton></Link>
-            </NavBarLeftPRIVATE>
+              <NavBarLeftPRIVATE >
+                <Link href='/MyCourses'><NavButton>Meus Cursos</NavButton></Link>
+                <Link href='/FeedCommunity'><NavButton>Comunidade</NavButton></Link>
+              </NavBarLeftPRIVATE>
 
-            <NavBarSection width='20%' >
-              <Link href="/">
-                <Image src="/assets/logo4k.png" alt="Logo" width={50} height={50} />
-              </Link>
-            </NavBarSection>
+              <NavBarSection width='20%' >
+                <Link href="/">
+                  <Image src="/assets/logo4k.png" alt="Logo" width={50} height={50} />
+                </Link>
+              </NavBarSection>
 
-            <NavBarRightPRIVATE >
-              {!isMobile && !painelInfo &&(
-              <div style={{display:'flex', alignItems:'center' }}>
-                  <div style={{display:'flex', gap:'5px', marginRight:'30px'}}>Level: {currentUser?.lvl}</div>
+              <NavBarRightPRIVATE >
+                {!isMobile && !painelInfo && (
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: '5px', marginRight: '30px' }}>Level: {currentUser?.lvl}</div>
 
-                  EXP: <ProgressBarNavBar width={`${currentUser?.xp}%`} />
-              
-                 <div style={{display:'flex', gap:'5px', marginLeft:'30px'}}>CODES: {currentUser?.codes} </div>
-               
-              </div>
+                    EXP: <ProgressBarNavBar width={`${currentUser?.xp}%`} />
+
+                    <div style={{ display: 'flex', gap: '5px', marginLeft: '30px' }}>CODES: {currentUser?.codes} </div>
+
+                  </div>
+                )}
+              </NavBarRightPRIVATE>
+
+              {isMobile ? (
+
+                <UserProfileImgMobile onClick={() => handleMenuMobileClick()} >
+                  <img src={currentUser?.imgUrlProfile} alt="Logo" width={45} height={45} style={{ borderRadius: '50px' }} />
+                </UserProfileImgMobile>
+
+              ) : (
+                <UserProfileImg onClick={() => handlePainelInfoClick()} >
+                  <img src={currentUser?.imgUrlProfile} alt="Logo" width={45} height={45} style={{ borderRadius: '50px' }} />
+                </UserProfileImg>
               )}
-            </NavBarRightPRIVATE>
+            </FlexContainer>
 
-          {isMobile ? (
-            
-              <UserProfileImgMobile onClick={()=>handleMenuMobileClick()} >
-                <img src={currentUser?.imgUrlProfile} alt="Logo" width={45} height={45} style={{borderRadius:'50px'}}/>
-              </UserProfileImgMobile>
-            
-          ) : (          
-              <UserProfileImg onClick={()=>handlePainelInfoClick()} >
-                <img src={currentUser?.imgUrlProfile} alt="Logo" width={45} height={45} style={{borderRadius:'50px'}}/>
-              </UserProfileImg>         
-            )}
-          </FlexContainer>
-
-          {/** MENU MOBILE */}
+            {/** MENU MOBILE */}
             <div
               onClick={handleMenuMobileClick}
               style={{
@@ -311,7 +325,7 @@ const NavBarPrivate = (props) => {
                 left: 0,
                 width: '100%',
                 height: '100%',
-                
+
               }}
             >
               <div
@@ -357,11 +371,11 @@ const NavBarPrivate = (props) => {
                       </div>
                     </>
                   ) : (
-                    <div style={{display:'flex' , flexDirection:'column'}}>
-                      
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+
                       <button onClick={handlePainelInfoMobileClick} style={{ border: '1px solid #45ff45', padding: '5px', borderRadius: '10px', margin: '5px' }}>Status</button>
-                      
-                      <div style={{marginTop:'20px',marginBottom:'20px',display:"flex", flexDirection:'column', textAlign:'left', fontSize:'0.8rem'}}>
+
+                      <div style={{ marginTop: '20px', marginBottom: '20px', display: "flex", flexDirection: 'column', textAlign: 'left', fontSize: '0.8rem' }}>
                         <ul >
                           <li><input type="checkbox" /> Login do dia <span></span></li>
                           <li><input type="checkbox" /> Conclusão de curso</li>
@@ -373,85 +387,87 @@ const NavBarPrivate = (props) => {
                       </div>
                     </div>)}
 
-                    {painelAdmpermissions && (
-                      <Link href='/ManageCourses' style={{color:'#912d2d', cursor:'pointer', fontWeight:'800'}}>Painel ADM</Link>
-                    )}
-                    <LogOutButton onClick={logout} style={{ border: '1px solid red', padding: '5px', borderRadius: '10px', margin: '5px' }}>Desconectar</LogOutButton>
-                  </UserProfileMenu>
-            
+                  {painelAdmpermissions && (
+                    <Link href='/ManageCourses' style={{ color: '#912d2d', cursor: 'pointer', fontWeight: '800' }}>Painel ADM</Link>
+                  )}
+                  <LogOutButton onClick={logout} style={{ border: '1px solid red', padding: '5px', borderRadius: '10px', margin: '5px' }}>Desconectar</LogOutButton>
+                </UserProfileMenu>
+
               </div>
             </div>
-          {/** MENU DESKTOP */}
+            {/** MENU DESKTOP */}
             <div
               onClick={handlePainelInfoClick} // fecha o menu quando clica fora
               style={{
-                  display: painelInfo ? 'block' : 'none',
+                display: painelInfo ? 'block' : 'none',
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+              }}
+            >
+              <div
+                onClick={(e) => e.stopPropagation()} // impede que o menu feche quando clica dentro
+                style={{
+                  border: '1px solid blue',
                   position: 'fixed',
+                  width: '30%',
+                  height: '450px',
+                  zIndex: 9999,
                   top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
+                  right: 0,
+                  backgroundColor: 'rgba(0, 0, 0, 0.9)', // preto transparente
+                  color: 'white',
+                  borderRadius: '10px',
                 }}
               >
-                <div
-                  onClick={(e) => e.stopPropagation()} // impede que o menu feche quando clica dentro
-                  style={{
-                    border: '1px solid blue',
-                    position: 'fixed',
-                    width: '30%',
-                    height: '450px',
-                    zIndex: 9999,
-                    top: 0,
-                    right: 0,
-                    backgroundColor: 'rgba(0, 0, 0, 0.9)', // preto transparente
-                    color: 'white',
-                    borderRadius: '10px',
-                  }}
-                >
-                  <div style={{ padding: '10px', height: '100%' }}>
-                    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <p style={{ display: 'flex', marginLeft: '30px' }}>Minhas Informações</p>
-                      <FiXSquare size={40} onClick={handlePainelInfoClick} style={{ cursor: 'pointer', color: "#45ff45" }} />
+                <div style={{ padding: '10px', height: '100%' }}>
+                  <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <p style={{ display: 'flex', marginLeft: '30px' }}>Minhas Informações</p>
+                    <FiXSquare size={40} onClick={handlePainelInfoClick} style={{ cursor: 'pointer', color: "#45ff45" }} />
+                  </div>
+
+                  <div style={{ display: 'flex', width: '100%', borderRadius: '20px', border: '1px solid #45ff45', boxShadow: '0 0 5px #45ff45', justifyContent: 'space-around', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+                    <p style={{ fontSize: '1.2rem', color: '#45ff45' }}> {currentUser?.userName} </p>
+
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <p>Codes: {currentUser?.codes} </p>
+                      <span style={{ marginLeft: '5px' }}>
+                        <Image src="/assets/logo4k.png" alt="Logo" width={15} height={15} />
+                      </span>
                     </div>
+                  </div>
 
-                    <div style={{ display: 'flex', width: '100%', borderRadius: '20px', border: '1px solid #45ff45', boxShadow: '0 0 5px #45ff45', justifyContent: 'space-around', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
-                      <p style={{ fontSize: '1.2rem', color: '#45ff45' }}> {currentUser?.userName} </p>
+                  <div>
+                    <p style={{ marginTop: '15px', width: '100%', textAlign: 'center' }}>Level: {currentUser?.lvl} </p>
+                    <ProgressBar width={`${currentUser?.xp}%`} />
+                  </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <p>Codes: {currentUser?.codes} </p>
-                        <span style={{ marginLeft: '5px' }}>
-                          <Image src="/assets/logo4k.png" alt="Logo" width={15} height={15} />
-                        </span>
-                      </div>
-                    </div>
+                  <div style={{ padding: '10px', width: '100%', height: '50%', marginTop: '10px', display: 'flex', flexDirection: 'column' }}>
+                    <p style={{ width: '100%', textAlign: 'center', marginBottom: '10px' }}>Check List Diário</p>
 
-                    <div>
-                      <p style={{ marginTop: '15px', width: '100%', textAlign: 'center' }}>Level: {currentUser?.lvl} </p>
-                      <ProgressBar width={`${currentUser?.xp}%`} />
-                    </div>
+                    <ul>
+                      <li><input type="checkbox" /> Login do dia <span></span></li>
+                      <li><input type="checkbox" /> Conclusão de curso</li>
+                      <li><input type="checkbox" /> Conclusão de Módulo</li>
+                      <li><input type="checkbox" /> Conclusão de Atividade</li>
+                      <li><input type="checkbox" /> Comentário no Feed</li>
+                      <li><input type="checkbox" /> Bônus XP: </li>
+                    </ul>
+                  </div>
 
-                    <div style={{ padding: '10px', width: '100%', height: '50%', marginTop: '10px', display: 'flex', flexDirection: 'column' }}>
-                      <p style={{ width: '100%', textAlign: 'center', marginBottom: '10px' }}>Check List Diário</p>
-
-                      <ul>
-                        <li><input type="checkbox" /> Login do dia <span></span></li>
-                        <li><input type="checkbox" /> Conclusão de curso</li>
-                        <li><input type="checkbox" /> Conclusão de Módulo</li>
-                        <li><input type="checkbox" /> Conclusão de Atividade</li>
-                        <li><input type="checkbox" /> Comentário no Feed</li>
-                        <li><input type="checkbox" /> Bônus XP: </li>
-                      </ul>
-                    </div>
-
-                    <div style={{ height: '20%', display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+                  <div style={{ height: '20%', display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
                     {painelAdmpermissions && (
-                      <Link href='/ManageCourses' style={{color:'#912d2d', cursor:'pointer', fontWeight:'800'}}>Painel ADM</Link>
+                      <Link href='/ManageCourses' style={{ color: '#912d2d', cursor: 'pointer', fontWeight: '800' }}>Painel ADM</Link>
                     )}
-                      <StyledLinkPerfil>
-  
-    <a onClick={handleProfileClick}>Meu Perfil</a>
-  
-</StyledLinkPerfil>
+                    <StyledLinkPerfil>
+                      <Link href={'/Profile'}>
+                        Meu Perfil
+                      </Link>
+
+
+                    </StyledLinkPerfil>
 
                     <LogOutButton onClick={logout} >Desconectar</LogOutButton>
                   </div>
@@ -459,8 +475,8 @@ const NavBarPrivate = (props) => {
               </div>
             </div>
 
-        </NavBar>
-      )
+          </NavBar>
+        )
       }
     </>
 

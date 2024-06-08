@@ -120,7 +120,7 @@ export default function FeedCommunity() {
             <CreatePost />
             <>
                 {posts && posts.map((post) => (
-                        <div key={post.docId} style={{ display: "flex", flexDirection: 'column', marginTop: "60px", color: 'white', width: '100%', justifyContent: "center", alignItems: 'center', }}>
+                        <div key={post.docId} style={{ display: "flex", flexDirection: 'column', color: 'white', width: '100%', justifyContent: "center", alignItems: 'center', }}>
 
                             <EditPostForm   postItem={post} />
                         </div>
