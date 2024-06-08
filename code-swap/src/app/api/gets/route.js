@@ -1,4 +1,4 @@
-import { deleteDoc, doc, setDoc, updateDoc, addDoc, collection, arrayUnion, getDoc, where, getDocs, query } from "firebase/firestore";
+import { deleteDoc, doc, setDoc, updateDoc, addDoc, collection,endAt, arrayUnion, getDoc, where, getDocs, query, orderBy, limit, startAfter, startAt } from "firebase/firestore";
 import { db } from "../../../../database/firebase";
 import { NextResponse } from "next/server";
 
@@ -6,6 +6,7 @@ export async function GET(request){
     const { searchParams } =  new URL(request.url);
     const id = searchParams.get('id') || null;
     const type = searchParams.get('type');
+    const lastPostId = searchParams.get('lastPostId') || null;
 
     if(id && type) console.log('GET request Server..............:', id, type);
    // if(type && id === null) console.log('GET request Server..............:', type);
@@ -65,7 +66,34 @@ export async function GET(request){
                 throw new Error('Erro no servidor ao buscar os módulos');
             }
         }
+
+
+        case 'GetPosts': { //Buscar todas as publicações
+            //pegar o body da requisição
+            console.log('lastPostId:', lastPostId);
+            const postsPerPage = 5;
+        
+            const posts = [];
+            const postsRef = collection(db, 'FeedPosts');
+            let queryRef = query(postsRef, orderBy('date', 'desc'), limit(postsPerPage));
+            if(lastPostId) {
+                const lastPostDocRef = doc(db, 'FeedPosts', lastPostId);
+                const lastPostSnapshot = await getDoc(lastPostDocRef);
+                if (lastPostSnapshot.exists()) {
+                    queryRef = query(postsRef, orderBy('date', 'desc'), startAfter(lastPostSnapshot), limit(postsPerPage));
+                }
+            }
+            const querySnapshot = await getDocs(queryRef);
+            querySnapshot.forEach((doc) => {
+                const postData = doc.data();
+                postData.docId = doc.id; // Adiciona o ID do documento ao objeto do post
+                posts.push(postData);
+                //console.log('postData:', postData);
+            });
+        
+            return NextResponse.json(posts);
+        }
         default:
             return NextResponse.error('Tipo de busca inválido', 400);
-    }   
+    }
 }
