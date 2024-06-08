@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import CreatePost from "./Components/createPost";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ContextDataCache } from '../Providers/ContextDataCache';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function FeedCommunity() {
     const [lastPostId, setLastPostId] = useState(null);
@@ -125,7 +126,7 @@ export default function FeedCommunity() {
         console.log(postsUpdated);
         queryClient.setQueryData(['All-Posts'], postsUpdated);
         //invalidar o cache
-        queryClient.invalidateQueries(['All-Posts']);
+        //queryClient.invalidateQueries(['All-Posts']);
 
 
         fetch(`http://localhost:3000/api/posts?type=likePost`, {
@@ -232,7 +233,7 @@ export default function FeedCommunity() {
         const oldPosts = queryClient.getQueryData(['All-Posts']);
 
         const commentData = {
-
+            id: uuidv4(),
             userId: currentUser.id,
             userName: currentUser.userName,
             content: comment,
@@ -294,7 +295,7 @@ export default function FeedCommunity() {
     }
 
     return (
-        <div style={{ display: "flex", flexDirection: 'column', marginTop: "60px", color: 'white', width: '100%', border: "1px solid white", justifyContent: "center", alignItems: 'center', }}>
+        <div style={{ display: "flex", flexDirection: 'column', marginTop: "60px", color: 'white', width: '100%', justifyContent: "center", alignItems: 'center', }}>
             <h1>Feed Community</h1>
 
             <CreatePost />

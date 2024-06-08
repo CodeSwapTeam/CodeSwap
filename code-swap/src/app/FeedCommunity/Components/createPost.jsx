@@ -4,6 +4,7 @@ import React from 'react';
 import ButtonSubmit from './button-submit';
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ContextDataCache } from '@/app/Providers/ContextDataCache';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function CreatePost() {
 
@@ -17,6 +18,7 @@ export default function CreatePost() {
         const formData = new FormData(event.target);
         
         const postContentData = {
+            postId: uuidv4(),
             userId: currentUser.id,
             userName: currentUser.userName,
             content: formData.get('content'),
@@ -44,7 +46,7 @@ export default function CreatePost() {
         // Atualizar a lista de posts
         queryClient.setQueryData(['endOfPosts'], {state: false ,lastPostId: null, newPost: true});
        //atualizar a lista de de AllPosts
-        queryClient.setQueryD
+        queryClient.invalidateQueries(['All-Posts']);
         
         
     }
