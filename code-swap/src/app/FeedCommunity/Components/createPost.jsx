@@ -43,7 +43,9 @@ export default function CreatePost() {
 
         // Atualizar a lista de posts
         queryClient.setQueryData(['endOfPosts'], {state: false ,lastPostId: null, newPost: true});
-        queryClient.invalidateQueries(['All-Posts']);
+       //atualizar a lista de de AllPosts
+        queryClient.setQueryD
+        
         
     }
 
@@ -54,7 +56,7 @@ export default function CreatePost() {
                 style={{display:'flex', flexDirection:'column', width:"60%"}}>
                 <textarea style={{color:'black', border:'1px solid green', borderRadius:'10px', margin:'10px', width:'100%', height:'100px'}}
                     name="content"
-                    placeholder="Como você está se sentindo hoje?" 
+                    placeholder="Qual é a sua ideia?" 
                     type="text"
                 />
                 <ButtonSubmit />

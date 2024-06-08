@@ -250,9 +250,9 @@ export default function FeedCommunity() {
             return post;
 
         });
-        queryClient.setQueryData(['All-Posts'], postsUpdated);
+         queryClient.setQueryData(['All-Posts'], postsUpdated);
         //invalidar o cache
-        queryClient.invalidateQueries(['All-Posts']);
+        //queryClient.invalidateQueries(['All-Posts']);
 
         fetch(`http://localhost:3000/api/posts?type=commentPost`, {
             method: 'POST',
@@ -260,10 +260,10 @@ export default function FeedCommunity() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ postId: postId, userId: currentUser.id, comment: commentData })
-            //ENVIAR NO BODY O ID DO POST
+
         });
 
-        setFormStateComment(!formStateComment);
+
         setCommentForm('');
 
     }
@@ -300,10 +300,10 @@ export default function FeedCommunity() {
             <CreatePost />
             <>
                 {posts && posts.map((post, index) => (
-                    <div key={index} style={{ border: '1px solid green', borderRadius: '10px', margin: '10px', padding: '10px', width: '60%' }}>
+                    <div key={index} style={{ border: '1px solid green', borderRadius: '10px', margin: '10px', padding: '10px', width: '60%', backgroundColor:"#00000063" }}>
 
                         <div  >
-                            <div style={{display:'flex', justifyContent:'space-between'}}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: '5px' }}>
                                     <span style={{ width: "30px", height: '30px', borderRadius: '50px', border: '1px solid white' }}>
                                         <img src="" alt="" />
@@ -312,7 +312,7 @@ export default function FeedCommunity() {
                                     <span>{post.dateFormat}</span>
                                 </div>
 
-                                <div style={{display:'flex', gap:'10px'}}>
+                                <div style={{ display: 'flex', gap: '10px' }}>
                                     {currentUser?.id === post.userId && <button onClick={() => handleEditPost(post.content)}>Editar</button>}
                                     {currentUser?.id === post.userId && <button onClick={() => deletePost(post.docId)}>Deletar Post</button>}
                                 </div>
@@ -328,49 +328,45 @@ export default function FeedCommunity() {
                             }
 
 
-                                <div style={{display:'flex', gap:'10px'}}>
-                                    <div>{post.likes.length}
-                                        {post.likes.find(like => like.userId === currentUser?.id) ?
-                                            <span> <button onClick={() => dislikePost(post.docId)}> Curtiu</button></span>
-                                            :
-                                            <span> <button onClick={() => likePost(post.docId)}> Likes</button></span>
-                                        }
-                                    </div>
-                                    <button onClick={() => setFormStateComment(!formStateComment)}>
-                                        {post.comments.length} comentários
-                                    </button>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <div>{post.likes.length}
+                                    {post.likes.find(like => like.userId === currentUser?.id) ?
+                                        <span> <button onClick={() => dislikePost(post.docId)}> Curtiu</button></span>
+                                        :
+                                        <span> <button onClick={() => likePost(post.docId)}> Likes</button></span>
+                                    }
                                 </div>
+                                <button onClick={() => setFormStateComment(!formStateComment)}>
+                                    {post.comments.length} comentários
+                                </button>
+                            </div>
                             <div>
 
                                 {formStateComment && (
                                     <>
 
-                                        <div style={{width:'100%'}}>
-                                            <textarea style={{ color: "black", width:'100%', borderRadius:'10px', marginTop:'10px', height:'100px' }} name="comment" value={commentForm} onChange={e => setCommentForm(e.target.value)} />
-                                            <button style={{border:'1px solid green', borderRadius:'10px', margin:'10px', padding:'10px', width:'100px', backgroundColor:'green', color:'white'}}
-                                             onClick={() => commentPost(post.docId, commentForm)}>Comentar</button>
+                                        <div style={{ width: '100%' }}>
+                                            <textarea style={{ color: "black", width: '100%', borderRadius: '10px', marginTop: '10px', height: '100px' }} name="comment" value={commentForm} onChange={e => setCommentForm(e.target.value)} />
+                                            <button style={{ border: '1px solid green', borderRadius: '10px', margin: '10px', padding: '10px', width: '100px', backgroundColor: 'green', color: 'white' }}
+                                                onClick={() => commentPost(post.docId, commentForm)}>Comentar</button>
                                         </div>
 
-                                        <div >
-                                            {post.comments.map((comment, index) => (
-                                                <div key={index} style={{border:'1px solid white', margin:"10px", padding:'5px'}}>
-                                                   
-                                                    <div style={{display:'flex', justifyContent:'space-between'}}>
-
-                                                    <div style={{display:'flex', alignItems: "center", gap:'5px'}}>
-                                                        <span style={{ width: "25px", height: '25px', borderRadius: '50px', border: '1px solid white' }}>
-                                                            <img src="" alt="" />
-                                                        </span>{comment.userName}
-                                                        <span>{comment.dateFormat}</span>
+                                        <div>
+                                            {post.comments.sort((a, b) => new Date(b.dateFormat) - new Date(a.dateFormat)).map((comment, index) => (
+                                                
+                                                <div key={index} style={{ border: '1px solid green', margin: "10px", padding: '5px', backgroundColor:"#00000063", borderRadius:' 10px', padding:'10px' }}>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                        <div style={{ display: 'flex', alignItems: "center", gap: '5px' }}>
+                                                            <span style={{ width: "25px", height: '25px', borderRadius: '50px', border: '1px solid white' }}>
+                                                                <img src="" alt="" />
+                                                            </span>{comment.userName}
+                                                            <span>{comment.dateFormat}</span>
+                                                        </div>
+                                                        {currentUser?.id === comment.userId && <button onClick={() => deleteComment(post.docId, comment.id)}>Deletar Comentário</button>}
                                                     </div>
-
-                                                    {currentUser?.id === comment.userId && <button onClick={() => deleteComment(post.docId, comment.id)}>Deletar Comentário</button>}
-                                                    
-                                                    </div>
-
                                                     <p>{comment.content}</p>
-                                                    
                                                 </div>
+
                                             ))}
                                         </div>
                                     </>
