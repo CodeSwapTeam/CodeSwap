@@ -71,7 +71,7 @@ export default function ProfileSkills(props) {
     const { currentUser } = ContextDataCache();
     return (
         <>
-        {currentUser && currentUser.CoursesEnrolled.map((CoursesEnrolled, index) => (
+        {currentUser && currentUser.CoursesEnrolled?.map((CoursesEnrolled, index) => (
             <HabilidadesContainer key={index} style={{fontWeight:'bold', margin:'0.5rem'}}>
                 <div style={{display:'flex', flexDirection:'row', justifyContent:'space-between', marginBottom:'1rem'}}>
                     <p>{CoursesEnrolled.title}</p>

@@ -260,7 +260,7 @@ export async function POST(NextRequest) {
         }
         //Curtir um post
         case 'likePost': {
-            
+                console.log('Like post.....', data.postId, data.userId)
             try {
                 const postDoc = doc(db, 'FeedPosts', data.postId);
                 const postSnap = await getDoc(postDoc);
@@ -279,6 +279,7 @@ export async function POST(NextRequest) {
         }
         //Dislike um post
         case 'dislikePost': {
+            console.log('Dislike post.....', data.postId, data.userId)
             try {
                 const postDoc = doc(db, 'FeedPosts', data.postId);
                 const postSnap = await getDoc(postDoc);
@@ -318,6 +319,7 @@ export async function POST(NextRequest) {
                 const post = postSnap.data();
                 const comment = {
                     userId: data.comment.userId,
+                    id: data.comment.id,
                     userName: data.comment.userName,
                     content: data.comment.content,
                     date: data.comment.date,
