@@ -214,15 +214,21 @@ export async function UpdateCover(courseId, imgUrlCover) {
 
 
 
-//--- NÃO IMPLEMENTADO --- função para buscar cursos pela categoria
+//---  --- função para buscar cursos pela categoria
 export async function GetCoursesByCategory(categoryId) {
+    console.log('categoryId:', categoryId);
     const courses = [];
     try {
         const querySnapshot = await getDocs(collection(db, 'Courses'), where('category', '==', categoryId));
         querySnapshot.forEach((doc) => {
             courses.push(doc.data());
         });
-        return courses;
+        
+        //filtrar os cursos somente da categoria selecionada
+        const filteredCourses = courses.filter(course => course.category === categoryId);
+
+        console.log('courses encontrados:', filteredCourses);
+        return filteredCourses;
     }
     catch (error) {
         console.error('Erro ao buscar os cursos:', error);

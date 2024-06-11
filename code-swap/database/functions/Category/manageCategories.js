@@ -7,6 +7,7 @@ export const CreateCategory = async (data) => {
     const categoryData = {
         name: data.name,
         description: data.description,
+        thumbnail: data.thumbnail,
         courses: []
     }
 

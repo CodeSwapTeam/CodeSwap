@@ -100,6 +100,7 @@ export default function WorldMap() {
             queryKey: ['All-Categories-MyCourses'],
             queryFn: async () => {
                 const categories = await controller.manageCategories.GetAllCategories();
+                console.log(categories);
                 return categories;
             },
             staleTime: 1000 * 60 * 5 // 5 minutos
@@ -112,7 +113,7 @@ export default function WorldMap() {
                 { categoriesData && (
                     <div>
                         <PointMapClick x={48} y={50} imageSrc='assets/mapclick2.png' text={'Este é o ponto no mapa'} route={`/worldmap/${categoriesData[0].id}`} mapRef={mapRef}/>
-                        <PointMapClick x={75} y={45} imageSrc='assets/pointMap1.png' text={'Este é o ponto no mapa'} mapRef={mapRef} />
+                        <PointMapClick x={75} y={45} imageSrc='assets/pointMap1.png' text={'Este é o ponto no mapa'} mapRef={mapRef} route={`/worldmap/${categoriesData[1].id}`} />
                     </div>
                 )}
             </div>

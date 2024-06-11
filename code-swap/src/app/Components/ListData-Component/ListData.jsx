@@ -1,10 +1,13 @@
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-const ModuleList = styled.div`
+const ListItens = styled.div`
     
     width: 95%;
     margin-top: 20px;
+    
 `;
 
 const ModuleTitle = styled.h2`
@@ -34,7 +37,7 @@ const ModuleTitle = styled.h2`
 
 const ModuleItem = styled.div`
     
-    box-sizing: border-box;
+    
     color: white;  
     display: flex;
     flex-direction: column;
@@ -46,10 +49,33 @@ const ModuleItem = styled.div`
 
     font-size: 1rem;
 
+    margin-left: 0px;
+    margin-right: 0px;
+
     @media (max-width: 768px) {
         font-size: 0.8rem;
     }
-    
+`;
+
+const ButtonAcessCourse = styled.button`
+    color: green;
+    border: 2px solid green;
+    border-radius: 5px;
+    padding: 10px;
+    font-family: 'Hairline', sans-serif;
+    background-color: #00000063;
+    font-weight: bold;
+
+    &:hover {
+        background: none;
+        background-color: #00000063;
+        transform: scale(1.02);
+        box-shadow: 10px 0px 15px rgba(4, 255, 2, 0.2); // Adicionado box-shadow verde suave
+    }
+
+    @media (max-width: 768px) {
+        font-size: 0.8rem;
+    }
 `;
 
 const LessonsModule = styled.div`
@@ -87,8 +113,10 @@ const ButtonSubscribe = styled.button`
     }
 `;
 
-export function Modules({ modules, openIndex, toggleOpen, currentUser, course }) {
+export function CoursesCategoryList({ courses}) {
     const [openIndex, setOpenIndex] = useState(null);
+
+    const router = useRouter();
 
     //função para abrir e fechar o modulo
     const toggleOpen = (index) => {
@@ -98,9 +126,16 @@ export function Modules({ modules, openIndex, toggleOpen, currentUser, course })
             setOpenIndex(null);
         }
     };
+
+    //função para acessar o curso
+    const handleAcessCourse = (course) => {
+        console.log(course);
+        router.push(`/MyCourses/${course}`);
+    }
+
     return (
-        <ModuleList>
-            {modules && modules.map((module, index) => (
+        <ListItens>
+            {courses && courses.map((course, index) => (
                 <div key={index}>
                     <ModuleTitle onClick={() => toggleOpen(index)} 
                     style={{
@@ -108,23 +143,43 @@ export function Modules({ modules, openIndex, toggleOpen, currentUser, course })
                         backgroundColor: openIndex === index ? '#00000063' : 'transparent',
                         marginBottom: openIndex === index ? '10px' : '0'
                     }}>
-                        {module.title}
+                        {course.title}
                     </ModuleTitle>
                     <ModuleItem open={openIndex === index} 
                     style={{ 
                         backgroundColor: openIndex === index ? '#00000058' : 'transparent',
                         padding: openIndex === index ? '10px' : '0'
                         }}>
-                        {module.description}
+                            <div style={{display:"flex"}}>
+                                <div style={{ width:'60%'}}>
+                                    <h3 style={{ textAlign: 'left' }}>Descrição do curso</h3>
+                                    {course.description}
 
-                        <LessonsModule>
-                            {module.lessons && module.lessons.map((lesson, index) => (
+                                    <h3 style={{ textAlign: 'left' , marginTop:'40px'}}>Recompensas:</h3>
+                                    <p>Codes: {course.codes}</p>
+                                    <p>Experiência: {course.experience}</p>
+
+                                    <h3 style={{ textAlign: 'left' , marginTop:'20px'}}>Itens:</h3>
+
+                                </div>
+
+                                <div style={{width:'40%'}}>
+                                
+                                    {course.imgUrlCover && <Image src={course.imgUrlCover} alt={course.title} style={{  }} width={400} height={400} />}
+                                </div>
+                            </div>
+
+                            <ButtonAcessCourse onClick={()=> handleAcessCourse(course.id)}>Iniciar Quests</ButtonAcessCourse>
+                        
+
+                        {/* <LessonsModule>
+                            {course.modules && course.modules.map((module, index) => (
                                 <div key={index}>
-                                    <h3 style={{ textAlign: 'left' }}>{lesson.nameLesson}</h3>
+                                    <h3 style={{ textAlign: 'left' }}>{module.title}</h3>
                                 </div>
                             ))}
-                        </LessonsModule>
-                        {
+                        </LessonsModule> */}
+                        {/* {
                             currentUser && currentUser.CoursesEnrolled && currentUser.CoursesEnrolled.find(c => c.courseId === course.id) ?
                                 ((courseEnrolled) => (
                                     courseEnrolled.modulePermission >= module.permission ?
@@ -134,10 +189,12 @@ export function Modules({ modules, openIndex, toggleOpen, currentUser, course })
                                 ))(currentUser.CoursesEnrolled.find(c => c.courseId === course.id))
                                 :
                                 <p>Se inscreva no curso para visualizar o módulo</p>
-                        }
+                        } */}
                     </ModuleItem>
                 </div>
             ))}
-        </ModuleList>
+        </ListItens>
     );
 }
+
+export default CoursesCategoryList;

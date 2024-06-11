@@ -54,8 +54,10 @@ export async function POST(NextRequest) {
                 const categoryData = {
                     name: data.name,
                     description: data.description,
+                    thumbnail: data.thumbnail,
                     courses: []
                 }
+                console.log('categoryData:', categoryData);
                 // Criar a categoria no banco de dados
                 const docRef = await addDoc(collection(db, 'Categories'), categoryData, { merge: true });
                 // Adicionar o id da categoria no documento
