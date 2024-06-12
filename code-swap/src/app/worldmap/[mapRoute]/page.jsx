@@ -23,59 +23,51 @@ const Title = styled.h1`
     color: white;
     font-size: 2rem;
     margin: auto;
-    text-align: center; // Centraliza o texto
+    text-align: center;
 
     @media (max-width: 768px) {
         font-size: 1rem;
     }
 `;
 
- const Districts = () => {
-
+const Districts = () => {
     const { mapRoute } = useParams();
     const controller = Controller();
 
+    const [imageURL, setImageURL] = useState(null);
     const [categorySelected, setCategorySelected] = useState(null);
-  const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
 
-    const { data: Courses, isLoading, isError } = useQuery({
-        queryKey: ['courses-category-map'],
-        queryFn: async () => {
-          const courses = await controller.manageCourses.GetCoursesByCategory(mapRoute);
+    const { data: Courses, isLoading } = useQuery({
+        queryKey: ['courses', mapRoute],
 
-          //pegar nome da categoria selecionada no ["All-Categories-MyCourses"] que seja igual a o id da categoria selecionada
-          const categoriesCached = queryClient.getQueryData(['All-Categories-MyCourses']);
-          const categorySelected = categoriesCached.find(c => c.id === mapRoute);
-
-          setCategorySelected(categorySelected);
-
-
-          console.log('categorySelected', categorySelected);
-          return courses;
+        queryFn: async () => await controller.manageCourses.GetCoursesByCategory(mapRoute),
+        enabled: !!mapRoute, // Só executa a query se mapRoute for diferente de null
+        onSuccess: (data) => {
+            setCategorySelected(data.category);
+           // setImageURL(data.category.image);
         }
+    });
 
-      });
+    useEffect(() => {
+        if (!mapRoute) {
+            queryClient.invalidateQueries('courses');
+        }
+    }
+    , [mapRoute, queryClient]);
 
-      
+    
 
-
-
-
-   return (
-    <div style={{ marginTop: '70px', color: 'white', overflowY: 'hidden', display:"flex", alignItems: 'flex-start' }}>
-
-    <section style={{ width: "60%", overflowY: 'hidden', margin: 0, padding: 0 }}>
-        <Title>{categorySelected?.name}</Title>
-        <CoursesCategoryList courses={Courses} />
-    </section>
-
-    <section style={{width:'40%', display:'flex', justifyContent:'center'}}>
-        <Image src={categorySelected?.thumbnail} alt="Mapa" width={300} height={300} />
-    </section>
-
-    {isLoading && <p>Carregando...</p>}
-</div>
-  );
+    return (
+        <div style={{ marginTop: '70px', color: 'white', overflowY: 'hidden', display:"flex", alignItems: 'flex-start' }}>
+            <section style={{ width: "60%", overflowY: 'hidden', margin: 0, padding: 0 }}>
+                <Title>{categorySelected?.name}</Title>
+                <CoursesCategoryList courses={Courses}  />
+            </section>
+           
+            {isLoading && <p>Carregando...</p>}
+        </div>
+    );
 }
 
 export default Districts;

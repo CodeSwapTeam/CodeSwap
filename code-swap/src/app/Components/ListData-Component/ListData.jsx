@@ -113,7 +113,7 @@ const ButtonSubscribe = styled.button`
     }
 `;
 
-export function CoursesCategoryList({ courses}) {
+export function CoursesCategoryList({ courses }) {
     const [openIndex, setOpenIndex] = useState(null);
 
     const router = useRouter();
@@ -130,7 +130,7 @@ export function CoursesCategoryList({ courses}) {
     //função para acessar o curso
     const handleAcessCourse = (course) => {
         console.log(course);
-        router.push(`/MyCourses/${course}`);
+        router.push(`/DistrictMap/${course}`);
     }
 
     return (

@@ -1,7 +1,7 @@
 'use client';
 import Controller from '@/Controller/controller';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
@@ -46,11 +46,13 @@ export function PointMapClick({ x, y, imageSrc, text, route, mapRef }) {
     //const [courses, setCourses] = useState([]);
 
     const router = useRouter();
+    const { DistrictMap } = useParams();
+    console.log(DistricMap);
     let pointRef = useRef(null);
     
     // Função para redirecionar para outra página
     const handlePointClick = () => {
-        router.push(route);
+        router.push(DistrictMap);
     }
 
     useEffect(() => {
@@ -73,19 +75,20 @@ export function PointMapClick({ x, y, imageSrc, text, route, mapRef }) {
 }
 
 
-export default function WorldMap() {
+export default function DistricMap() {
     const mapRef = useRef(null);
 
     const controller = Controller();
 
+    const { DistrictMap } = useParams();
 
 
-        const { data: categoriesData } = useQuery({
-            queryKey: ['All-Categories-MyCourses'],
+        const { data: coursesData } = useQuery({
+            queryKey: ['DistrictMap-MyCourses'],
             queryFn: async () => {
-                const categories = await controller.manageCategories.GetAllCategories();
-                console.log(categories);
-                return categories;
+                const courses = await controller.manageCourses.GetCoursesByCategory(DistrictMap);
+                console.log(courses);
+                return courses;
             },
             staleTime: 1000 * 60 * 5 // 5 minutos
         });
@@ -94,9 +97,13 @@ export default function WorldMap() {
         <div style={{display:"flex", justifyContent:"center", marginTop:'70px'}}>
             <div style={{width:'70%', height:"60%", position: 'relative'}} ref={mapRef}>
                 <img src="/assets/mapV1.jpg" alt="Map" style={{width: '100%', height: '100%'}} />
-                { categoriesData && (
+                { coursesData && (
                     <div>
-                        <PointMapClick x={48} y={50} imageSrc='assets/mapclick2.png' text={'Este é o ponto no mapa'} route={`/worldmap/${categoriesData[0].id}`} mapRef={mapRef}/>
+                        <PointMapClick x={48} y={50} 
+                            imageSrc='assets/mapclick2.png' 
+                            text={'Este é o ponto no mapa'} 
+                            route={`/worldmap/${categoriesData[0].id}`} 
+                            mapRef={mapRef}/>
                         <PointMapClick x={75} y={45} imageSrc='assets/pointMap1.png' text={'Este é o ponto no mapa'} mapRef={mapRef} route={`/worldmap/${categoriesData[1].id}`} />
                     </div>
                 )}
