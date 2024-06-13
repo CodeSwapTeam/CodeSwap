@@ -30,7 +30,7 @@ const Tooltip = styled.div`
     z-index: 1;
 `;
 
-const Image = styled.img`
+const ImageMap = styled.img`
     width: 100%;
     height: 100%;
     
@@ -66,7 +66,7 @@ export function PointMapClick({ x, y, imageSrc, text, route, mapRef }) {
 
     return (
         <Point ref={pointRef} onMouseEnter={() => setShowTooltip(true)} onMouseLeave={() => setShowTooltip(false)} onClick={handlePointClick}>
-            <Image src={imageSrc} alt="Point on Map" />
+            <ImageMap src={imageSrc} alt="Point on Map" />
             {showTooltip && <Tooltip>{text}</Tooltip>}
         </Point>
     )
@@ -80,7 +80,7 @@ export default function WorldMap() {
 
 
 
-        const { data: categoriesData } = useQuery({
+        const { data: categoriesData, isLoading } = useQuery({
             queryKey: ['All-Categories-MyCourses'],
             queryFn: async () => {
                 const categories = await controller.manageCategories.GetAllCategories();
@@ -90,17 +90,24 @@ export default function WorldMap() {
             staleTime: 1000 * 60 * 5 // 5 minutos
         });
 
+        if(isLoading) return <h1>Carregando...</h1>;
+
     return (
-        <div style={{display:"flex", justifyContent:"center", marginTop:'70px'}}>
-            <div style={{width:'70%', height:"60%", position: 'relative'}} ref={mapRef}>
-                <img src="/assets/mapV1.jpg" alt="Map" style={{width: '100%', height: '100%'}} />
-                { categoriesData && (
-                    <div>
-                        <PointMapClick x={48} y={50} imageSrc='assets/mapclick2.png' text={'Este é o ponto no mapa'} route={`/worldmap/${categoriesData[0].id}`} mapRef={mapRef}/>
-                        <PointMapClick x={75} y={45} imageSrc='assets/pointMap1.png' text={'Este é o ponto no mapa'} mapRef={mapRef} route={`/worldmap/${categoriesData[1].id}`} />
-                    </div>
-                )}
+        <>
+        
+        {categoriesData && (
+            <div style={{display:"flex", justifyContent:"center", marginTop:'70px'}}>
+                <div style={{width:'70%', height:"60%", position: 'relative'}} ref={mapRef}>
+                    <img src="/assets/mapV1.jpg" alt="Map" style={{width: '100%', height: '100%'}} />
+                    
+                        <div>
+                            <PointMapClick x={48} y={50} imageSrc='assets/mapclick2.png' text={'Este é o ponto no mapa'} route={`/worldmap/${categoriesData[0].id}`} mapRef={mapRef}/>
+                            <PointMapClick x={75} y={45} imageSrc='assets/pointMap1.png' text={'Este é o ponto no mapa'} mapRef={mapRef} route={`/worldmap/${categoriesData[1].id}`} />
+                        </div>
+                    
+                </div>
             </div>
-        </div>
+        )}
+        </>
     );
     }
