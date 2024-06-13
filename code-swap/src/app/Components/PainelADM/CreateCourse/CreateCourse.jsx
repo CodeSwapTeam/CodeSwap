@@ -7,6 +7,7 @@ import { ref } from "firebase/storage";
 
 import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
 import { ContextDataCache } from '@/app/Providers/ContextDataCache';
+import ModalUpdateCategory from '../../Modals/modalUpdateCategory';
 
 
 const CreateCourses = () => {
@@ -180,7 +181,8 @@ const CreateCourses = () => {
             </select>
             <ModalCreateCategory />
             <button onClick={() => deleteCategory(selectedCategoryID)} style={{ padding: '5px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.1)' }}>Excluir Categoria</button>
-            
+            {categoriesData && <ModalUpdateCategory categoriesData={categoriesData}/>
+            }
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' , marginTop:'20px'}}>
                 <div style={{ marginBottom: '20px' }}>
                     <label htmlFor="title" style={{  marginBottom: '5px', color: '#ffffff' }}>Título do Curso:</label>

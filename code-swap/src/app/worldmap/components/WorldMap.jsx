@@ -100,10 +100,10 @@ export default function WorldMap() {
                 <div style={{width:'70%', height:"60%", position: 'relative'}} ref={mapRef}>
                     <img src="/assets/mapV1.jpg" alt="Map" style={{width: '100%', height: '100%'}} />
                     
-                        <div>
+                            <PointMapClick x={12} y={42} imageSrc='assets/pointMap5.png' text={'Este é o ponto no mapa'} route={`/worldmap/${categoriesData[0].id}`} mapRef={mapRef}/>
                             <PointMapClick x={48} y={50} imageSrc='assets/mapclick2.png' text={'Este é o ponto no mapa'} route={`/worldmap/${categoriesData[0].id}`} mapRef={mapRef}/>
                             <PointMapClick x={75} y={45} imageSrc='assets/pointMap1.png' text={'Este é o ponto no mapa'} mapRef={mapRef} route={`/worldmap/${categoriesData[1].id}`} />
-                        </div>
+                        
                     
                 </div>
             </div>

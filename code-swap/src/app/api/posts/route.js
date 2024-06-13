@@ -54,7 +54,7 @@ export async function POST(NextRequest) {
                 const categoryData = {
                     name: data.name,
                     description: data.description,
-                    thumbnail: data.thumbnail,
+                    PositionBadgeMap: data.PositionBadgeMap,
                     courses: []
                 }
                 console.log('categoryData:', categoryData);
@@ -69,6 +69,22 @@ export async function POST(NextRequest) {
 
 
 
+        }
+        case 'UpdateCategory': {//Atualizar informações da categoria
+            console.log('data................................:', data);
+            try {
+                const categoryData = {
+                    name: data.name,
+                    description: data.description,
+                    PositionBadgeMap: data.PositionBadgeMap,
+                    Badge: data.Badge,
+                    PositionBadgeMap: data.PositionBadgeMap
+                }
+                await updateDoc(doc(db, 'Categories', data.id), categoryData);
+                return NextResponse.json({ message: 'Informações da categoria atualizadas com sucesso!' });
+            } catch (error) {
+                return NextResponse.error('Erro ao atualizar informações da categoria:', error);
+            }
         }
         case 'UpdateInfoCourse': {//Atualizar informações do curso
             try {

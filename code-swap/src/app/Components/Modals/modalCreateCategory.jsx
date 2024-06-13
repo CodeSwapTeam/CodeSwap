@@ -13,7 +13,7 @@ function ModalCreateCategory() {
     const [show, setShow] = useState(false);
     const [categoryName, setCategoryName] = useState('');
     const [categoryDescription, setCategoryDescription] = useState('');
-    const [imgUrlThumbnail, setImgUrlThumbnail] = useState('');
+    const [imgUrlBadge, setImgUrlBadge] = useState('');
     const [progress, setProgress] = useState(0);
 
 
@@ -25,7 +25,8 @@ function ModalCreateCategory() {
     await controller.manageCategories.CreateCategory({ 
       name: categoryName, 
       description: categoryDescription,
-      thumbnail: imgUrlThumbnail 
+      Badge: imgUrlBadge,
+      PositionBadgeMap: { x: 0, y: 0 }
     });
     queryClient.refetchQueries(['All-Categories']);
 
@@ -34,15 +35,15 @@ function ModalCreateCategory() {
     handleClose();
   };
 
-  // Função para lidar com o upload de uma imagem de thumbnail da categoria
-  const handleUploadThumbnailCategory = async (e) => {
+  // Função para lidar com o upload de uma imagem de Badge da categoria
+  const handleUploadBadgeCategory = async (e) => {
     e.preventDefault();
     const file = e.target.file.files[0];
 
     
     if (!file) return;
-    const fileName = `${categoryName}-thumbnail`;
-    const storageRef = ref(storage, `Categories/Thumbnails/${fileName}`);
+    const fileName = `${categoryName}-Badge`;
+    const storageRef = ref(storage, `Categories/Badge/${fileName}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
     uploadTask.on('state_changed', (snapshot) => {
@@ -52,7 +53,7 @@ function ModalCreateCategory() {
         console.error(error);
     }, () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            setImgUrlThumbnail(downloadURL);
+            setImgUrlBadge(downloadURL);
         });
         //limpar o campo de upload
         e.target.file.value = '';
@@ -79,14 +80,14 @@ function ModalCreateCategory() {
               <div>
                 
                 <div style={{ marginBottom: '20px' }}>
-                <label style={{ fontWeight: 'bold', color: '#007bff', display: 'block', marginBottom: '10px' }}>Upload Thumbnail:</label>
-                <form onSubmit={handleUploadThumbnailCategory} style={{ display: 'flex', alignItems: 'center' }}>
+                <label style={{ fontWeight: 'bold', color: '#007bff', display: 'block', marginBottom: '10px' }}>Upload Badge:</label>
+                <form onSubmit={handleUploadBadgeCategory} style={{ display: 'flex', alignItems: 'center' }}>
                     <input type="file" name="file" style={{ marginRight: '10px', padding: '10px', fontSize: '1rem', borderRadius: '5px', border: '1px solid #ddd', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)' }} />
                     <button style={{ padding: '10px 20px', backgroundColor: '#034C8C', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.1)' }} type="submit">Enviar</button>
                 </form>
                 <br />
-                {!imgUrlThumbnail && <progress value={progress} max="100" style={{ width: '100%', height: '10px', borderRadius: '5px' }} />}
-                {imgUrlThumbnail && <img src={imgUrlThumbnail} alt="Imagem do curso" style={{ width: '100px', height: '100px', borderRadius: '5px', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)' }} />}
+                {!imgUrlBadge && <progress value={progress} max="100" style={{ width: '100%', height: '10px', borderRadius: '5px' }} />}
+                {imgUrlBadge && <img src={imgUrlBadge} alt="Imagem do curso" style={{ width: '100px', height: '100px', borderRadius: '5px', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.1)' }} />}
             </div>
               
               </div>

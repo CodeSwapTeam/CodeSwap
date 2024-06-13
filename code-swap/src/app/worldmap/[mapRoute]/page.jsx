@@ -1,6 +1,6 @@
 'use client';
 import Controller from "@/Controller/controller";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import CoursesCategoryList from "@/app/Components/ListData-Component/ListData";
@@ -47,12 +47,12 @@ export function PointMapClick({ x, y, imageSrc, text, route, mapRef }) {
     const [showTooltip, setShowTooltip] = useState(false);
     //const [courses, setCourses] = useState([]);
 
-    //const router = useRouter();
+    const router = useRouter();
     let pointRef = useRef(null);
     
     // Função para redirecionar para outra página
     const handlePointClick = () => {
-       // router.push(route);
+        router.push(route);
     }
 
     useEffect(() => {
@@ -109,9 +109,9 @@ const Districts = () => {
             <div style={{width:'70%', height:"60%", position: 'relative'}} >
                 <img src="/assets/mapV2.jpg" alt="Map" style={{width: '100%', height: '100%'}} />
                 
-                    <PointMapClick x={65} y={60} imageSrc="/assets/pointMap4.png"text={'Este é o ponto no mapa'} />
-                    <PointMapClick x={65} y={12} imageSrc='/assets/pointMap3.png' text={'Este é o ponto no mapa'} />
-                    <PointMapClick x={15} y={25} imageSrc='/assets/pointMap1.png' text={'Este é o ponto no mapa'} />
+                    <PointMapClick x={65} y={60} imageSrc="/assets/pointMap4.png"text={'Este é o ponto no mapa'} route={`/MyCourses/${Courses[0].id}`} />
+                    <PointMapClick x={65} y={12} imageSrc='/assets/pointMap3.png' text={'Este é o ponto no mapa'} route={`/MyCourses/${Courses[1].id}`}/>
+                    <PointMapClick x={15} y={25} imageSrc='/assets/pointMap1.png' text={'Este é o ponto no mapa'} route={`/MyCourses/${Courses[2].id}`}/>
             </div>
         </div>
         )}
