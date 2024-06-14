@@ -163,7 +163,8 @@ export async function POST(NextRequest) {
                     moduleObservations: '',
                     id: '',
                     permission: data.permission,
-                    lessons: []
+                    lessons: [],
+                    thumbnail: data.thumbnail
                 };
                 const docRef = await addDoc(collection(db, 'Modules'), moduleData, { merge: true });
                 //setar o id do modulo com o id do documento
@@ -206,6 +207,17 @@ export async function POST(NextRequest) {
                 return NextResponse.json({ message: 'Informações do módulo atualizadas com sucesso!' });
             } catch (error) {
                 return NextResponse.error('Erro ao atualizar informações do módulo:', error);
+            }
+        }
+        case 'addThumbnailModule': {//Adicionar thumbnail ao módulo
+            console.log('addThumbnailModule................................:', data);
+            try {
+                await updateDoc(doc(db, 'Modules', data.moduleId), {
+                    thumbnail: data.thumbnail
+                });
+                return NextResponse.json({ message: 'Thumbnail adicionada com sucesso!' });
+            } catch (error) {
+                return NextResponse.error('Erro ao adicionar thumbnail ao módulo:', error);
             }
         }
         case 'updateModuleConfigs': {//Atualizar configurações do módulo

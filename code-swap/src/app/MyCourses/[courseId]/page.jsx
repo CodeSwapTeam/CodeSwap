@@ -483,9 +483,9 @@ const Page = () => {
                                             {module.title}
                                         </ModuleTitle>
                                         <ModuleItem open={openIndex === index} 
-                                        style={{ 
-                                            backgroundColor: openIndex === index ? '#00000058' : 'transparent',
-                                            padding: openIndex === index ? '10px' : '0'
+                                            style={{ 
+                                                backgroundColor: openIndex === index ? '#00000058' : 'transparent',
+                                                padding: openIndex === index ? '10px' : '0'
                                             }}>
                                             {module.description}
 

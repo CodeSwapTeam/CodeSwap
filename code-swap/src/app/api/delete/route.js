@@ -10,6 +10,7 @@ export async function DELETE(NextRequest){
     let data;
     if (NextRequest.body) {
         data = NextRequest.body;
+        
     } else {
         console.log('Sem dados no corpo da solicitação');
     }
@@ -68,19 +69,27 @@ export async function DELETE(NextRequest){
                 return NextResponse.error('Erro ao deletar a categoria');
             }
         }
-        case 'deleteModule': {//Deletar o módulo pelo ID
+        case 'deleteModule': { //Deletar o módulo pelo ID
+            
             try {
-
-                const { courseSelectedId, moduleSelected } = data;
-                //deletar o modulo do curso no database
-                await deleteDoc(doc(db, 'Modules', moduleSelected.id ));
-
-                //deletar o modulo do array de modulos do curso
+                const reader = data.getReader();
+        const result = await reader.read(); // raw array buffer
+        const decoder = new TextDecoder();
+        const json = decoder.decode(result.value);
+        const dataObj = JSON.parse(json);
+                
+                console.log('dados------------------------------------', dataObj);
+        
+                const { courseSelectedId, moduleSelected } = dataObj;
+                
+                // deletar o modulo do curso no database
+                await deleteDoc(doc(db, 'Modules', moduleSelected ));
+        
+                // deletar o modulo do array de modulos do curso
                 await updateDoc(doc(db, 'Courses', courseSelectedId), {
                     modules: arrayRemove(moduleSelected)
                 });
-
-
+        
                 return NextResponse.json({ message: 'Módulo deletado com sucesso!' });
             } catch (error) {
                 return NextResponse.error('Erro ao deletar o módulo');

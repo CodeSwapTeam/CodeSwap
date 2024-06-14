@@ -149,6 +149,7 @@ export default function ModulesCourseList({ setSelectedPainel }) {
 
         const modules = await fetch(`/api/gets?id=${courseSelected.id}&type=courseId`);
         const data = await modules.json();
+        console.log(data[0].modules);
         return data[0].modules;
 
       } catch (error) {
@@ -163,9 +164,9 @@ export default function ModulesCourseList({ setSelectedPainel }) {
   //Função para deletar um módulo
   const handleDeleteModule = useMutation({
     mutationFn: async (moduleToDelete) => {
-      await controller.manageModules.DeleteModule(courseSelected.id, moduleToDelete);
+      await controller.manageModules.DeleteModule(courseSelected.id, moduleToDelete.id);
   
-      // Criar uma cópia do array de módulos
+      /* // Criar uma cópia do array de módulos
       const modulesCourse = [...courseSelected.modules];
       // Remover o módulo do array de módulos
       const updatedModules = modulesCourse.filter(module => module.id !== moduleToDelete.id);
@@ -181,7 +182,13 @@ export default function ModulesCourseList({ setSelectedPainel }) {
         course.id === courseSelected.id ? { ...course, modules: updatedModules } : course
       );
       queryClient.setQueryData(["Courses-Cached"], updatedCoursesCached);
-      queryClient.invalidateQueries(["Courses-Cached"]);
+      queryClient.invalidateQueries(["Courses-Cached"]); */
+
+      //Atualizar o cache ["Modules-Course"] com os modulos
+      //const modulesCached = queryClient.getQueryData(["Modules-Course"]) || [];
+      //const updatedModulesCached = modulesCached.filter(module => module.id !== moduleToDelete.id);
+      //queryClient.setQueryData(["Modules-Course"], updatedModulesCached);
+      queryClient.refetchQueries(["Modules-Course"]);
     }
   });
 

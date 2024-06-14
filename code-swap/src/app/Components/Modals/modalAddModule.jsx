@@ -110,7 +110,8 @@ function AddModuleModal() {
             courseId: courseSelected.id,
             id: '',
             permission: await permissionModule(),
-            lessons: []
+            lessons: [],
+            thumbnail: ''
         };
     
         const moduleID = await controller.manageModules.CreateModule(courseSelected.id, newModule);
