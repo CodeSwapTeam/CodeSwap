@@ -516,9 +516,11 @@ const Page = () => {
                         </LeftContent>
 
                         <RightContent>
-                            <div>
-                                <Image src={course.imgUrlCover} alt="Capa Curso" style={{ marginTop: '50px' }} width={1000} height={800}/>
-                            </div>
+                            {course.imgUrlCover && (
+                                <div>
+                                    <Image src={course.imgUrlCover} alt="Capa Curso" style={{ marginTop: '50px' }} width={1000} height={800}/>
+                                </div>
+                            )}
 
                             <CourseContainer >
                                 <CourseTitle >Cursos recomendados</CourseTitle>

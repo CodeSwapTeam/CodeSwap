@@ -109,9 +109,10 @@ const Districts = () => {
             <div style={{width:'70%', height:"60%", position: 'relative'}} >
                 <img src="/assets/mapV2.jpg" alt="Map" style={{width: '100%', height: '100%'}} />
                 
-                    <PointMapClick x={65} y={60} imageSrc="/assets/pointMap4.png"text={'Este é o ponto no mapa'} route={`/MyCourses/${Courses[0].id}`} />
-                    <PointMapClick x={65} y={12} imageSrc='/assets/pointMap3.png' text={'Este é o ponto no mapa'} route={`/MyCourses/${Courses[1].id}`}/>
-                    <PointMapClick x={15} y={25} imageSrc='/assets/pointMap1.png' text={'Este é o ponto no mapa'} route={`/MyCourses/${Courses[2].id}`}/>
+                {Courses.map((course, index) => (
+                    <PointMapClick key={index} x={course.PositionBadgeMap.x} y={course.PositionBadgeMap.y} imageSrc={course.Badge} text={course.name} route={`/MyCourses/${course.id}`} />
+                ))}
+                   
             </div>
         </div>
         )}

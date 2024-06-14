@@ -13,6 +13,7 @@ export async function POST(NextRequest) {
 
     switch (type) {
         case 'CreateCourse': { //Criar um curso
+            console.log('CreateCourse................................:', data);
             try {
                 const courseData = {
                     title: data.title,
@@ -30,6 +31,8 @@ export async function POST(NextRequest) {
                     category: data.category,
                     SequentialModule: data.SequentialModule,
                     modules: [],
+                    Badge: data.Badge,
+                    PositionBadgeMap: data.PositionBadgeMap
                 };
                 const docRef = await addDoc(collection(db, 'Courses'), courseData);
                 
@@ -50,12 +53,14 @@ export async function POST(NextRequest) {
             }
         }
         case 'CreateCategory': {//Criar uma categoria
+            console.log('CreateCategory................................:', data);
             try {
                 const categoryData = {
                     name: data.name,
                     description: data.description,
                     PositionBadgeMap: data.PositionBadgeMap,
-                    courses: []
+                    courses: data.courses,
+                    Badge: data.Badge,
                 }
                 console.log('categoryData:', categoryData);
                 // Criar a categoria no banco de dados
@@ -71,16 +76,15 @@ export async function POST(NextRequest) {
 
         }
         case 'UpdateCategory': {//Atualizar informações da categoria
-            console.log('data................................:', data);
+            console.log('UpdateCategory................................:', data);
             try {
                 const categoryData = {
                     name: data.name,
                     description: data.description,
                     PositionBadgeMap: data.PositionBadgeMap,
                     Badge: data.Badge,
-                    PositionBadgeMap: data.PositionBadgeMap
                 }
-                await updateDoc(doc(db, 'Categories', data.id), categoryData);
+                await updateDoc(doc(db, 'Categories', data.id), categoryData , { merge: true });
                 return NextResponse.json({ message: 'Informações da categoria atualizadas com sucesso!' });
             } catch (error) {
                 return NextResponse.error('Erro ao atualizar informações da categoria:', error);
@@ -131,6 +135,8 @@ export async function POST(NextRequest) {
                 course.imgUrlThumbnail = data.courseData.imgUrlThumbnail;
                 course.difficulty = data.courseData.difficulty;
                 course.owner = data.courseData.owner;
+                course.Badge = data.courseData.Badge;
+                course.PositionBadgeMap = data.courseData.PositionBadgeMap;
 
 
                 //atualizar a categoria no banco de dados

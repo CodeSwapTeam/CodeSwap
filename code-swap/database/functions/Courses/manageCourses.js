@@ -26,6 +26,9 @@ export async function CreateCourse(formData) {
             category: formData.category,
             SequentialModule: formData.SequentialModule,
             modules: [],
+            Badge: formData.Badge,
+            PositionBadgeMap: formData.PositionBadgeMap,
+
         };
 
 
@@ -47,22 +50,6 @@ export async function CreateCourse(formData) {
         const data = await response.json();
         alert(data.message);
 
-/* 
-        const docRef = await addDoc(collection(db, 'Courses'), courseData);
-        //setar o id do curso com o id do documento
-        await updateDoc(doc(db, 'Courses', docRef.id), {
-            id: docRef.id
-        });
-        courseID = docRef.id;
-        
-        //adicionar no database em'categories' dentro de courses que é um array de objetos com o id do curso, o titulo e a descrição
-        await updateDoc(doc(db, 'Categories', courseData.category), {
-            //adicionar o id do curso no array de cursos da categoria
-            courses: arrayUnion({ id: docRef.id, title: courseData.title, description: courseData.description, imgUrlThumbnail: courseData.imgUrlThumbnail, status: courseData.status })
-        });
-
-        alert('Curso criado com sucesso'); */
-        //return courseID;
     }
     catch (error) {
         alert('Erro ao criar o curso, tente novamente!');

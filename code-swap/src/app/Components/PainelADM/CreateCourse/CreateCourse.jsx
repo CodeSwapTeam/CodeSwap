@@ -109,7 +109,9 @@ const CreateCourses = () => {
             id: '',
             category: selectedCategoryID,
             SequentialModule: false,
-            modules: []
+            modules: [],
+            Badge: '',
+            PositionBadgeMap: { x: 0, y: 0 },
         }
 
         //Criar o curso no banco de dados

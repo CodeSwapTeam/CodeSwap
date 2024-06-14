@@ -47,7 +47,7 @@ export function PointMapClick({ x, y, imageSrc, text, route, mapRef }) {
 
     const router = useRouter();
     let pointRef = useRef(null);
-    
+
     // Função para redirecionar para outra página
     const handlePointClick = () => {
         router.push(route);
@@ -80,34 +80,38 @@ export default function WorldMap() {
 
 
 
-        const { data: categoriesData, isLoading } = useQuery({
-            queryKey: ['All-Categories-MyCourses'],
-            queryFn: async () => {
-                const categories = await controller.manageCategories.GetAllCategories();
-                console.log(categories);
-                return categories;
-            },
-            staleTime: 1000 * 60 * 5 // 5 minutos
-        });
+    const { data: categoriesData, isLoading } = useQuery({
+        queryKey: ['All-Categories-MyCourses'],
+        queryFn: async () => {
+            const categories = await controller.manageCategories.GetAllCategories();
+            console.log('categories', categories);
+            return categories;
+        },
+        staleTime: 1000 * 60 * 5 // 5 minutos
+    });
 
-        if(isLoading) return <h1>Carregando...</h1>;
+    if (isLoading) return <h1>Carregando...</h1>;
 
-    return (
+    return (// 48 50
         <>
-        
-        {categoriesData && (
-            <div style={{display:"flex", justifyContent:"center", marginTop:'70px'}}>
-                <div style={{width:'70%', height:"60%", position: 'relative'}} ref={mapRef}>
-                    <img src="/assets/mapV1.jpg" alt="Map" style={{width: '100%', height: '100%'}} />
-                    
-                            <PointMapClick x={12} y={42} imageSrc='assets/pointMap5.png' text={'Este é o ponto no mapa'} route={`/worldmap/${categoriesData[0].id}`} mapRef={mapRef}/>
-                            <PointMapClick x={48} y={50} imageSrc='assets/mapclick2.png' text={'Este é o ponto no mapa'} route={`/worldmap/${categoriesData[0].id}`} mapRef={mapRef}/>
-                            <PointMapClick x={75} y={45} imageSrc='assets/pointMap1.png' text={'Este é o ponto no mapa'} mapRef={mapRef} route={`/worldmap/${categoriesData[1].id}`} />
-                        
-                    
+
+            {categoriesData && (
+                <div style={{ display: "flex", justifyContent: "center", marginTop: '70px' }}>
+                    <div style={{ width: '70%', height: "60%", position: 'relative' }} ref={mapRef}>
+                        <img src="/assets/mapV1.jpg" alt="Map" style={{ width: '100%', height: '100%' }} />
+
+                        {categoriesData.map((category, index) => {
+                            const x = category.PositionBadgeMap?.x || 0;
+                            const y = category.PositionBadgeMap?.y || 0;
+
+                            return (
+                                <PointMapClick key={index} x={x} y={y} imageSrc={category.Badge} text={category.name} route={`/worldmap/${category.id}`} mapRef={mapRef} />
+                            );
+                        })}
+
+                    </div>
                 </div>
-            </div>
-        )}
+            )}
         </>
     );
-    }
+}

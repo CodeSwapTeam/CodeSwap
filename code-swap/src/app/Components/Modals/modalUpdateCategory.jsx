@@ -16,8 +16,8 @@ function ModalUpdateCategory({categoriesData}){
 
     const [categorySelected, setCategorySelected] = useState(null);
     const [selectedCategoryID, setSelectedCategoryID] = useState('');
-    const [categoryName, setCategoryName] = useState(categoriesData.name);
-    const [categoryDescription, setCategoryDescription] = useState(categoriesData.description);
+    const [categoryName, setCategoryName] = useState('');
+    const [categoryDescription, setCategoryDescription] = useState('');
     const [imgUrlBadge, setImgUrlBadge] = useState('');
     const [progress, setProgress] = useState(0);
     const [positionBadgeMap, setPositionBadgeMap] = useState({ x: 0, y: 0 });
@@ -29,12 +29,6 @@ function ModalUpdateCategory({categoriesData}){
 
 
     const handleSubmit = async () => {
-        /* await controller.manageCategories.CreateCategory({ 
-          name: categoryName, 
-          description: categoryDescription,
-          Badge: imgUrlBadge,
-          PositionBadgeMap: { x: 0, y: 0 }
-        }); */
 
         await controller.manageCategories.UpdateCategoryData({
             id: selectedCategoryID,
@@ -77,6 +71,15 @@ function ModalUpdateCategory({categoriesData}){
 
     const handleChangeCategory = (e) => {
         setSelectedCategoryID(e.target.value);
+
+        //setar os valores da categoria selecionada nos campos
+        const category = categoriesData.find((category) => category.id === e.target.value);
+        setCategoryName(category.name);
+        setCategoryDescription(category.description);
+        setImgUrlBadge(category.Badge);
+        setPositionBadgeMap(category.PositionBadgeMap);
+
+
         console.log(e.target.value);
     }
 
