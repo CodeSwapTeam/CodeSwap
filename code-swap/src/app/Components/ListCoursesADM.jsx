@@ -33,7 +33,7 @@ background-color: #0f1425d6;
 
 
 const ListCoursesADM = () => {
-    const [selectedPainel, setSelectedPainel] = useState('courses');
+    const [selectedPainel, setSelectedPainel] = useState('CategoryList');
     const controller = Controller();
 
     // Função para buscar as categorias no cache local ou no banco de dados
@@ -46,18 +46,24 @@ const ListCoursesADM = () => {
         staleTime: 1000 * 60 * 5 // 5 minutos
     });
 
+    //função para retornar os cursos selecionados de uma categoria
+    const handleCategory = (category) => {
+        console.log('Category selected:', category);
+        return category;
+    };
+
     return (
         <div  >
             <H1>
-                {selectedPainel === 'courses' ? `Lista de Cursos ` :
+                {selectedPainel === 'CategoryList' ? `Lista de Cursos ` :
                     selectedPainel === 'ModuleDescription' ? 'Módulos e Aulas' :
                         'Cursos e Módulos'}
             </H1>
 
             <ContainerDiv>
 
-                {selectedPainel === 'courses' ? (
-                    <CoursesCategoryList categoriesData={categoriesData} setSelectedPainel={setSelectedPainel} />
+                {selectedPainel === 'CategoryList' ? (
+                    <CoursesCategoryList  categoriesData={categoriesData} setSelectedPainel={setSelectedPainel} />
                 ) : selectedPainel === 'CourseDescription' ? (                  
                     <ConfigCourse setSelectedPainel={setSelectedPainel} />                
                 ) : selectedPainel === 'Modules' ? (

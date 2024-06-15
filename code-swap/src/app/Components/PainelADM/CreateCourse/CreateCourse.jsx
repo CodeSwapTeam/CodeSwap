@@ -47,6 +47,8 @@ const CreateCourses = () => {
     const { data: categoriesData } = useQuery({
         queryKey: ['All-Categories'],
         queryFn: async () => {
+            console.log('Buscando categorias no banco de dados...');
+
             //verificar se existe algum erro ao salvar o curso buscando no cache local o erro_save
             const erroData = JSON.parse(sessionStorage.getItem('erro_save'));
             if (erroData) {
@@ -58,11 +60,9 @@ const CreateCourses = () => {
                 //limpar o cache local
                 sessionStorage.removeItem('erro_save');
             }
-
             const categories = await controller.manageCategories.GetAllCategories();
             return categories;
-        },
-        staleTime: 1000 * 60 * 5 // 5 minutos
+        }
     });
 
     // if(categoriesData) console.log('categoriesData', categoriesData);
@@ -117,6 +117,8 @@ const CreateCourses = () => {
         //Criar o curso no banco de dados
         await controller.manageCourses.CreateCourse(formData);
         queryClient.refetchQueries(['All-Categories']);
+        
+        queryClient.invalidateQueries(["Category-Selected", selectedCategoryID]);
 
         //limpar os inputs
         setCourseName('');

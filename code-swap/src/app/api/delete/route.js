@@ -95,6 +95,30 @@ export async function DELETE(NextRequest){
                 return NextResponse.error('Erro ao deletar o módulo');
             }
         }
+        case 'RemoveCourseModule': {//Remover o módulo do curso pelo ID
+            try {
+                const reader = data.getReader();
+                let result = await reader.read(); // result.value will have the data
+                let parsedData = JSON.parse(new TextDecoder("utf-8").decode(result.value));
+                console.log('Dados---------------------------:', parsedData);
+                let courseId = parsedData.courseId;
+                let moduleId = parsedData.moduleId;
+                
+                // Deletar o módulo do curso
+                const courseRef = doc(db, 'Courses', courseId);
+                const courseSnap = await getDoc(courseRef);
+                const courseData = courseSnap.data();
+                const modules = courseData.modules;
+                const moduleIndex = modules.findIndex(module => module.id === moduleId);
+                modules.splice(moduleIndex, 1);
+                await updateDoc(courseRef, { modules });
+                return NextResponse.json({ message: 'Módulo removido do curso com sucesso!' });
+                
+            }
+            catch (error) {
+                return NextResponse.error('Erro ao remover o módulo do curso');
+            }
+        }
         case 'deleteLesson': {//Deletar a aula pelo ID
 
         const { moduleId, lessonId } = data;

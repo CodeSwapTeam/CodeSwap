@@ -368,7 +368,7 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
         <div  >
 
           <Container>
-            <Button onClick={() => { setSelectedPainel('courses') }}>Voltar</Button>
+            <Button onClick={() => { setSelectedPainel('CategoryList') }}>Voltar</Button>
             <Title>{courseSelected?.title}</Title>
             <Spacer></Spacer>
           </Container>

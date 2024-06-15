@@ -1,4 +1,4 @@
-import { deleteDoc, doc, setDoc, updateDoc, addDoc, collection, arrayUnion, getDoc, where, getDocs } from "firebase/firestore";
+import { deleteDoc, doc, setDoc, updateDoc, addDoc, collection, arrayUnion, getDoc, where, getDocs, arrayRemove } from "firebase/firestore";
 import { db } from "../../firebase";
 import Controller from "@/Controller/controller";
 
@@ -192,6 +192,20 @@ export async function UpdateCover(courseId, imgUrlCover) {
         throw error;
     }
 };
+
+//função para remover modulo dentro de curso
+export async function RemoveCourseModule(courseId, moduleId) {
+    console.log('Removendo módulo do curso:', courseId, moduleId);
+    const reponse = await fetch(`/api/delete?type=RemoveCourseModule`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ courseId, moduleId })
+    });
+
+}
+
 
 
 

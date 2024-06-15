@@ -81,6 +81,7 @@ function AddModuleModal() {
           queryClient.setQueryData(["Modules-Course"], modulesCourse);
         },
         onSuccess: (data) => {
+            queryClient.refetchQueries(["Modules-Course", courseSelected.id]);
         }
       });
 

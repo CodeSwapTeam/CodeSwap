@@ -8,7 +8,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 function ModalUpdateCategory({categoriesData}){
 
-    console.log('categoriesData', categoriesData);
+    
 
     const [show, setShow] = useState(false);
 

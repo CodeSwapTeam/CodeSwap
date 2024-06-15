@@ -143,11 +143,12 @@ export default function ModulesCourseList({ setSelectedPainel }) {
 
   //Função para buscar os módulos de um curso
   const { data: modules } = useQuery({
-    queryKey: ["Modules-Course"],
+    queryKey: ["Modules-Course", courseSelected.id],
     queryFn: async () => {
       try {
-
+        console.log('Buscando módulos do curso:', courseSelected.id);
         const modules = await fetch(`/api/gets?id=${courseSelected.id}&type=courseId`);
+        
         const data = await modules.json();
         console.log(data[0].modules);
         return data[0].modules;
@@ -165,30 +166,8 @@ export default function ModulesCourseList({ setSelectedPainel }) {
   const handleDeleteModule = useMutation({
     mutationFn: async (moduleToDelete) => {
       await controller.manageModules.DeleteModule(courseSelected.id, moduleToDelete.id);
-  
-      /* // Criar uma cópia do array de módulos
-      const modulesCourse = [...courseSelected.modules];
-      // Remover o módulo do array de módulos
-      const updatedModules = modulesCourse.filter(module => module.id !== moduleToDelete.id);
-  
-      // Atualizar os módulos dentro do curso selecionado
-      const updatedCourse = { ...courseSelected, modules: updatedModules };
-      queryClient.setQueryData(["Course-Selected"], updatedCourse);
-      queryClient.invalidateQueries(["Course-Selected"]);
-  
-      //Atualizar o cache ["Courses-Cached"] dentro do curso selecionado com os modulos
-      const coursesCached = queryClient.getQueryData(["Courses-Cached"]) || [];
-      const updatedCoursesCached = coursesCached.map(course => 
-        course.id === courseSelected.id ? { ...course, modules: updatedModules } : course
-      );
-      queryClient.setQueryData(["Courses-Cached"], updatedCoursesCached);
-      queryClient.invalidateQueries(["Courses-Cached"]); */
-
-      //Atualizar o cache ["Modules-Course"] com os modulos
-      //const modulesCached = queryClient.getQueryData(["Modules-Course"]) || [];
-      //const updatedModulesCached = modulesCached.filter(module => module.id !== moduleToDelete.id);
-      //queryClient.setQueryData(["Modules-Course"], updatedModulesCached);
-      queryClient.refetchQueries(["Modules-Course"]);
+      await controller.manageCourses.RemoveCourseModule(courseSelected.id, moduleToDelete.id);
+      queryClient.invalidateQueries(["Modules-Course"]);
     }
   });
 
