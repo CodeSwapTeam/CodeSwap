@@ -195,7 +195,6 @@ export async function UpdateCover(courseId, imgUrlCover) {
 
 //função para remover modulo dentro de curso
 export async function RemoveCourseModule(courseId, moduleId) {
-    console.log('Removendo módulo do curso:', courseId, moduleId);
     const reponse = await fetch(`/api/delete?type=RemoveCourseModule`, {
         method: 'DELETE',
         headers: {
@@ -217,7 +216,6 @@ export async function RemoveCourseModule(courseId, moduleId) {
 
 //---  --- função para buscar cursos pela categoria
 export async function GetCoursesByCategory(categoryId) {
-    console.log('categoryId:', categoryId);
     const courses = [];
     try {
         const querySnapshot = await getDocs(collection(db, 'Courses'), where('category', '==', categoryId));
@@ -228,7 +226,6 @@ export async function GetCoursesByCategory(categoryId) {
         //filtrar os cursos somente da categoria selecionada
         const filteredCourses = courses.filter(course => course.category === categoryId);
 
-        console.log('courses encontrados:', filteredCourses);
         return filteredCourses;
     }
     catch (error) {

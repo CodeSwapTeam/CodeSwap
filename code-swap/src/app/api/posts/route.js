@@ -83,6 +83,7 @@ export async function POST(NextRequest) {
                     description: data.description,
                     PositionBadgeMap: data.PositionBadgeMap,
                     Badge: data.Badge,
+                    mapImage: data.mapImage,
                 }
                 await updateDoc(doc(db, 'Categories', data.id), categoryData , { merge: true });
                 return NextResponse.json({ message: 'Informações da categoria atualizadas com sucesso!' });
@@ -215,6 +216,27 @@ export async function POST(NextRequest) {
                 await updateDoc(doc(db, 'Modules', data.moduleId), {
                     thumbnail: data.thumbnail
                 });
+
+                //pegar o id do curso do modulo
+                const moduleDoc = doc(db, 'Modules', data.moduleId);
+                const moduleSnap = await getDoc(moduleDoc);
+                const module = moduleSnap.data();
+                const courseId = module.courseId;
+
+                // Atualizar thumbnail do módulo no curso
+                const courseDoc = doc(db, 'Courses', courseId);
+                const courseSnap = await getDoc(courseDoc);
+                const course = courseSnap.data();
+                const moduleCourse = course.modules.find(module => module.id === data.moduleId);
+                moduleCourse.thumbnail = data.thumbnail;
+
+                //atualizar o modulo no array de modulos do curso
+                await updateDoc(courseDoc, {
+                    modules: course.modules
+                });
+
+
+
                 return NextResponse.json({ message: 'Thumbnail adicionada com sucesso!' });
             } catch (error) {
                 return NextResponse.error('Erro ao adicionar thumbnail ao módulo:', error);

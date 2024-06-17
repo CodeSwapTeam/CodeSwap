@@ -403,7 +403,7 @@ export default function ManageModule({ setSelectedPainel }) {
     queryClient.setQueryData(['Module-Selected'], moduleUpdated);
 
 
-
+    
 
     
     e.target.file.value = '';

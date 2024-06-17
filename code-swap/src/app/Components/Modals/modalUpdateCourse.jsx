@@ -26,6 +26,9 @@ function UpdateCourseModal(props) {
             description: courseDescription
         };
 
+        //atualizar Titulo e descrição do curso no banco de dados
+       await controller.manageCourses.UpdateInfoCourse(courseId, categoryId, courseData);
+
         const courseSelected = queryClient.getQueryData(['Course-Selected']);
         //atualizar o titulo e descrição do curso selecionado
         courseSelected.title = courseTitle;
@@ -51,7 +54,7 @@ function UpdateCourseModal(props) {
         //Atualizar ["Category-Selected"] no cache
         const categorySelected = queryClient.getQueryData(['Category-Selected']);
         //verificar se a categoria selecionada é a mesma do curso selecionado
-        if (categorySelected.id === categoryId) {
+        if (categorySelected && categorySelected.id === categoryId) {
             //atualizar o titulo e descrição do curso selecionado
             categorySelected.courses.find(course => course.id === courseId).title = courseTitle;
             categorySelected.courses.find(course => course.id === courseId).description = courseDescription;
@@ -69,8 +72,7 @@ function UpdateCourseModal(props) {
         queryClient.setQueryData(['Courses-Cached'], coursesCached);
 
 
-        //atualizar Titulo e descrição do curso no banco de dados
-       await controller.manageCourses.UpdateInfoCourse(courseId, categoryId, courseData);
+        
 
        props.setPainelUpdateCourse(false);
             

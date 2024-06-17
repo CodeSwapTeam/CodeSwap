@@ -77,19 +77,22 @@ export function PointMapClick({ x, y, imageSrc, text, route, mapRef }) {
 const Districts = () => {
     const { mapRoute } = useParams();
     const controller = Controller();
-
-    const [imageURL, setImageURL] = useState(null);
-    const [categorySelected, setCategorySelected] = useState(null);
     const queryClient = useQueryClient();
 
     const { data: Courses, isLoading } = useQuery({
         queryKey: ['courses', mapRoute],
 
         queryFn: async () => await controller.manageCourses.GetCoursesByCategory(mapRoute),
-        enabled: !!mapRoute, // Só executa a query se mapRoute for diferente de null
-        onSuccess: (data) => {
-            setCategorySelected(data.category);
-           // setImageURL(data.category.image);
+        enabled: !!mapRoute, // Só executa a query se mapRoute for diferente de null      
+    });
+
+    const { data: categorySelect} = useQuery({
+        queryKey: ['categorySelected', mapRoute],
+        queryFn: async () => {
+            const category = queryClient.getQueryData(['categorySelected', mapRoute])
+            //console.log('category', category);
+            setImageURL(category.mapImage);
+            return category;
         }
     });
 
@@ -100,17 +103,14 @@ const Districts = () => {
     }
     , [mapRoute, queryClient]);
 
-    
-
     return (
         <>
         { Courses && (
         <div style={{display:"flex", justifyContent:"center", marginTop:'70px'}}>
             <div style={{width:'70%', height:"60%", position: 'relative'}} >
-                <img src="/assets/mapV2.jpg" alt="Map" style={{width: '100%', height: '100%'}} />
-                
+                <img src={categorySelect?.mapImage} alt="Map" style={{width: '100%', height: '100%'}} />
                 {Courses.map((course, index) => (
-                    <PointMapClick key={index} x={course.PositionBadgeMap.x} y={course.PositionBadgeMap.y} imageSrc={course.Badge} text={course.name} route={`/MyCourses/${course.id}`} />
+                    <PointMapClick key={index} x={course.PositionBadgeMap.x} y={course.PositionBadgeMap.y} imageSrc={course.Badge} text={course.title} route={`/MyCourses/${course.id}`} />
                 ))}
                    
             </div>

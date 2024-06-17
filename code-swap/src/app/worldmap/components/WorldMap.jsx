@@ -1,6 +1,6 @@
 'use client';
 import Controller from '@/Controller/controller';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
@@ -41,19 +41,28 @@ const ImageMap = styled.img`
     }
 `;
 
-export function PointMapClick({ x, y, imageSrc, text, route, mapRef }) {
+export function PointMapClick({ x, y, imageSrc, text, route, mapRef, category, handleCategoryClick }) {
     const [showTooltip, setShowTooltip] = useState(false);
+    
     //const [courses, setCourses] = useState([]);
+    const queryClient = useQueryClient();
 
     const router = useRouter();
     let pointRef = useRef(null);
-
     // Função para redirecionar para outra página
     const handlePointClick = () => {
+
+        //salvar categoria selecionada no cache com o id da categoria e os dados da categoria
+        queryClient.setQueryData(['categorySelected', category.id], category);
+
         router.push(route);
     }
 
+
     useEffect(() => {
+
+        
+
         const point = pointRef.current;
 
         if (point) {
@@ -77,6 +86,20 @@ export default function WorldMap() {
     const mapRef = useRef(null);
 
     const controller = Controller();
+    const queryClient = useQueryClient();
+
+    
+
+
+
+    const [categorySelected, setCategorySelected] = useState(null);
+
+     function handleCategoryClick(category){
+        console.log('category', category);
+
+        //salvar categoria selecionada no cache com o id da categoria e os dados da categoria
+        queryClient.setQueryData(['categorySelected', category.id], category);
+    }
 
 
 
@@ -105,7 +128,7 @@ export default function WorldMap() {
                             const y = category.PositionBadgeMap?.y || 0;
 
                             return (
-                                <PointMapClick key={index} x={x} y={y} imageSrc={category.Badge} text={category.name} route={`/worldmap/${category.id}`} mapRef={mapRef} />
+                                <PointMapClick key={index} x={x} y={y} imageSrc={category.Badge} category={category} text={category.name} route={`/worldmap/${category.id}`} mapRef={mapRef} />
                             );
                         })}
 
