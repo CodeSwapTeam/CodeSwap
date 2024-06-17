@@ -41,6 +41,8 @@ const Image = styled.img`
     }
 `;
 
+
+
 export function PointMapClick({ x, y, imageSrc, text, route, mapRef }) {
     const [showTooltip, setShowTooltip] = useState(false);
     //const [courses, setCourses] = useState([]);
@@ -82,6 +84,8 @@ export default function DistricMap() {
 
     const { DistrictMap } = useParams();
 
+    
+
 
         const { data: coursesData } = useQuery({
             queryKey: ['DistrictMap-MyCourses'],
@@ -97,6 +101,7 @@ export default function DistricMap() {
         <div style={{display:"flex", justifyContent:"center", marginTop:'70px'}}>
             <div style={{width:'70%', height:"60%", position: 'relative'}} ref={mapRef}>
                 <img src="/assets/mapV1.jpg" alt="Map" style={{width: '100%', height: '100%'}} />
+                
                 { coursesData && (
                     <div>
                         <PointMapClick x={48} y={50} 

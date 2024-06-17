@@ -43,6 +43,38 @@ const Tooltip = styled.div`
     z-index: 1;
 `;
 
+const GridCell = styled.div`
+    width: 5%; // Ajuste para o tamanho desejado da célula do grid
+    height: 10%; // Ajuste para o tamanho desejado da célula do grid
+    position: absolute;
+    background-color: transparent;
+    transform: rotateX(45deg) rotateZ(45deg);
+
+    &:hover {
+        // boxshadow neon azul bem leve e suave
+        box-shadow: 0 0 10px rgba(0, 0, 200, 5);
+
+    }
+`;
+
+export function Grid({ onCellClick }) {
+    const cells = [];
+
+    for (let y = 0; y < 20; y++) { // Ajuste para o número desejado de células do grid
+        for (let x = 0; x < 20; x++) { // Ajuste para o número desejado de células do grid
+            cells.push(
+                <GridCell
+                    key={`${x}-${y}`}
+                    style={{ left: `${x * 5}%`, top: `${y * 5}%` }} // Ajuste para o tamanho desejado da célula do grid
+                    onClick={() => onCellClick(x, y)}
+                />
+            );
+        }
+    }
+
+    return <>{cells}</>;
+}
+
 export function PointMapClick({ x, y, imageSrc, text, route, mapRef }) {
     const [showTooltip, setShowTooltip] = useState(false);
     //const [courses, setCourses] = useState([]);
@@ -103,11 +135,17 @@ const Districts = () => {
     }
     , [mapRoute, queryClient]);
 
+
+    const handleCellClick = (x, y) => {
+        console.log(`Cell clicked at position: (${x}, ${y})`);
+    };
+
     return (
         <>
         { Courses && (
         <div style={{display:"flex", justifyContent:"center", marginTop:'70px'}}>
             <div style={{width:'70%', height:"60%", position: 'relative'}} >
+            <Grid onCellClick={handleCellClick} />
                 <img src={categorySelect?.mapImage} alt="Map" style={{width: '100%', height: '100%'}} />
                 {Courses.map((course, index) => (
                     <PointMapClick key={index} x={course.PositionBadgeMap.x} y={course.PositionBadgeMap.y} imageSrc={course.Badge} text={course.title} route={`/MyCourses/${course.id}`} />

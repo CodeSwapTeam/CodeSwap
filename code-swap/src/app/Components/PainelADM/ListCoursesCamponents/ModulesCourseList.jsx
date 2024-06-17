@@ -3,7 +3,7 @@ import { ContextDataCache } from "@/app/Providers/ContextDataCache";
 import AddModuleModal from "../../Modals/modalAddModule";
 import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
 import Controller from '@/Controller/controller';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ManageModule from '../ManageModule/ManageModule';
 
 
@@ -134,12 +134,48 @@ const Title = styled.h4`
   font-size: calc(1.2em + 1.2vw); // Ajusta o tamanho da fonte com base na largura da viewport
 `;
 
-export default function ModulesCourseList({ setSelectedPainel }) {
+// Subject
+const Subject = () => {
+  const observers = useRef([]);
 
+  const subscribe = (observer) => {
+    observers.current = [...observers.current, observer];
+  };
+
+  const unsubscribe = (observer) => {
+    observers.current = observers.current.filter((obs) => obs !== observer);
+  };
+
+  const notify = (data) => {
+    observers.current.forEach((observer) => observer(data));
+  };
+
+  return { subscribe, unsubscribe, notify };
+};
+
+
+export default function ModulesCourseList({ panelSubject }) {
+  
   const controller = Controller();
   const queryClient = useQueryClient();
-
   const courseSelected = queryClient.getQueryData(["Course-Selected"]);
+  const subject = Subject();
+
+  useEffect(() => {
+    // Observer
+    const observer = (data) => {
+      console.log('Notified with data:', data);
+      // Atualizar o painel selecionado
+      panelSubject.notify('ModuleDescription');
+    };
+
+    subject.subscribe(observer);
+
+    return () => {
+      subject.unsubscribe(observer);
+    };
+  }, [subject]);
+
 
   //Função para buscar os módulos de um curso
   const { data: modules } = useQuery({
@@ -172,31 +208,12 @@ export default function ModulesCourseList({ setSelectedPainel }) {
   });
 
 
-  const handleManageModule = async (moduleId) => {
-    // Obter o array de módulos cacheados
-    let modulesCached = queryClient.getQueryData(['Modules-Cached']) || [];
-
-    // Tentar encontrar o módulo no cache
-    let module = modulesCached.find(module => module.id === moduleId);
-    if(module){
-      // Setar o módulo selecionado no estado local
-      queryClient.setQueryData(['Module-Selected'], module);
-  
-      // Atualizar o painel selecionado
-      setSelectedPainel('ModuleDescription');
-    }
-    // Se o módulo não estiver no cache, buscar o módulo na API
-    if (!module) {
-        module = await controller.manageModules.GetModuleById(moduleId);
-        // Adicionar o novo módulo ao array de módulos cacheados
-        modulesCached = [...modulesCached, module[0]];
-
-        // Atualizar o cache com o novo array de módulos
-        queryClient.setQueryData(['Modules-Cached'], modulesCached);
+  const handleManageModule = async (module, controller) => {  
+        module = await controller.manageModules.GetModuleById(module.id);
         queryClient.setQueryData(['Module-Selected'], module[0]);
         // Atualizar o painel selecionado
-      setSelectedPainel('ModuleDescription');
-    }
+        panelSubject.notify('ModuleDescription');
+    
 
 };
 
@@ -205,7 +222,7 @@ export default function ModulesCourseList({ setSelectedPainel }) {
 
       <>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Button onClick={() => { setSelectedPainel('CourseDescription') }} >Voltar </Button>
+          <Button onClick={() => { panelSubject.notify('ModuleDescription')}} >Voltar </Button>
           <Title>{courseSelected?.title} </Title>
           <div></div>
         </div>
@@ -215,7 +232,7 @@ export default function ModulesCourseList({ setSelectedPainel }) {
               <ModuleContainer key={index}>
                 <ModuleTitle>{module.title}</ModuleTitle>
                 <p>{module.description}</p>
-                <ManageButton onClick={() => { handleManageModule(module.id) }}>Gerenciar Módulo</ManageButton>
+                <ManageButton onClick={() => { handleManageModule(module, controller) }}>Gerenciar Módulo</ManageButton>
                 <DeleteButton onClick={() => handleDeleteModule.mutate(module)}>Excluir Módulo</DeleteButton>
               </ModuleContainer>
             ))
