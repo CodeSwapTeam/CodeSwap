@@ -496,6 +496,9 @@ const Page = () => {
                                                     {module.lessons && module.lessons.map((lesson, index) => (
                                                         <div key={index}>
                                                             <h3 style={{ textAlign: 'left' }}>{lesson.nameLesson}</h3>
+                                                            <p>
+                                                                {lesson.description}
+                                                            </p>
                                                         </div>
                                                     ))}
                                                 </LessonsModule>
