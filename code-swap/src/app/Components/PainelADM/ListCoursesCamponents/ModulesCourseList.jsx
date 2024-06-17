@@ -3,7 +3,7 @@ import { ContextDataCache } from "@/app/Providers/ContextDataCache";
 import AddModuleModal from "../../Modals/modalAddModule";
 import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
 import Controller from '@/Controller/controller';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ManageModule from '../ManageModule/ManageModule';
 
 
@@ -154,7 +154,7 @@ const Subject = () => {
 };
 
 
-export default function ModulesCourseList({ panelSubject }) {
+export default function ModulesCourseList({ setSelectedPainel, panelSubject}) {
   
   const controller = Controller();
   const queryClient = useQueryClient();
@@ -166,7 +166,7 @@ export default function ModulesCourseList({ panelSubject }) {
     const observer = (data) => {
       console.log('Notified with data:', data);
       // Atualizar o painel selecionado
-      panelSubject.notify('ModuleDescription');
+      setSelectedPainel('ModuleDescription');
     };
 
     subject.subscribe(observer);
@@ -211,8 +211,8 @@ export default function ModulesCourseList({ panelSubject }) {
   const handleManageModule = async (module, controller) => {  
         module = await controller.manageModules.GetModuleById(module.id);
         queryClient.setQueryData(['Module-Selected'], module[0]);
-        // Atualizar o painel selecionado
-        panelSubject.notify('ModuleDescription');
+        
+
     
 
 };
