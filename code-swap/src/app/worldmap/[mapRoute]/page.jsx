@@ -7,17 +7,19 @@ import CoursesCategoryList from "@/app/Components/ListData-Component/ListData";
 import styled from "styled-components";
 //importar imagem 
 import mapclick2 from "../../../../public/assets/mapclick2.png";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+
 
 
 const Point = styled.div`
-    width: 15%; // 5% da largura do elemento pai
-    height: 25%; // 5% da altura do elemento pai
+    width: 10%; 
+    height: 15%;
     position: absolute;
     cursor: pointer;
     background-color: transparent;
 `;
 
-const ImageMap = styled.img`
+const ImagePointBadge = styled.img`
     width: 100%;
     height: 100%;
     
@@ -34,13 +36,16 @@ const Tooltip = styled.div`
     left: 50%;
     transform: translateX(-50%);
     margin-bottom: 10px;
-    background-color: #333;
+    //background-color: quase transparente
+   // background-color: rgba(0, 0, 0, 0.4);
     color: #fff;
     padding: 10px;
-    border-radius: 5px;
     width: 200px;
     text-align: center;
     z-index: 1;
+    //text-shddow azul
+    text-shadow: 0 0 10px rgba(0, 0, 255, 5);
+    font-size: 1.5rem;
 `;
 
 const GridCell = styled.div`
@@ -51,8 +56,8 @@ const GridCell = styled.div`
     transform: rotateX(45deg) rotateZ(45deg);
 
     &:hover {
-        // boxshadow neon azul bem leve e suave
-        box-shadow: 0 0 10px rgba(0, 0, 200, 5);
+        // boxshadow neon verde bem leve e suave
+        box-shadow: 0 0 10px rgba(0, 200, 0, 5);
 
     }
 `;
@@ -62,14 +67,16 @@ const MapContainer = styled.div`
     width: 70%;
     height: 60%;
     position: relative;
-    overflow: scroll; // Permite rolagem
+    border: 1px solid red;
     cursor: grab; // Muda o cursor para um punho fechado quando arrastando
 `;
 
 // Adicione estes estilos para a imagem do mapa
 const MapImage = styled.img`
-    width: 100%;
-    height: 100%;
+    box-shadow: 0 0 10px rgba(0, 200, 0, 5); //
+    
+    width: 70%;
+    height: 60%;
 `;
 
 export function Grid({ onCellClick }) {
@@ -96,7 +103,7 @@ export function PointMapClick({ x, y, imageSrc, text, route, mapRef }) {
 
     const router = useRouter();
     let pointRef = useRef(null);
-    
+
     // Função para redirecionar para outra página
     const handlePointClick = () => {
         router.push(route);
@@ -115,7 +122,7 @@ export function PointMapClick({ x, y, imageSrc, text, route, mapRef }) {
 
     return (
         <Point ref={pointRef} onMouseEnter={() => setShowTooltip(true)} onMouseLeave={() => setShowTooltip(false)} onClick={handlePointClick}>
-            <ImageMap src={imageSrc} alt="Point on Map" />
+            <ImagePointBadge src={imageSrc} alt="Point on Map" />
             {showTooltip && <Tooltip>{text}</Tooltip>}
         </Point>
     )
@@ -133,7 +140,7 @@ const Districts = () => {
         enabled: !!mapRoute, // Só executa a query se mapRoute for diferente de null      
     });
 
-    const { data: categorySelect} = useQuery({
+    const { data: categorySelect } = useQuery({
         queryKey: ['categorySelected', mapRoute],
         queryFn: async () => {
             const category = queryClient.getQueryData(['categorySelected', mapRoute])
@@ -148,27 +155,38 @@ const Districts = () => {
             queryClient.invalidateQueries('courses');
         }
     }
-    , [mapRoute, queryClient]);
+        , [mapRoute, queryClient]);
 
 
     const handleCellClick = (x, y) => {
         console.log(`Cell clicked at position: (${x}, ${y})`);
     };
 
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const imageRef = useRef();
+    const [bounds, setBounds] = useState({ top: 0, right: 0, bottom: 0, left: 0 });
+
+    useEffect(() => {
+        if (imageRef.current) {
+            const { width, height } = imageRef.current.getBoundingClientRect();
+            setBounds({ top: -height, right: width, bottom: height, left: -width });
+        }
+    }, [imageRef.current]);
+
+
     return (
-        <>
-        { Courses && (
-        <div style={{display:"flex", justifyContent:"center", marginTop:'70px'}}>
-            <MapContainer>
-                <Grid onCellClick={handleCellClick} />
-                <MapImage src={categorySelect?.mapImage} alt="Map" />
-                {Courses.map((course, index) => (
-                    <PointMapClick key={index} x={course.PositionBadgeMap.x} y={course.PositionBadgeMap.y} imageSrc={course.Badge} text={course.title} route={`/MyCourses/${course.id}`} />
-                ))}
-            </MapContainer>
+        <div >
+            {Courses && (
+                <div style={{ display: "flex", justifyContent: "center", marginTop: '70px' }}>
+                    <MapImage src={categorySelect?.mapImage} alt="Map" />
+                        <Grid onCellClick={handleCellClick} />
+                        {Courses.map((course, index) => (
+                            <PointMapClick key={index} x={course.PositionBadgeMap.x} y={course.PositionBadgeMap.y} imageSrc={course.Badge} text={course.title} route={`/MyCourses/${course.id}`} />
+                        ))}
+                  
+                </div>
+            )}
         </div>
-        )}
-        </>
 
 
     );

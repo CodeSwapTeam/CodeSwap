@@ -3,16 +3,23 @@ import Controller from '@/Controller/controller';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
+import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 import styled from 'styled-components';
 
 
 
 const Point = styled.div`
-    width: 15%; // 5% da largura do elemento pai
-    height: 25%; // 5% da altura do elemento pai
+    width: 10%; // 5% da largura do elemento pai
+    height: 15%; // 5% da altura do elemento pai
     position: absolute;
     cursor: pointer;
     background-color: transparent;
+    
+    transition: transform 0.3s ease-in-out;
+
+    &:hover {
+        transform: scale(1.05);
+    }
 `;
 
 const Tooltip = styled.div`
@@ -21,25 +28,32 @@ const Tooltip = styled.div`
     left: 50%;
     transform: translateX(-50%);
     margin-bottom: 10px;
-    background-color: #333;
+    //background-color: quase transparente
+   // background-color: rgba(0, 0, 0, 0.4);
     color: #fff;
     padding: 10px;
-    border-radius: 5px;
     width: 200px;
     text-align: center;
     z-index: 1;
+    //text-shddow azul
+    text-shadow: 0 0 10px rgba(0, 0, 255, 5);
+    font-size: 1.5rem;
 `;
 
 const ImageMap = styled.img`
     width: 100%;
     height: 100%;
-    
-    transition: transform 0.3s ease-in-out;
 
-    &:hover {
-        transform: scale(1.05);
-    }
 `;
+
+const MapContainer = styled.div`
+    width: 70%;
+    height: 60%;
+    position: relative;
+    border: 1px solid red;
+    cursor: grab; // Muda o cursor para um punho fechado quando arrastando
+    
+    `;
 
 export function PointMapClick({ x, y, imageSrc, text, route, mapRef, category, handleCategoryClick }) {
     const [showTooltip, setShowTooltip] = useState(false);
@@ -88,6 +102,9 @@ export default function WorldMap() {
     const controller = Controller();
     const queryClient = useQueryClient();
 
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const imageRef = useRef();
+
     
 
 
@@ -113,6 +130,17 @@ export default function WorldMap() {
         staleTime: 1000 * 60 * 5 // 5 minutos
     });
 
+    
+
+    
+
+    useEffect(() => {
+        if (imageRef.current) {
+            const { width, height } = imageRef.current.getBoundingClientRect();
+            setBounds({ top: -height, right: width, bottom: height, left: -width });
+        }
+    }, [imageRef.current]);
+
     if (isLoading) return <h1>Carregando...</h1>;
 
     return (// 48 50
@@ -120,19 +148,38 @@ export default function WorldMap() {
 
             {categoriesData && (
                 <div style={{ display: "flex", justifyContent: "center", marginTop: '70px' }}>
-                    <div style={{ width: '70%', height: "60%", position: 'relative' }} ref={mapRef}>
-                        <img src="/assets/mapV1.jpg" alt="Map" style={{ width: '100%', height: '100%' }} />
+                    <MapContainer>
+                        <TransformWrapper
+                            positionX={position.x}
+                            positionY={position.y}
+                            //limitToBounds={true} // Limita o zoom e o pan para dentro dos limites do elemento filho
+                            //limitToWrapper={true}// Limita o zoom e o pan para dentro dos limites do elemento pai
+                           // wheel={{ enabled: true }} // Habilita o zoom com a roda do mouse
+                            //panning={{ enabled: true }} // Habilita o pan
+                           // centerOnInit={true} // Centraliza o conteúdo na inicialização
+                           disablePadding={true}
+                        >
 
-                        {categoriesData.map((category, index) => {
-                            const x = category.PositionBadgeMap?.x || 0;
-                            const y = category.PositionBadgeMap?.y || 0;
+                            <TransformComponent>
+                                <div  ref={mapRef} style={{width:"100%"}}>
+                                    <img src="/assets/mapV1.jpg" alt="Map" style={{ width: '100%', height: '100%' }} />
 
-                            return (
-                                <PointMapClick key={index} x={x} y={y} imageSrc={category.Badge} category={category} text={category.name} route={`/worldmap/${category.id}`} mapRef={mapRef} />
-                            );
-                        })}
+                                    {categoriesData.map((category, index) => {
+                                        const x = category.PositionBadgeMap?.x || 0;
+                                        const y = category.PositionBadgeMap?.y || 0;
 
-                    </div>
+                                        return (
+                                            <React.Fragment key={index}>
+                                              <PointMapClick x={x} y={y} imageSrc={category.Badge} category={category} text={category.name} route={`/worldmap/${category.id}`} mapRef={mapRef} /> 
+                                            </React.Fragment>
+                                        );
+                                    })}
+
+                                </div>
+                            </TransformComponent>
+
+                        </TransformWrapper>
+                    </MapContainer>
                 </div>
             )}
         </>
