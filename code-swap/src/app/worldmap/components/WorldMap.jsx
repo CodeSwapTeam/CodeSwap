@@ -14,7 +14,6 @@ const Point = styled.div`
     position: absolute;
     cursor: pointer;
     background-color: transparent;
-    
     transition: transform 0.3s ease-in-out;
 
     &:hover {
@@ -56,36 +55,25 @@ const MapContainer = styled.div`
     `;
 
 export function PointMapClick({ x, y, imageSrc, text, route, mapRef, category, handleCategoryClick }) {
+
     const [showTooltip, setShowTooltip] = useState(false);
-    
-    //const [courses, setCourses] = useState([]);
     const queryClient = useQueryClient();
 
     const router = useRouter();
     let pointRef = useRef(null);
-    // Função para redirecionar para outra página
+
     const handlePointClick = () => {
-
-        //salvar categoria selecionada no cache com o id da categoria e os dados da categoria
         queryClient.setQueryData(['categorySelected', category.id], category);
-
         router.push(route);
     }
 
-
     useEffect(() => {
-
-        
-
         const point = pointRef.current;
-
         if (point) {
             point.style.left = `${x}%`;
             point.style.top = `${y}%`;
         }
     }, [x, y]);
-
-
 
     return (
         <Point ref={pointRef} onMouseEnter={() => setShowTooltip(true)} onMouseLeave={() => setShowTooltip(false)} onClick={handlePointClick}>
@@ -101,24 +89,8 @@ export default function WorldMap() {
 
     const controller = Controller();
     const queryClient = useQueryClient();
-
-    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const position = { x: 0, y: 0 };
     const imageRef = useRef();
-
-    
-
-
-
-    const [categorySelected, setCategorySelected] = useState(null);
-
-     function handleCategoryClick(category){
-        console.log('category', category);
-
-        //salvar categoria selecionada no cache com o id da categoria e os dados da categoria
-        queryClient.setQueryData(['categorySelected', category.id], category);
-    }
-
-
 
     const { data: categoriesData, isLoading } = useQuery({
         queryKey: ['All-Categories-MyCourses'],
@@ -130,10 +102,6 @@ export default function WorldMap() {
         staleTime: 1000 * 60 * 5 // 5 minutos
     });
 
-    
-
-    
-
     useEffect(() => {
         if (imageRef.current) {
             const { width, height } = imageRef.current.getBoundingClientRect();
@@ -143,25 +111,21 @@ export default function WorldMap() {
 
     if (isLoading) return <h1>Carregando...</h1>;
 
-    return (// 48 50
+    return (
         <>
-
             {categoriesData && (
                 <div style={{ display: "flex", justifyContent: "center", marginTop: '70px' }}>
                     <MapContainer>
                         <TransformWrapper
                             positionX={position.x}
                             positionY={position.y}
-                            //limitToBounds={true} // Limita o zoom e o pan para dentro dos limites do elemento filho
-                            //limitToWrapper={true}// Limita o zoom e o pan para dentro dos limites do elemento pai
-                           // wheel={{ enabled: true }} // Habilita o zoom com a roda do mouse
-                            //panning={{ enabled: true }} // Habilita o pan
-                           // centerOnInit={true} // Centraliza o conteúdo na inicialização
-                           disablePadding={true}
+                            disablePadding={true}
+                             
+                            maxScale={2}
                         >
 
                             <TransformComponent>
-                                <div  ref={mapRef} style={{width:"100%"}}>
+                                <div ref={mapRef} style={{ width: "100%" }}>
                                     <img src="/assets/mapV1.jpg" alt="Map" style={{ width: '100%', height: '100%' }} />
 
                                     {categoriesData.map((category, index) => {
@@ -170,7 +134,7 @@ export default function WorldMap() {
 
                                         return (
                                             <React.Fragment key={index}>
-                                              <PointMapClick x={x} y={y} imageSrc={category.Badge} category={category} text={category.name} route={`/worldmap/${category.id}`} mapRef={mapRef} /> 
+                                                <PointMapClick x={x} y={y} imageSrc={category.Badge} category={category} text={category.name} route={`/worldmap/${category.id}`} mapRef={mapRef} />
                                             </React.Fragment>
                                         );
                                     })}

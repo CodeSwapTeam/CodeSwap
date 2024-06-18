@@ -12,22 +12,21 @@ import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 
 const Point = styled.div`
-    width: 10%; 
-    height: 15%;
+    width: 10%; // 5% da largura do elemento pai
+    height: 15%; // 5% da altura do elemento pai
     position: absolute;
     cursor: pointer;
     background-color: transparent;
-`;
-
-const ImagePointBadge = styled.img`
-    width: 100%;
-    height: 100%;
-    
     transition: transform 0.3s ease-in-out;
 
     &:hover {
         transform: scale(1.05);
     }
+`;
+
+const ImagePointBadge = styled.img`
+    width: 100%;
+    height: 100%;
 `;
 
 const Tooltip = styled.div`
@@ -60,49 +59,56 @@ const GridCell = styled.div`
         box-shadow: 0 0 10px rgba(0, 200, 0, 5);
 
     }
+;
 `;
 
-// Adicione estes estilos para a div pai
 const MapContainer = styled.div`
-    width: 70%;
-    height: 60%;
     position: relative;
+    width: 70%; // Este pode ser qualquer porcentagem que você deseja
+    height: 60%; // Redefina a altura
     border: 1px solid red;
-    cursor: grab; // Muda o cursor para um punho fechado quando arrastando
 `;
 
-// Adicione estes estilos para a imagem do mapa
 const MapImage = styled.img`
-    box-shadow: 0 0 10px rgba(0, 200, 0, 5); //
-    
-    width: 70%;
-    height: 60%;
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: relative;
 `;
 
-export function Grid({ onCellClick }) {
+const Grid = styled.div`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+`;
+
+const GridComponent = ({ onCellClick, gridSize }) => {
     const cells = [];
 
-    for (let y = 0; y < 20; y++) { // Ajuste para o número desejado de células do grid
-        for (let x = 0; x < 20; x++) { // Ajuste para o número desejado de células do grid
+    for (let y = 0; y < gridSize.height; y++) {
+        for (let x = 0; x < gridSize.width; x++) {
             cells.push(
                 <GridCell
                     key={`${x}-${y}`}
-                    style={{ left: `${x * 5}%`, top: `${y * 5}%` }} // Ajuste para o tamanho desejado da célula do grid
+                    style={{ left: `${x * 5}%`, top: `${y * 5}%` }}
                     onClick={() => onCellClick(x, y)}
                 />
             );
         }
     }
 
-    return <>{cells}</>;
-}
+    return <Grid>{cells}</Grid>;
+};
+
 
 export function PointMapClick({ x, y, imageSrc, text, route, mapRef }) {
     const [showTooltip, setShowTooltip] = useState(false);
     //const [courses, setCourses] = useState([]);
 
     const router = useRouter();
-    let pointRef = useRef(null);
+    let pointEventRef = useRef(null);
 
     // Função para redirecionar para outra página
     const handlePointClick = () => {
@@ -110,7 +116,7 @@ export function PointMapClick({ x, y, imageSrc, text, route, mapRef }) {
     }
 
     useEffect(() => {
-        const point = pointRef.current;
+        const point = pointEventRef.current;
 
         if (point) {
             point.style.left = `${x}%`;
@@ -119,9 +125,8 @@ export function PointMapClick({ x, y, imageSrc, text, route, mapRef }) {
     }, [x, y]);
 
 
-
     return (
-        <Point ref={pointRef} onMouseEnter={() => setShowTooltip(true)} onMouseLeave={() => setShowTooltip(false)} onClick={handlePointClick}>
+        <Point ref={pointEventRef} onMouseEnter={() => setShowTooltip(true)} onMouseLeave={() => setShowTooltip(false)} onClick={handlePointClick}>
             <ImagePointBadge src={imageSrc} alt="Point on Map" />
             {showTooltip && <Tooltip>{text}</Tooltip>}
         </Point>
@@ -132,6 +137,7 @@ const Districts = () => {
     const { mapRoute } = useParams();
     const controller = Controller();
     const queryClient = useQueryClient();
+    const gridSize = { width: 20, height: 20 };
 
     const { data: Courses, isLoading } = useQuery({
         queryKey: ['courses', mapRoute],
@@ -157,33 +163,22 @@ const Districts = () => {
     }
         , [mapRoute, queryClient]);
 
-
     const handleCellClick = (x, y) => {
         console.log(`Cell clicked at position: (${x}, ${y})`);
     };
 
-    const [position, setPosition] = useState({ x: 0, y: 0 });
-    const imageRef = useRef();
-    const [bounds, setBounds] = useState({ top: 0, right: 0, bottom: 0, left: 0 });
-
-    useEffect(() => {
-        if (imageRef.current) {
-            const { width, height } = imageRef.current.getBoundingClientRect();
-            setBounds({ top: -height, right: width, bottom: height, left: -width });
-        }
-    }, [imageRef.current]);
-
-
     return (
-        <div >
+        <div>
             {Courses && (
                 <div style={{ display: "flex", justifyContent: "center", marginTop: '70px' }}>
-                    <MapImage src={categorySelect?.mapImage} alt="Map" />
-                        <Grid onCellClick={handleCellClick} />
+                    <MapContainer>
+                        <MapImage src={categorySelect?.mapImage} alt="Map" />
+                        <GridComponent onCellClick={handleCellClick} gridSize={gridSize} />
                         {Courses.map((course, index) => (
-                            <PointMapClick key={index} x={course.PositionBadgeMap.x} y={course.PositionBadgeMap.y} imageSrc={course.Badge} text={course.title} route={`/MyCourses/${course.id}`} />
-                        ))}
-                  
+                        <PointMapClick key={index} x={course.PositionBadgeMap.x} y={course.PositionBadgeMap.y} imageSrc={course.Badge} text={course.title} route={`/MyCourses/${course.id}`} />
+                    ))}
+                    </MapContainer>
+                    
                 </div>
             )}
         </div>
