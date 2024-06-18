@@ -57,6 +57,21 @@ const GridCell = styled.div`
     }
 `;
 
+// Adicione estes estilos para a div pai
+const MapContainer = styled.div`
+    width: 70%;
+    height: 60%;
+    position: relative;
+    overflow: scroll; // Permite rolagem
+    cursor: grab; // Muda o cursor para um punho fechado quando arrastando
+`;
+
+// Adicione estes estilos para a imagem do mapa
+const MapImage = styled.img`
+    width: 100%;
+    height: 100%;
+`;
+
 export function Grid({ onCellClick }) {
     const cells = [];
 
@@ -144,14 +159,13 @@ const Districts = () => {
         <>
         { Courses && (
         <div style={{display:"flex", justifyContent:"center", marginTop:'70px'}}>
-            <div style={{width:'70%', height:"60%", position: 'relative'}} >
-            <Grid onCellClick={handleCellClick} />
-                <img src={categorySelect?.mapImage} alt="Map" style={{width: '100%', height: '100%'}} />
+            <MapContainer>
+                <Grid onCellClick={handleCellClick} />
+                <MapImage src={categorySelect?.mapImage} alt="Map" />
                 {Courses.map((course, index) => (
                     <PointMapClick key={index} x={course.PositionBadgeMap.x} y={course.PositionBadgeMap.y} imageSrc={course.Badge} text={course.title} route={`/MyCourses/${course.id}`} />
                 ))}
-                   
-            </div>
+            </MapContainer>
         </div>
         )}
         </>
