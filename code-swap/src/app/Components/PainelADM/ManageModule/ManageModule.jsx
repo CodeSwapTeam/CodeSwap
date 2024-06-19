@@ -259,7 +259,7 @@ export default function ManageModule({ setSelectedPainel }) {
       queryClient.setQueryData(['Lessons-Module'], Lessons);
       console.log(module);
 
-      return module || {}; // retorna um objeto vazio se moduleSelected for undefined
+      return module || {};
     }
   });
 
@@ -307,22 +307,8 @@ export default function ManageModule({ setSelectedPainel }) {
     moduleUpdated = { ...moduleUpdated, ...updatedModule };
     queryClient.setQueryData(['Module-Selected'], moduleUpdated);
 
-    //Atualizar o  modulos em ["Modules-Cached"] com o novo modulo atualizado
-    let modulesCached = await queryClient.getQueryData(["Modules-Cached"]);
-
-    //procurar dentro  do array o objeto do modulo no cache que contenha o id do modulo selecionado
-    const moduleCache = modulesCached.find(module => module.id === moduleSelected.id);
-
-    //se o modulo estiver no cache, atualizar o modulo no cache
-    if (moduleCache) {
-      const modulesUpdated = modulesCached.map(module => {
-        if (module.id === moduleSelected.id) {
-          return { ...module, ...updatedModule };
-        }
-        return module;
-      });
-      queryClient.setQueryData(["Modules-Cached"], modulesUpdated);
-    }
+    
+    
   };
 
   //Função apra deletar a aula
@@ -389,6 +375,8 @@ export default function ManageModule({ setSelectedPainel }) {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setThumbnailModule(downloadURL);
            controller.manageModules.AddThumbnailModule(moduleSelected.id, downloadURL);
+           console.log('File available at', downloadURL);
+           console.log('moduleSelected.id', moduleSelected.id);
         });
         //limpar o campo de upload
         e.target.file.value = '';

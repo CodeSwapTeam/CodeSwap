@@ -212,13 +212,14 @@ export async function POST(NextRequest) {
         }
         case 'addThumbnailModule': {//Adicionar thumbnail ao módulo
             console.log('addThumbnailModule................................:', data);
+            const { thumbnail, moduleId } = data;
             try {
-                await updateDoc(doc(db, 'Modules', data.moduleId), {
-                    thumbnail: data.thumbnail
+                await updateDoc(doc(db, 'Modules', moduleId), {
+                    thumbnail: thumbnail
                 });
 
                 //pegar o id do curso do modulo
-                const moduleDoc = doc(db, 'Modules', data.moduleId);
+                const moduleDoc = doc(db, 'Modules', moduleId);
                 const moduleSnap = await getDoc(moduleDoc);
                 const module = moduleSnap.data();
                 const courseId = module.courseId;
@@ -228,7 +229,7 @@ export async function POST(NextRequest) {
                 const courseSnap = await getDoc(courseDoc);
                 const course = courseSnap.data();
                 const moduleCourse = course.modules.find(module => module.id === data.moduleId);
-                moduleCourse.thumbnail = data.thumbnail;
+                moduleCourse.thumbnail = thumbnail;
 
                 //atualizar o modulo no array de modulos do curso
                 await updateDoc(courseDoc, {

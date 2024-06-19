@@ -121,7 +121,7 @@ export default function WorldMap() {
                             positionY={position.y}
                             disablePadding={true}
                              
-                            maxScale={2}
+                            maxScale={10}
                         >
 
                             <TransformComponent>

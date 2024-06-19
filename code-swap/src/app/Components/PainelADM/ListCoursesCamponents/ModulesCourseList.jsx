@@ -186,7 +186,7 @@ export default function ModulesCourseList({ setSelectedPainel, panelSubject}) {
         const modules = await fetch(`/api/gets?id=${courseSelected.id}&type=courseId`);
         
         const data = await modules.json();
-        console.log(data[0].modules);
+        //console.log(data[0].modules);
         return data[0].modules;
 
       } catch (error) {
@@ -208,13 +208,12 @@ export default function ModulesCourseList({ setSelectedPainel, panelSubject}) {
   });
 
 
-  const handleManageModule = async (module, controller) => {  
-        module = await controller.manageModules.GetModuleById(module.id);
-        queryClient.setQueryData(['Module-Selected'], module[0]);
-        
-
-    
-
+  const handleManageModule = async (module) => {  
+    //console.log('module:', module);
+      const controller = Controller();
+       const moduleData = await controller.manageModules.GetModuleById(module.id);
+        console.log('module:', moduleData[0]);
+        queryClient.setQueryData(['Module-Selected'], moduleData[0]);
 };
 
   return (
@@ -232,7 +231,7 @@ export default function ModulesCourseList({ setSelectedPainel, panelSubject}) {
               <ModuleContainer key={index}>
                 <ModuleTitle>{module.title}</ModuleTitle>
                 <p>{module.description}</p>
-                <ManageButton onClick={() => { handleManageModule(module, controller) }}>Gerenciar Módulo</ManageButton>
+                <ManageButton onClick={() => { handleManageModule(module), setSelectedPainel('ModuleDescription') }}>Gerenciar Módulo</ManageButton>
                 <DeleteButton onClick={() => handleDeleteModule.mutate(module)}>Excluir Módulo</DeleteButton>
               </ModuleContainer>
             ))
