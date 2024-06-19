@@ -192,6 +192,11 @@ export async function GetModulesCourseID(courseId) {
 
 //>>>>ALTERADO PARA API ROUTER<<<<função para adicionar uma thumbnail ao modulo
 export async function AddThumbnailModule(moduleId, thumbnail) {
+    console.log(moduleId, thumbnail);
+    let dataFetch = {
+        moduleId: moduleId,
+        thumbnail: thumbnail
+    }
     try {
         //////////////////////////////////////////////////////////////////////
         //>>>>ALTERADO PARA API ROUTER<<<<
@@ -201,7 +206,7 @@ export async function AddThumbnailModule(moduleId, thumbnail) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ moduleId, thumbnail })
+            body: JSON.stringify(dataFetch)
         });
 
         if (!response.ok) {
