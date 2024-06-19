@@ -49,7 +49,8 @@ const MapContainer = styled.div`
     width: 70%;
     height: 60%;
     position: relative;
-    border: 1px solid red;
+    //box-shadow suave verde
+    box-shadow: 0 0 10px rgba(0, 200, 0, 5);
     cursor: grab; // Muda o cursor para um punho fechado quando arrastando
     
     `;

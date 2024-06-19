@@ -52,7 +52,7 @@ const GridCell = styled.div`
     height: 10%; // Ajuste para o tamanho desejado da célula do grid
     position: absolute;
     background-color: transparent;
-    transform: rotateX(45deg) rotateZ(45deg);
+    transform: rotate(-60deg) skewY(30deg) rotateY(30deg);
 
     &:hover {
         // boxshadow neon verde bem leve e suave
@@ -66,7 +66,7 @@ const MapContainer = styled.div`
     position: relative;
     width: 70%; // Este pode ser qualquer porcentagem que você deseja
     height: 60%; // Redefina a altura
-    border: 1px solid red;
+    box-shadow: 0 0 10px rgba(0, 200, 0, 5);
 `;
 
 const MapImage = styled.img`
