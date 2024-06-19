@@ -81,6 +81,7 @@ function AddModuleModal() {
           queryClient.setQueryData(["Modules-Course"], modulesCourse);
         },
         onSuccess: (data) => {
+            queryClient.refetchQueries(["Modules-Course", courseSelected.id]);
         }
       });
 
@@ -110,7 +111,8 @@ function AddModuleModal() {
             courseId: courseSelected.id,
             id: '',
             permission: await permissionModule(),
-            lessons: []
+            lessons: [],
+            thumbnail: ''
         };
     
         const moduleID = await controller.manageModules.CreateModule(courseSelected.id, newModule);

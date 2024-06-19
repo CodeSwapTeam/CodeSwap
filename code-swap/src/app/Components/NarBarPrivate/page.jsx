@@ -281,6 +281,7 @@ const NavBarPrivate = (props) => {
               <NavBarLeftPRIVATE >
                 <Link href='/MyCourses'><NavButton>Meus Cursos</NavButton></Link>
                 <Link href='/FeedCommunity'><NavButton>Comunidade</NavButton></Link>
+                <Link href='/worldmap'><NavButton>World Map</NavButton></Link>
               </NavBarLeftPRIVATE>
 
               <NavBarSection width='20%' >

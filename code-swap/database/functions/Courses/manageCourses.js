@@ -1,4 +1,4 @@
-import { deleteDoc, doc, setDoc, updateDoc, addDoc, collection, arrayUnion, getDoc, where, getDocs } from "firebase/firestore";
+import { deleteDoc, doc, setDoc, updateDoc, addDoc, collection, arrayUnion, getDoc, where, getDocs, arrayRemove } from "firebase/firestore";
 import { db } from "../../firebase";
 import Controller from "@/Controller/controller";
 
@@ -26,6 +26,9 @@ export async function CreateCourse(formData) {
             category: formData.category,
             SequentialModule: formData.SequentialModule,
             modules: [],
+            Badge: formData.Badge,
+            PositionBadgeMap: formData.PositionBadgeMap,
+
         };
 
 
@@ -47,22 +50,6 @@ export async function CreateCourse(formData) {
         const data = await response.json();
         alert(data.message);
 
-/* 
-        const docRef = await addDoc(collection(db, 'Courses'), courseData);
-        //setar o id do curso com o id do documento
-        await updateDoc(doc(db, 'Courses', docRef.id), {
-            id: docRef.id
-        });
-        courseID = docRef.id;
-        
-        //adicionar no database em'categories' dentro de courses que é um array de objetos com o id do curso, o titulo e a descrição
-        await updateDoc(doc(db, 'Categories', courseData.category), {
-            //adicionar o id do curso no array de cursos da categoria
-            courses: arrayUnion({ id: docRef.id, title: courseData.title, description: courseData.description, imgUrlThumbnail: courseData.imgUrlThumbnail, status: courseData.status })
-        });
-
-        alert('Curso criado com sucesso'); */
-        //return courseID;
     }
     catch (error) {
         alert('Erro ao criar o curso, tente novamente!');
@@ -206,6 +193,17 @@ export async function UpdateCover(courseId, imgUrlCover) {
     }
 };
 
+//função para remover modulo dentro de curso
+export async function RemoveCourseModule(courseId, moduleId) {
+    const reponse = await fetch(`/api/delete?type=RemoveCourseModule`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ courseId, moduleId })
+    });
+
+}
 
 
 
@@ -214,7 +212,9 @@ export async function UpdateCover(courseId, imgUrlCover) {
 
 
 
-//--- NÃO IMPLEMENTADO --- função para buscar cursos pela categoria
+
+
+//---  --- função para buscar cursos pela categoria
 export async function GetCoursesByCategory(categoryId) {
     const courses = [];
     try {
@@ -222,7 +222,11 @@ export async function GetCoursesByCategory(categoryId) {
         querySnapshot.forEach((doc) => {
             courses.push(doc.data());
         });
-        return courses;
+        
+        //filtrar os cursos somente da categoria selecionada
+        const filteredCourses = courses.filter(course => course.category === categoryId);
+
+        return filteredCourses;
     }
     catch (error) {
         console.error('Erro ao buscar os cursos:', error);

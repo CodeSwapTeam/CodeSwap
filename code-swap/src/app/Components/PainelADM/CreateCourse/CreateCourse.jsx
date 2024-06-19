@@ -7,6 +7,7 @@ import { ref } from "firebase/storage";
 
 import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
 import { ContextDataCache } from '@/app/Providers/ContextDataCache';
+import ModalUpdateCategory from '../../Modals/modalUpdateCategory';
 
 
 const CreateCourses = () => {
@@ -46,6 +47,8 @@ const CreateCourses = () => {
     const { data: categoriesData } = useQuery({
         queryKey: ['All-Categories'],
         queryFn: async () => {
+            console.log('Buscando categorias no banco de dados...');
+
             //verificar se existe algum erro ao salvar o curso buscando no cache local o erro_save
             const erroData = JSON.parse(sessionStorage.getItem('erro_save'));
             if (erroData) {
@@ -57,11 +60,9 @@ const CreateCourses = () => {
                 //limpar o cache local
                 sessionStorage.removeItem('erro_save');
             }
-
             const categories = await controller.manageCategories.GetAllCategories();
             return categories;
-        },
-        staleTime: 1000 * 60 * 5 // 5 minutos
+        }
     });
 
     // if(categoriesData) console.log('categoriesData', categoriesData);
@@ -108,12 +109,16 @@ const CreateCourses = () => {
             id: '',
             category: selectedCategoryID,
             SequentialModule: false,
-            modules: []
+            modules: [],
+            Badge: '',
+            PositionBadgeMap: { x: 0, y: 0 },
         }
 
         //Criar o curso no banco de dados
         await controller.manageCourses.CreateCourse(formData);
         queryClient.refetchQueries(['All-Categories']);
+        
+        queryClient.invalidateQueries(["Category-Selected", selectedCategoryID]);
 
         //limpar os inputs
         setCourseName('');
@@ -180,7 +185,8 @@ const CreateCourses = () => {
             </select>
             <ModalCreateCategory />
             <button onClick={() => deleteCategory(selectedCategoryID)} style={{ padding: '5px', backgroundColor: '#dc3545', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.1)' }}>Excluir Categoria</button>
-            
+            {categoriesData && <ModalUpdateCategory categoriesData={categoriesData}/>
+            }
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' , marginTop:'20px'}}>
                 <div style={{ marginBottom: '20px' }}>
                     <label htmlFor="title" style={{  marginBottom: '5px', color: '#ffffff' }}>Título do Curso:</label>

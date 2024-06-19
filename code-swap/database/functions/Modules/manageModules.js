@@ -16,7 +16,8 @@ export async function createModule(courseId, newModule) {
             courseId: courseId,
             id: '',
             permission: newModule.permission,
-            lessons: []
+            lessons: [],
+            thumbnail: newModule.thumbnail
         };
 
         const response = await fetch('/api/posts?type=CreateModule', {
@@ -187,3 +188,37 @@ export async function GetModulesCourseID(courseId) {
 
     return data;
 };
+
+
+//>>>>ALTERADO PARA API ROUTER<<<<função para adicionar uma thumbnail ao modulo
+export async function AddThumbnailModule(moduleId, thumbnail) {
+    console.log(moduleId, thumbnail);
+    let dataFetch = {
+        moduleId: moduleId,
+        thumbnail: thumbnail
+    }
+    try {
+        //////////////////////////////////////////////////////////////////////
+        //>>>>ALTERADO PARA API ROUTER<<<<
+        //api router POST para adicionar uma thumbnail ao modulo
+        const response = await fetch(`/api/posts?type=addThumbnailModule`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataFetch)
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro ao adicionar a thumbnail ao módulo');
+        }
+
+        const data = await response.json();
+
+        alert(data.message);
+
+    } catch (error) {
+        console.error('Erro ao adicionar a thumbnail ao módulo:', error);
+        throw error; // Lança o erro para tratamento em um nível superior
+    }
+}

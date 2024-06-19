@@ -6,6 +6,9 @@ import Controller from '@/Controller/controller';
 import { useState } from 'react';
 import UpdateModuleModal from '../../Modals/modalUpdateModule';
 import AddLessonModal from '../../Modals/modalAddLesson';
+import { set } from 'firebase/database';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { storage } from '../../../../../database/firebase';
 
 
 const Container = styled.div`
@@ -231,14 +234,12 @@ export default function ManageModule({ setSelectedPainel }) {
   const [panelUpdateModule, setPanelUpdateModule] = useState(false);
 
   const [permissionModule, setPermissionModule] = useState(0);
-  //Codes do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar 0
   const [codesModule, setCodesModule] = useState(0);
-  //XP do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar 0
   const [xpModule, setXpModule] = useState(0);
-  //Dificuldade do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar 'iniciante'
   const [difficultyModule, setDifficultyModule] = useState('');
-  //Observações do modulo quando carregar o modulo selecionado do cache, caso não tenha valor, setar ''
   const [moduleObservations, setModuleObservations] = useState('');
+  const [thumbnailModule, setThumbnailModule] = useState('');
+  const [progress, setProgress] = useState(0);
 
 
   const { data: moduleSelected, isLoading } = useQuery({
@@ -252,12 +253,13 @@ export default function ManageModule({ setSelectedPainel }) {
       setCodesModule(module.codes);
       setDifficultyModule(module.difficulty);
       setModuleObservations(module.moduleObservations);
+      setThumbnailModule(module.thumbnail);
 
       const Lessons = await controller.manageModules.GetLessonsModule(module.id);
       queryClient.setQueryData(['Lessons-Module'], Lessons);
+      console.log(module);
 
-
-      return module || {}; // retorna um objeto vazio se moduleSelected for undefined
+      return module || {};
     }
   });
 
@@ -294,7 +296,8 @@ export default function ManageModule({ setSelectedPainel }) {
       experience: xpModule,
       codes: codesModule,
       difficulty: difficultyModule,
-      moduleObservations: moduleObservations
+      moduleObservations: moduleObservations,
+      thumbnailModule: thumbnailModule
     };
 
     await controller.manageModules.UpdateModuleConfigs(moduleSelected.id, updatedModule);
@@ -304,22 +307,8 @@ export default function ManageModule({ setSelectedPainel }) {
     moduleUpdated = { ...moduleUpdated, ...updatedModule };
     queryClient.setQueryData(['Module-Selected'], moduleUpdated);
 
-    //Atualizar o  modulos em ["Modules-Cached"] com o novo modulo atualizado
-    let modulesCached = await queryClient.getQueryData(["Modules-Cached"]);
-
-    //procurar dentro  do array o objeto do modulo no cache que contenha o id do modulo selecionado
-    const moduleCache = modulesCached.find(module => module.id === moduleSelected.id);
-
-    //se o modulo estiver no cache, atualizar o modulo no cache
-    if (moduleCache) {
-      const modulesUpdated = modulesCached.map(module => {
-        if (module.id === moduleSelected.id) {
-          return { ...module, ...updatedModule };
-        }
-        return module;
-      });
-      queryClient.setQueryData(["Modules-Cached"], modulesUpdated);
-    }
+    
+    
   };
 
   //Função apra deletar a aula
@@ -363,6 +352,51 @@ export default function ManageModule({ setSelectedPainel }) {
 
   };
 
+  //Função para atualizar a thumbnail do curso//
+  const UpdateThumbnailModule = async (e) => {
+    e.preventDefault();
+    ////////////ATUALIZAR A IMAGEM NO BANCO DE DADOS////////////////
+    
+    e.preventDefault();
+    const file = e.target.file.files[0];
+
+    
+    if (!file) return;
+    const fileName = `${moduleSelected.title}-Badge`;
+    const storageRef = ref(storage, `Courses/Badge/${fileName}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on('state_changed', (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setProgress(progress);
+    }, (error) => {
+        console.error(error);
+    }, () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setThumbnailModule(downloadURL);
+           controller.manageModules.AddThumbnailModule(moduleSelected.id, downloadURL);
+           console.log('File available at', downloadURL);
+           console.log('moduleSelected.id', moduleSelected.id);
+        });
+        //limpar o campo de upload
+        e.target.file.value = '';
+    });
+
+    
+    
+    
+    //atualizar a query ["Module-Selected"] com a nova thumbnail
+    let moduleUpdated = await queryClient.getQueryData(['Module-Selected']);
+    moduleUpdated = { ...moduleUpdated, thumbnail: thumbnailModule };
+    queryClient.setQueryData(['Module-Selected'], moduleUpdated);
+
+
+    
+
+    
+    e.target.file.value = '';
+  };
+
 
 
   return (
@@ -393,6 +427,14 @@ export default function ManageModule({ setSelectedPainel }) {
                   <option value="avançado">Avançado</option>
                 </select>
               </div>
+
+              <label style={{ display: 'flex', flexDirection: 'column', marginRight: '10px', marginBottom: '10px' }}>
+                Thumbnail<img src={thumbnailModule} alt="imagem" />
+              </label>
+              <form onSubmit={UpdateThumbnailModule}>
+                <input type="file" name="file" />
+                <ManageButton type="submit">Atualizar Thumbnail</ManageButton>
+              </form>
 
               <textarea style={{padding:'5px',borderRadius: '5px',color: 'black', height: '10rem', width: '100%' }} type="text" placeholder="Observações do Curso" value={moduleObservations} onChange={(e) => setModuleObservations(e.target.value)} />
 

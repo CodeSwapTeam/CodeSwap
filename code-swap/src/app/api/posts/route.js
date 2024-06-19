@@ -13,6 +13,7 @@ export async function POST(NextRequest) {
 
     switch (type) {
         case 'CreateCourse': { //Criar um curso
+            console.log('CreateCourse................................:', data);
             try {
                 const courseData = {
                     title: data.title,
@@ -30,6 +31,8 @@ export async function POST(NextRequest) {
                     category: data.category,
                     SequentialModule: data.SequentialModule,
                     modules: [],
+                    Badge: data.Badge,
+                    PositionBadgeMap: data.PositionBadgeMap
                 };
                 const docRef = await addDoc(collection(db, 'Courses'), courseData);
                 
@@ -50,12 +53,16 @@ export async function POST(NextRequest) {
             }
         }
         case 'CreateCategory': {//Criar uma categoria
+            console.log('CreateCategory................................:', data);
             try {
                 const categoryData = {
                     name: data.name,
                     description: data.description,
-                    courses: []
+                    PositionBadgeMap: data.PositionBadgeMap,
+                    courses: data.courses,
+                    Badge: data.Badge,
                 }
+                console.log('categoryData:', categoryData);
                 // Criar a categoria no banco de dados
                 const docRef = await addDoc(collection(db, 'Categories'), categoryData, { merge: true });
                 // Adicionar o id da categoria no documento
@@ -67,6 +74,22 @@ export async function POST(NextRequest) {
 
 
 
+        }
+        case 'UpdateCategory': {//Atualizar informações da categoria
+            console.log('UpdateCategory................................:', data);
+            try {
+                const categoryData = {
+                    name: data.name,
+                    description: data.description,
+                    PositionBadgeMap: data.PositionBadgeMap,
+                    Badge: data.Badge,
+                    mapImage: data.mapImage,
+                }
+                await updateDoc(doc(db, 'Categories', data.id), categoryData , { merge: true });
+                return NextResponse.json({ message: 'Informações da categoria atualizadas com sucesso!' });
+            } catch (error) {
+                return NextResponse.error('Erro ao atualizar informações da categoria:', error);
+            }
         }
         case 'UpdateInfoCourse': {//Atualizar informações do curso
             try {
@@ -113,6 +136,8 @@ export async function POST(NextRequest) {
                 course.imgUrlThumbnail = data.courseData.imgUrlThumbnail;
                 course.difficulty = data.courseData.difficulty;
                 course.owner = data.courseData.owner;
+                course.Badge = data.courseData.Badge;
+                course.PositionBadgeMap = data.courseData.PositionBadgeMap;
 
 
                 //atualizar a categoria no banco de dados
@@ -139,7 +164,8 @@ export async function POST(NextRequest) {
                     moduleObservations: '',
                     id: '',
                     permission: data.permission,
-                    lessons: []
+                    lessons: [],
+                    thumbnail: data.thumbnail
                 };
                 const docRef = await addDoc(collection(db, 'Modules'), moduleData, { merge: true });
                 //setar o id do modulo com o id do documento
@@ -182,6 +208,39 @@ export async function POST(NextRequest) {
                 return NextResponse.json({ message: 'Informações do módulo atualizadas com sucesso!' });
             } catch (error) {
                 return NextResponse.error('Erro ao atualizar informações do módulo:', error);
+            }
+        }
+        case 'addThumbnailModule': {//Adicionar thumbnail ao módulo
+            console.log('addThumbnailModule................................:', data);
+            const { thumbnail, moduleId } = data;
+            try {
+                await updateDoc(doc(db, 'Modules', moduleId), {
+                    thumbnail: thumbnail
+                });
+
+                //pegar o id do curso do modulo
+                const moduleDoc = doc(db, 'Modules', moduleId);
+                const moduleSnap = await getDoc(moduleDoc);
+                const module = moduleSnap.data();
+                const courseId = module.courseId;
+
+                // Atualizar thumbnail do módulo no curso
+                const courseDoc = doc(db, 'Courses', courseId);
+                const courseSnap = await getDoc(courseDoc);
+                const course = courseSnap.data();
+                const moduleCourse = course.modules.find(module => module.id === data.moduleId);
+                moduleCourse.thumbnail = thumbnail;
+
+                //atualizar o modulo no array de modulos do curso
+                await updateDoc(courseDoc, {
+                    modules: course.modules
+                });
+
+
+
+                return NextResponse.json({ message: 'Thumbnail adicionada com sucesso!' });
+            } catch (error) {
+                return NextResponse.error('Erro ao adicionar thumbnail ao módulo:', error);
             }
         }
         case 'updateModuleConfigs': {//Atualizar configurações do módulo

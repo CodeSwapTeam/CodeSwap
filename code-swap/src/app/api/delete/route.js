@@ -10,6 +10,7 @@ export async function DELETE(NextRequest){
     let data;
     if (NextRequest.body) {
         data = NextRequest.body;
+        
     } else {
         console.log('Sem dados no corpo da solicitação');
     }
@@ -68,22 +69,54 @@ export async function DELETE(NextRequest){
                 return NextResponse.error('Erro ao deletar a categoria');
             }
         }
-        case 'deleteModule': {//Deletar o módulo pelo ID
+        case 'deleteModule': { //Deletar o módulo pelo ID
+            
             try {
-
-                const { courseSelectedId, moduleSelected } = data;
-                //deletar o modulo do curso no database
-                await deleteDoc(doc(db, 'Modules', moduleSelected.id ));
-
-                //deletar o modulo do array de modulos do curso
+                const reader = data.getReader();
+        const result = await reader.read(); // raw array buffer
+        const decoder = new TextDecoder();
+        const json = decoder.decode(result.value);
+        const dataObj = JSON.parse(json);
+                
+                console.log('dados------------------------------------', dataObj);
+        
+                const { courseSelectedId, moduleSelected } = dataObj;
+                
+                // deletar o modulo do curso no database
+                await deleteDoc(doc(db, 'Modules', moduleSelected ));
+        
+                // deletar o modulo do array de modulos do curso
                 await updateDoc(doc(db, 'Courses', courseSelectedId), {
                     modules: arrayRemove(moduleSelected)
                 });
-
-
+        
                 return NextResponse.json({ message: 'Módulo deletado com sucesso!' });
             } catch (error) {
                 return NextResponse.error('Erro ao deletar o módulo');
+            }
+        }
+        case 'RemoveCourseModule': {//Remover o módulo do curso pelo ID
+            try {
+                const reader = data.getReader();
+                let result = await reader.read(); // result.value will have the data
+                let parsedData = JSON.parse(new TextDecoder("utf-8").decode(result.value));
+                console.log('Dados---------------------------:', parsedData);
+                let courseId = parsedData.courseId;
+                let moduleId = parsedData.moduleId;
+                
+                // Deletar o módulo do curso
+                const courseRef = doc(db, 'Courses', courseId);
+                const courseSnap = await getDoc(courseRef);
+                const courseData = courseSnap.data();
+                const modules = courseData.modules;
+                const moduleIndex = modules.findIndex(module => module.id === moduleId);
+                modules.splice(moduleIndex, 1);
+                await updateDoc(courseRef, { modules });
+                return NextResponse.json({ message: 'Módulo removido do curso com sucesso!' });
+                
+            }
+            catch (error) {
+                return NextResponse.error('Erro ao remover o módulo do curso');
             }
         }
         case 'deleteLesson': {//Deletar a aula pelo ID

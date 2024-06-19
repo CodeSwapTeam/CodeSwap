@@ -39,7 +39,7 @@ export const CategoriesList = ({ setSelectedPainel, categories, handleCategory }
             <h3>CATEGORIAS</h3>
             <div >
                 {categories?.map((category, index) => (
-                    <CategoryContainer key={index} onClick={() => { handleCategory(category) ,setSelectedPainel("courses") }}>
+                    <CategoryContainer key={index} onClick={() => { handleCategory(category) ,setSelectedPainel("CategoryList") }}>
                         <h4>{category.name}</h4>
                     </CategoryContainer>
                 ))}

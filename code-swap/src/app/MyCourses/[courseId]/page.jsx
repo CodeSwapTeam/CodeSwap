@@ -145,12 +145,13 @@ const TitleDescription = styled.div`
 `;
 
 const LessonsModule = styled.div`
+    
     margin-top: 20px;
-    width: 100%;
+    width: 50%;
     color: white;
     font-size: 1rem;
-    justify-content: left;
-    align-items: left;
+    //justify-content: left;
+    //align-items: left;
     margin-bottom: 20px;
 
     @media (max-width: 768px) {
@@ -309,6 +310,7 @@ const Page = () => {
         }
     
         setCourse(course);
+        console.log('Curso:', course);
 
         const getAndSortModules = async (courseId) => {
             const modules = await controller.manageModules.GetModulesCourseID(courseId);
@@ -483,21 +485,28 @@ const Page = () => {
                                             {module.title}
                                         </ModuleTitle>
                                         <ModuleItem open={openIndex === index} 
-                                        style={{ 
-                                            backgroundColor: openIndex === index ? '#00000058' : 'transparent',
-                                            padding: openIndex === index ? '10px' : '0'
+                                            style={{ 
+                                                backgroundColor: openIndex === index ? '#00000058' : 'transparent',
+                                                padding: openIndex === index ? '10px' : '0'
                                             }}>
                                             {module.description}
 
-                                            <LessonsModule>
-                                                {module.lessons && module.lessons.map((lesson, index) => (
-                                                    <div key={index}>
-                                                        <h3 style={{ textAlign: 'left' }}>{lesson.nameLesson}</h3>
-                                                    </div>
-                                                ))}
-                                            </LessonsModule>
+                                            <div style={{ display:' flex', width:'100%',height:'250px'}}>
+                                                <LessonsModule>
+                                                    {module.lessons && module.lessons.map((lesson, index) => (
+                                                        <div key={index}>
+                                                            <h3 style={{ textAlign: 'left' }}>{lesson.nameLesson}</h3>
+                                                            <p>
+                                                                {lesson.description}
+                                                            </p>
+                                                        </div>
+                                                    ))}
+                                                </LessonsModule>
+                                                <div style={{width: '50%',alignContent:"center"}}>
+                                                    <img src={module.thumbnail} alt="NPC" />
+                                                </div>
+                                            </div>
                                             {
-                                                // Se currentUser e CoursesEnrolled existirem e o curso com o id do curso estiver em CoursesEnrolled, verificar modulePermission e renderizar o botão ou a mensagem apropriada
                                                 currentUser && currentUser.CoursesEnrolled && currentUser.CoursesEnrolled.find(c => c.courseId === course.id) ?
                                                     ((courseEnrolled) => (
                                                         courseEnrolled.modulePermission >= module.permission ?
@@ -516,9 +525,11 @@ const Page = () => {
                         </LeftContent>
 
                         <RightContent>
-                            <div>
-                                <Image src={course.imgUrlCover} alt="Capa Curso" style={{ marginTop: '50px' }} width={1000} height={800}/>
-                            </div>
+                            {course.imgUrlCover && (
+                                <div>
+                                    <Image src={course.imgUrlCover} alt="Capa Curso" style={{ marginTop: '50px' }} width={1000} height={800}/>
+                                </div>
+                            )}
 
                             <CourseContainer >
                                 <CourseTitle >Cursos recomendados</CourseTitle>

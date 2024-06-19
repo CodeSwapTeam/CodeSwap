@@ -196,24 +196,20 @@ export const CoursesCategoryList = ({  setSelectedPainel, categoriesData }) => {
     //se ouver categoria selecionada ['Category-Selected'], setar os cursos da categoria no estado local, se não, setar um array vazio
     const [courses, setCourses] = useState(queryClient.getQueryData(['Category-Selected'])?.courses || []);
 
+    // Adicione um estado para o status de filtro
+    const [filterStatus, setFilterStatus] = useState('approved');
+
+    // Adicione um estado para os cursos ordenados
+    const [sortedCourses, setSortedCourses] = useState([]);
     
 
     //função para deletar um curso
     const handleDeleteCourse = useMutation({
-        mutationFn: async (courseId) => {
-            //atualizar o estado courses com os cursos que não foram deletados
-            setCourses(courses.filter(course => course.id !== courseId));
-
-            //remover de ['All-Categories'] o curso deletado
-            const categories = queryClient.getQueryData(['All-Categories']);
-            categories.forEach(category => {
-                category.courses = category.courses.filter(course => course.id !== courseId);
-            });
-
-            //atualizar o cache com as categorias atualizadas
-            queryClient.setQueryData(['All-Categories'], categories);
-
+        mutationFn: async (data) => {
+            const {categoryId, courseId} = data;
             await controller.manageCourses.DeleteCourse(courseId);
+            queryClient.refetchQueries(['All-Categories']);
+            queryClient.invalidateQueries(['Category-Selected',categoryId]);
         }
     });
 
@@ -253,15 +249,11 @@ export const CoursesCategoryList = ({  setSelectedPainel, categoriesData }) => {
     //função para pegar os cursos dentro de uma categoria selecionada pelo usuário
     const handleCategory = (category) => {
         setCourses(category.courses);
-        queryClient.setQueryData(['Category-Selected'], category);
+        queryClient.setQueryData(['Category-Selected',category.id], category);
     };
 
 
-    // Adicione um estado para o status de filtro
-    const [filterStatus, setFilterStatus] = useState('approved');
-
-    // Adicione um estado para os cursos ordenados
-    const [sortedCourses, setSortedCourses] = useState([]);
+    
 
     // Adicione uma função para lidar com a mudança de filtro
     const handleFilterChange = (status) => {
@@ -302,7 +294,7 @@ export const CoursesCategoryList = ({  setSelectedPainel, categoriesData }) => {
                 <h3>CATEGORIAS</h3>
                 <div >
                     {categoriesData?.map((category, index) => (
-                        <CategoryContainer key={index} onClick={() => { handleCategory(category), setSelectedPainel("courses") }}>
+                        <CategoryContainer key={index} onClick={() => { handleCategory(category), setSelectedPainel("CategoryList") }}>
                             <h4>{category.name}</h4>
                         </CategoryContainer>
                     ))}
@@ -330,7 +322,7 @@ export const CoursesCategoryList = ({  setSelectedPainel, categoriesData }) => {
                             <ManageButton onClick={() => { handleGetCourseData(course.id) }}>Gerenciar</ManageButton>
                             <BottomDiv>
                                 <StatusCourse status={course.status}>Status: {course.status}</StatusCourse>
-                                <DeleteButton onClick={() => handleDeleteCourse.mutate(course.id)}>Deletar Curso</DeleteButton>
+                                <DeleteButton onClick={() => handleDeleteCourse.mutate({categoryId: course.category, courseId: course.id})}>Deletar Curso</DeleteButton>
                             </BottomDiv>
                         </CourseInfoDiv>
                     </StyledCourseDiv>

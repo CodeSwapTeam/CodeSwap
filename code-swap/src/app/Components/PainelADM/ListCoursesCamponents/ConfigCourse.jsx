@@ -3,6 +3,8 @@ import { useQuery, useMutation, useQueryClient, } from "@tanstack/react-query";
 import { useState } from "react";
 import UpdateCourseModal from "../../Modals/modalUpdateCourse";
 import styled from "styled-components";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "../../../../../database/firebase";
 
 
 const UpdateInfoCourse = styled.button`
@@ -199,12 +201,17 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
   const [experienceCourse, setExperienceCourse] = useState(100);
   const [codesCourse, setCodesCourse] = useState(150);
   const [isPremium, setIsPremium] = useState(false);
+  const [BadgeURL, setBadgeURL] = useState('');
+  const [progress, setProgress] = useState(0);
+  const [positionBadgeMap, setPositionBadgeMap] = useState({ x: 0, y: 0 });
+
 
 
   const { data: courseSelected } = useQuery({
     queryKey: ['Course-Selected'],
     queryFn: async () => {
       const course = queryClient.getQueryData(['Course-Selected']);
+      console.log('course', course);
 
       //Setar os modulos do curso em ["Modules-Course"]
       queryClient.setQueryData(['Modules-Course'], course.modules);
@@ -220,6 +227,9 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
       setIsSequential(course.SequentialModule);
       setCourseId(course.id);
       setCategoryId(course.categoryId);
+      setBadgeURL(course.Badge);
+      setPositionBadgeMap(course.PositionBadgeMap);
+
 
       return course;
 
@@ -247,7 +257,29 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
   };
 
 
+  const handleUploadBadgeCourse = async (e) => {
+    e.preventDefault();
+    const file = e.target.file.files[0];
 
+    
+    if (!file) return;
+    const fileName = `${courseSelected.title}-Badge`;
+    const storageRef = ref(storage, `Courses/Badge/${fileName}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on('state_changed', (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setProgress(progress);
+    }, (error) => {
+        console.error(error);
+    }, () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setBadgeURL(downloadURL);
+        });
+        //limpar o campo de upload
+        e.target.file.value = '';
+    });
+}
 
   //Função para atualizar a thumbnail do curso//
   const UpdateThumbnail = async (e) => {
@@ -296,7 +328,9 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
         codes: codesCourse,
         courseObservations: courseObservations,
         imgUrlThumbnail: imgUrlThumbnail,
-        imgUrlCover: imgUrlCover
+        imgUrlCover: imgUrlCover,
+        Badge: BadgeURL,
+        PositionBadgeMap: positionBadgeMap
       };
       console.log('courseData', courseData);
       ////////////ATUALIZAR AS INFORMAÇÕES DO CURSO NO BANCO DE DADOS////////////////
@@ -334,7 +368,7 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
         <div  >
 
           <Container>
-            <Button onClick={() => { setSelectedPainel('courses') }}>Voltar</Button>
+            <Button onClick={() => { setSelectedPainel('CategoryList') }}>Voltar</Button>
             <Title>{courseSelected?.title}</Title>
             <Spacer></Spacer>
           </Container>
@@ -376,7 +410,30 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
                   <option value="avançado">Avançado</option>
                 </select>
               </div>
-              <label style={{ display: 'flex', flexDirection: 'column', marginRight: '10px', border: '1px solid white', marginBottom: '10px' }}>
+
+              <label style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start', marginTop: '5px', width: 'auto', }}>Badge do curso:</label>
+              <form onSubmit={handleUploadBadgeCourse} style={{ display: 'flex', flexDirection: 'column' }}>
+                <input type="file" name="file" />
+                <StyledButtonUploadImg type="submit">Enviar</StyledButtonUploadImg>
+              </form>
+              <div style={{ display: 'flex', flexDirection: 'row', gap: '5px', justifyContent: 'flex-start', marginTop: '5px', width: 'auto', }}>
+                Progresso do upload:<span type="text" >{progress}%
+                </span></div>
+
+                <label style={{ display: 'flex', flexDirection: 'column', marginRight: '10px', marginBottom: '10px', alignItems:'center' }}>
+                  Badge<img src={courseSelected.Badge} alt="imagem" width={100} height={100} />
+                </label>
+
+                <div style={{ padding: '10px 15px' }}>
+                <label style={{ fontWeight: 'bold', color: '#007bff', display: 'block', marginBottom: '10px' }}>Posição do Badge no Mapa:</label>
+                <div style={{ display: 'flex', justifyContent: 'space-between' , alignItems:'center'}}>
+                  X<input type="number" placeholder="X" value={positionBadgeMap.x} onChange={(e) => setPositionBadgeMap({ ...positionBadgeMap, x: e.target.value })} style={{ width: 'calc(50% - 10px)', padding: '10px', fontSize: '1rem', borderRadius: '5px', border: '1px solid #ddd', transition: 'box-shadow 0.3s ease', boxShadow: positionBadgeMap.x ? '0px 0px 5px rgba(0, 0, 0, 0.1)' : 'none' , color:'black'}} />
+                  Y<input type="number" placeholder="Y" value={positionBadgeMap.y} onChange={(e) => setPositionBadgeMap({ ...positionBadgeMap, y: e.target.value })} style={{ width: 'calc(50% - 10px)', padding: '10px', fontSize: '1rem', borderRadius: '5px', border: '1px solid #ddd', transition: 'box-shadow 0.3s ease', boxShadow: positionBadgeMap.y ? '0px 0px 5px rgba(0, 0, 0, 0.1)' : 'none' , color:'black'}} />
+                </div>
+              </div>
+
+
+              <label style={{ display: 'flex', flexDirection: 'column', marginRight: '10px', marginBottom: '10px' }}>
                 Thumbnail<img src={courseSelected.imgUrlThumbnail} alt="imagem" />
               </label>
               <div>
@@ -385,6 +442,9 @@ export const ConfigCourse = ({ setSelectedPainel }) => {
                   <input type="file" name="file" />
                   <StyledButtonUploadImg type="submit">Enviar</StyledButtonUploadImg>
                 </form>
+
+                
+                
                 <br />
               </div>
               <div>

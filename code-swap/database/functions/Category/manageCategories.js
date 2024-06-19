@@ -7,7 +7,9 @@ export const CreateCategory = async (data) => {
     const categoryData = {
         name: data.name,
         description: data.description,
-        courses: []
+        Badge: data.Badge,
+        courses: [],
+        PositionBadgeMap: data.PositionBadgeMap
     }
 
     try {
@@ -53,7 +55,7 @@ export const GetAllCategories = async () => {
 
 // Função para deletar uma categoria no banco de dados
 export const DeleteCategory = async (categoryId) => {
-    try {       
+    try {
         //////////////////////////////////////////////////////////////////////////
         //>>>>ALTERADO PARA API ROUTER<<<<
         //api router DELETE para deletar uma categoria no banco de dados
@@ -92,12 +94,12 @@ export const SaveImgUrlThumbnail = async (categoryId, courseId, imgUrlThumbnail)
             const category = categorySnap.data();
             //verificar se o curso existe
             const course = category.courses.find(course => course.id === courseId);
-            
-            if(course){
+
+            if (course) {
                 course.imgUrlThumbnail = imgUrlThumbnail;
                 await updateDoc(categoryRef, { courses: category.courses });
             }
-        } 
+        }
 
     } catch (error) {
         console.error('Erro ao salvar a imagem da categoria:', error);
@@ -107,15 +109,28 @@ export const SaveImgUrlThumbnail = async (categoryId, courseId, imgUrlThumbnail)
 
 
 
-        // >>>>NÃO IMPLEMENTADO<<<< Função para atualizar uma categoria no banco de dados 
-        export const UpdateCategoryData = async (categoryId, data) => {
-            try {
-                const categoryRef = doc(db, 'Categories', categoryId);
+//Função para atualizar uma categoria no banco de dados 
+export const UpdateCategoryData = async (data) => {
+    //////////////////////////////////////////////////////////////////////////
+        //>>>>ALTERADO PARA API ROUTER<<<<
+    try {
+        //api router PUT para atualizar uma categoria no banco de dados
+        const response = await fetch(`/api/posts?type=UpdateCategory`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            throw new Error('Erro ao atualizar a categoria');
+        }
+
+        alert('Categoria atualizada com sucesso!');
+
         
-                await updateDoc(categoryRef, data);
+    } catch (error) {
         
-            } catch (error) {
-                console.error('Erro ao atualizar a categoria:', error);
-                throw error;
-            }
-        };
+    }
+};
