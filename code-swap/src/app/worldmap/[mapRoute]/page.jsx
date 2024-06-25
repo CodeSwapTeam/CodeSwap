@@ -135,6 +135,7 @@ export function PointMapClick({ x, y, imageSrc, text, route, mapRef }) {
 const Districts = () => {
     const { mapRoute } = useParams();
     const controller = Controller();
+    const router = useRouter();
     const queryClient = useQueryClient();
     const gridSize = { width: 20, height: 20 };
 
@@ -166,10 +167,11 @@ const Districts = () => {
         console.log(`Cell clicked at position: (${x}, ${y})`);
         const data = await controller.manageCategories.GetCategoryPositionMap(categorySelect.id, x, y);
         console.log('data', data);
-        
-        
-        
-            
+        if(data) {
+            let link = data.info.moduleId;
+            router.push('/Quests/' + link);
+
+        }    
     };
 
     return (
