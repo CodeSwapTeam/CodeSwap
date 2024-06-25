@@ -3,7 +3,7 @@ import { getCookiesAcessToken, removeCookiesAcessToken, setCookiesAcessToken } f
 import { CreateUser, GetUserById, GetUserDataBase, GetUserLocalData, RemoveUser, UpdateUserData } from "../../database/functions/Users/manageUserData";
 
 
-import { CreateCategory, DeleteCategory, GetAllCategories, SaveImgUrlThumbnail, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
+import { CreateCategory, CreateCategoryPositionMap, DeleteCategory, GetAllCategories, GetCategoryPositionMap, GetCategoryPositionsMap, SaveImgUrlThumbnail, UpdateCategoryData } from "../../database/functions/Category/manageCategories";
 import { CreateCourse, DeleteCourse, GetCourseById, GetCoursesByCategory, RemoveCourseModule, UpdateConfigCourseData, UpdateCover, UpdateInfoCourse,  UpdateThumbnail } from "../../database/functions/Courses/manageCourses";
 import { AddThumbnailModule, GetLessonsModule, GetModuleById, GetModules, GetModulesCourseID, UpdateModuleConfigs, createModule, deleteModule, updateInfoModule } from "../../database/functions/Modules/manageModules";
 import { handleUpdateThumbnail } from "@/app/services/UpdateThumbnail";
@@ -85,7 +85,10 @@ export default function Controller(){
             UpdateCategoryData: UpdateCategoryData,
             DeleteCategory: DeleteCategory,
 
-            SaveImgUrlThumbnail: SaveImgUrlThumbnail
+            SaveImgUrlThumbnail: SaveImgUrlThumbnail,
+            GetCategoryPositionsMap: GetCategoryPositionsMap,
+            CreateCategoryPositionMap: CreateCategoryPositionMap,
+            GetCategoryPositionMap: GetCategoryPositionMap
         },
         /**
          * Serviços de cookies,

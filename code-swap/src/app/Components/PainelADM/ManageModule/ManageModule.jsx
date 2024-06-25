@@ -9,6 +9,7 @@ import AddLessonModal from '../../Modals/modalAddLesson';
 import { set } from 'firebase/database';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { storage } from '../../../../../database/firebase';
+import PositionForm from './components/PositionQuestForm';
 
 
 const Container = styled.div`
@@ -241,25 +242,30 @@ export default function ManageModule({ setSelectedPainel }) {
   const [thumbnailModule, setThumbnailModule] = useState('');
   const [progress, setProgress] = useState(0);
 
+  
+
 
   const { data: moduleSelected, isLoading } = useQuery({
     queryKey: ['Module-Selected'],
     queryFn: async () => {
-      const moduleSelected = await queryClient.getQueryData(['Module-Selected']);
-      const module = moduleSelected || {}; // retorna um objeto vazio se moduleSelected for undefined
+      const module = await queryClient.getQueryData(['Module-Selected']);
+      const moduleId = module.id;
+      const moduleData = await controller.manageModules.GetModuleById(moduleId);
+       // retorna um objeto vazio se moduleSelected for undefined
+      console.log('moduleSelected....', moduleData);
+      setPermissionModule(moduleData[0].permission);
+      setXpModule(moduleData[0].experience);
+      setCodesModule(moduleData[0].codes);
+      setDifficultyModule(moduleData[0].difficulty);
+      setModuleObservations(moduleData[0].moduleObservations);
+      setThumbnailModule(moduleData[0].thumbnail);
+
+      const Lessons = await controller.manageModules.GetLessonsModule(moduleId);
       
-      setPermissionModule(module.permission);
-      setXpModule(module.experience);
-      setCodesModule(module.codes);
-      setDifficultyModule(module.difficulty);
-      setModuleObservations(module.moduleObservations);
-      setThumbnailModule(module.thumbnail);
-
-      const Lessons = await controller.manageModules.GetLessonsModule(module.id);
       queryClient.setQueryData(['Lessons-Module'], Lessons);
-      console.log(module);
+      
 
-      return module || {};
+      return moduleData || {};
     }
   });
 
@@ -397,7 +403,7 @@ export default function ManageModule({ setSelectedPainel }) {
     e.target.file.value = '';
   };
 
-
+  if(isLoading) return <div>Carregando...</div>
 
   return (
     <Container >
@@ -427,6 +433,11 @@ export default function ManageModule({ setSelectedPainel }) {
                   <option value="avançado">Avançado</option>
                 </select>
               </div>
+
+              
+              <PositionForm moduleSelected={moduleSelected}/>
+
+              
 
               <label style={{ display: 'flex', flexDirection: 'column', marginRight: '10px', marginBottom: '10px' }}>
                 Thumbnail<img src={thumbnailModule} alt="imagem" />

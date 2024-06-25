@@ -208,13 +208,14 @@ export default function ModulesCourseList({ setSelectedPainel, panelSubject}) {
   });
 
 
-  const handleManageModule = async (module) => {  
-    //console.log('module:', module);
-      const controller = Controller();
-       const moduleData = await controller.manageModules.GetModuleById(module.id);
-        console.log('module:', moduleData[0]);
-        queryClient.setQueryData(['Module-Selected'], moduleData[0]);
-};
+  const handleManageModule = async (module) => {
+    //console.log('module.......:', module);
+    const controller = Controller();
+    const moduleData = await controller.manageModules.GetModuleById(module.id);
+    console.log('module:', moduleData[0]);
+    queryClient.invalidateQueries(['Module-Selected']);
+    queryClient.setQueryData(['Module-Selected'], moduleData[0]);
+  };
 
   return (
     <Container >

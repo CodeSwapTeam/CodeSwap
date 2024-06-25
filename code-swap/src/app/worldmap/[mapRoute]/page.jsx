@@ -48,14 +48,13 @@ const Tooltip = styled.div`
 `;
 
 const GridCell = styled.div`
-    width: 5%; // Ajuste para o tamanho desejado da célula do grid
-    height: 10%; // Ajuste para o tamanho desejado da célula do grid
+    width: 5%;
+    height: 10%; 
     position: absolute;
     background-color: transparent;
     transform: rotate(-60deg) skewY(30deg) rotateY(30deg);
 
     &:hover {
-        // boxshadow neon verde bem leve e suave
         box-shadow: 0 0 10px rgba(0, 200, 0, 5);
 
     }
@@ -64,8 +63,8 @@ const GridCell = styled.div`
 
 const MapContainer = styled.div`
     position: relative;
-    width: 70%; // Este pode ser qualquer porcentagem que você deseja
-    height: 60%; // Redefina a altura
+    width: 70%; 
+    height: 60%; 
     box-shadow: 0 0 10px rgba(0, 200, 0, 5);
 `;
 
@@ -163,8 +162,14 @@ const Districts = () => {
     }
         , [mapRoute, queryClient]);
 
-    const handleCellClick = (x, y) => {
+    const handleCellClick = async  (x, y) => {
         console.log(`Cell clicked at position: (${x}, ${y})`);
+        const data = await controller.manageCategories.GetCategoryPositionMap(categorySelect.id, x, y);
+        console.log('data', data);
+        
+        
+        
+            
     };
 
     return (

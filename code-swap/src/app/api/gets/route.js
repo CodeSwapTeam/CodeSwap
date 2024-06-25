@@ -19,6 +19,7 @@ export async function GET(request){
                 categories.push(doc.data());
             });
             if (!categories) throw new Error('Erro no servidor ao buscar as categorias');
+           
     
             return NextResponse.json(categories);
         }
